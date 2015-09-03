@@ -13,7 +13,7 @@ public class DBManager {
 	private static final String LOG_COLLECTION = "log";
 	private static final String MUNICIPALITIES_COLLECTION = "municipalities";
 	private static final String SCHOOL_COLLECTION = "school";
-	private static final String WATCHES_COLLECTION = "watches";
+	private static final String WATCHES_COLLECTION = "watch";
 	
 	private static MongoClient client = null;
 
@@ -85,4 +85,11 @@ public class DBManager {
 		return doc;
 	}
 	
+	public FindIterable<Document> findWatchesByScore(int score){
+		
+		MongoCollection<Document> collection = getCollectionByName(WATCHES_COLLECTION);
+		FindIterable<Document> iterable = collection.find(new Document("lastEventData.context.userScore", score)); 
+		
+		return iterable;
+	}
 }

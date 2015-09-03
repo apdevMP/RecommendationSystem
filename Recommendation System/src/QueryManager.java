@@ -1,5 +1,7 @@
 import org.bson.Document;
 
+import com.mongodb.client.FindIterable;
+
 
 public class QueryManager {
 	
@@ -31,6 +33,13 @@ public class QueryManager {
 		code = document.getInteger("municipality_id");
 		
 		return code;
+	}
+	
+	public void findWatchByScore(int score){
+		FindIterable<Document> iterable = manager.findWatchesByScore(score);
+		for(Document doc : iterable){
+			System.out.println(doc.toJson());
+		}
 	}
 	
 	public void closeConnection(){
