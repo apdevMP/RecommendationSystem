@@ -54,7 +54,7 @@ public class DBManager {
 	public MongoDatabase getDatabase() {
 		return database;
 	}
-
+	
 	public MongoCollection<Document> getCollectionByName(String collectionName) {
 		MongoCollection<Document> collection = database
 				.getCollection(collectionName);
@@ -68,5 +68,21 @@ public class DBManager {
 				.first();
 		return doc;
 	}
+	
+	public Document retrieveProvinceCodeByName(String provinceName) {
 
+		MongoCollection<Document> collection = getCollectionByName(MUNICIPALITIES_COLLECTION);
+		Document doc = collection.find(new Document("province_name", provinceName))
+				.first();
+		return doc;
+	}
+
+	public Document retrieveCityCodeByName(String cityName) {
+
+		MongoCollection<Document> collection = getCollectionByName(MUNICIPALITIES_COLLECTION);
+		Document doc = collection.find(new Document("municipality_name", cityName))
+				.first();
+		return doc;
+	}
+	
 }

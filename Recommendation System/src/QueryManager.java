@@ -17,6 +17,22 @@ public class QueryManager {
 		return code;
 	}
 	
+	public int retrieveProvinceCodeByProvinceName(String provinceName){
+		int code=0;
+		Document document = manager.retrieveProvinceCodeByName(provinceName);
+		code = document.getInteger("province_id");
+		
+		return code;
+	}
+	
+	public int retrieveCityCodeByCityName(String cityName){
+		int code=0;
+		Document document = manager.retrieveCityCodeByName(cityName);
+		code = document.getInteger("municipality_id");
+		
+		return code;
+	}
+	
 	public void closeConnection(){
 		manager.closeConnection();
 	}

@@ -4,8 +4,10 @@ public class TestMain {
 	public static void main(String[] args) {
 
 		QueryManager queryManager = new QueryManager();
-		int code = queryManager.retrieveRegionCodeByRegionName("Piemonte");
-		System.out.println("Piemonte Code: " + code);
+		
+		System.out.println("Piemonte Code: " + queryManager.retrieveRegionCodeByRegionName("Piemonte"));
+		System.out.println("TO Code: " + queryManager.retrieveProvinceCodeByProvinceName("Torino"));
+		System.out.println("Agliè Code: " + queryManager.retrieveCityCodeByCityName("Agliè"));
 		
 		queryManager.closeConnection();
 	}
