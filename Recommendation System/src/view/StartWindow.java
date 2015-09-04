@@ -1,32 +1,49 @@
-package presentation;
+package view;
 
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
 import java.awt.BorderLayout;
+
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.SpinnerListModel;
+
 import java.awt.Color;
+
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.JTextPane;
+
 import java.awt.ScrollPane;
 import java.awt.TextArea;
+
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JTextArea;
+import javax.swing.JComboBox;
 
 public class StartWindow
 {
 
-	private JFrame		frame;
-	private JTextField	textFieldScore;
+	private JFrame				frame;
+	private JTextField			textFieldScore;
+	private JComboBox<String>	comboBoxRegion;
+	private JComboBox<String>	comboBoxClass;
+	private JComboBox<String>	comboBoxRange;
+	private JButton				btnGo;
+	private JTextArea			textArea;
+
+	private String[]			regionStrings	= { "ABRUZZO", "BASILICATA", "CALABRIA", "CAMPANIA", "EMILIA ROMAGNA", "FRIULI VENEZIA GIULIA",
+			"LAZIO", "LIGURIA", "LOMBARDIA", "LAZIO", "MOLISE", "PIEMONTE", "PUGLIA", "SARDEGNA", "SICILIA", "TOSCANA", "TRENTINO ALTO ADIGE",
+			"UMBRIA", "VALLE D'AOSTA", "VENETO" };
 
 	/**
-	 * Launch the application.
+	 * Di prova per vedere se l'interfaccia veniva creata bene
 	 */
 	public static void main(String[] args)
 	{
@@ -80,9 +97,9 @@ public class StartWindow
 		lblClass.setBounds(6, 44, 126, 16);
 		panelData.add(lblClass);
 
-		JSpinner spinnerClass = new JSpinner();
-		spinnerClass.setBounds(6, 62, 154, 34);
-		panelData.add(spinnerClass);
+		comboBoxClass = new JComboBox<String>();
+		comboBoxClass.setBounds(6, 62, 154, 27);
+		panelData.add(comboBoxClass);
 
 		JLabel lblScore = new JLabel("Punteggio");
 		lblScore.setBounds(6, 101, 70, 16);
@@ -93,25 +110,25 @@ public class StartWindow
 		panelData.add(textFieldScore);
 		textFieldScore.setColumns(10);
 
-		JLabel lblFascia = new JLabel("Fascia");
-		lblFascia.setBounds(6, 158, 61, 16);
-		panelData.add(lblFascia);
+		JLabel lblRange = new JLabel("Fascia");
+		lblRange.setBounds(6, 158, 61, 16);
+		panelData.add(lblRange);
 
-		JSpinner spinnerFascia = new JSpinner();
-		spinnerFascia.setBounds(6, 175, 154, 34);
-		panelData.add(spinnerFascia);
-
-		JButton btnGo = new JButton("Avvia");
-		btnGo.setBounds(28, 280, 117, 29);
-		panelData.add(btnGo);
+		comboBoxRange = new JComboBox<String>();
+		comboBoxRange.setBounds(6, 182, 154, 27);
+		panelData.add(comboBoxRange);
 
 		JLabel lblRegion = new JLabel("Regione Provenienza");
 		lblRegion.setBounds(6, 221, 151, 16);
 		panelData.add(lblRegion);
 
-		JSpinner spinnerRegion = new JSpinner();
-		spinnerRegion.setBounds(6, 240, 154, 34);
-		panelData.add(spinnerRegion);
+		comboBoxRegion = new JComboBox(regionStrings);
+		comboBoxRegion.setBounds(6, 241, 154, 27);
+		panelData.add(comboBoxRegion);
+
+		btnGo = new JButton("Avvia");
+		btnGo.setBounds(28, 280, 117, 29);
+		panelData.add(btnGo);
 
 		JPanel panelResult = new JPanel();
 		panelResult.setBackground(Color.WHITE);
@@ -128,9 +145,39 @@ public class StartWindow
 		scrollPane.setBounds(6, 6, 321, 303);
 		panelResult.add(scrollPane);
 
-		JTextArea textArea = new JTextArea();
+		textArea = new JTextArea();
 		textArea.setBounds(6, 6, 304, 303);
 		scrollPane.add(textArea);
 
 	}
+
+	public JButton getButton()
+	{
+		return btnGo;
+	}
+
+	public JTextArea getTextArea()
+	{
+		return textArea;
+	}
+	
+	public String getRegion(){
+		
+		return comboBoxRegion.getSelectedItem().toString();
+	}
+	
+	public Double getScore(){
+		return Double.parseDouble(textFieldScore.getText());
+	}
+	
+	public String getClassCode()
+	{
+		return comboBoxClass.getSelectedItem().toString();
+	}
+	
+	public Integer getRange()
+	{
+		return (Integer) comboBoxRange.getSelectedItem();
+	}
+	
 }
