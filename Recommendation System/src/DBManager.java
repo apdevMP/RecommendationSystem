@@ -92,4 +92,10 @@ public class DBManager {
 		
 		return iterable;
 	}
+
+	public FindIterable<Document> findNearCities(){
+		FindIterable<Document> iterable = null;
+		return iterable;
+	}
+	
 }
