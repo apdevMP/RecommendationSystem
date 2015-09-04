@@ -4,6 +4,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+		
 
 public class DBManager {
 
@@ -30,6 +31,7 @@ public class DBManager {
 		if (manager == null)
 			manager = new DBManager();
 		return manager;
+
 
 	}
 
