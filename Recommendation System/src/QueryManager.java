@@ -35,14 +35,70 @@ public class QueryManager {
 		return code;
 	}
 	
-	public void findWatchByScore(int score){
+	public void findWatchesByScore(int score){
 		FindIterable<Document> iterable = manager.findWatchesByScore(score);
 		for(Document doc : iterable){
 			System.out.println(doc.toJson());
 		}
 	}
 	
+	public FindIterable<Document> findWatchesByTeachingRole(String teachingRole){
+		FindIterable<Document> iterable = manager.findWatchesByTeachingRole(teachingRole);
+		return iterable;
+	}
+	
+	public void findLogsByTeachingRole(String teachingRole){
+		FindIterable<Document> iterable = manager.findLogsByTeachingRole(teachingRole);
+		int i= 1;
+		for(Document doc : iterable){
+			System.out.println(i+")");
+			System.out.println(doc.toJson());
+			i++;
+			if(i>50)
+					break;
+		}
+	}
+	
+	public int isProvinceInRegion(String region,String province) {
+		
+		Document doc = manager.findDocWithProvince(province);
+		if(doc == null)
+			return 1;
+		String documentRegion = doc.getString("region_name");
+		if(documentRegion.equals(region))
+			return 0;
+		else
+			return 1;
+	}
+
+	//TODO sicuramente da modificare: il codice lo si trova all'interno dei grafi
+	public int isMunicipalityInRegion(String region, String municipality) {
+		Document doc = manager.findDocWithMunicpality(municipality);
+		if(doc == null)
+			return 1;
+		
+		String documentRegion = doc.getString("region_name");
+		if(documentRegion.equals(region))
+			return 0;
+		else
+			return 1;
+	}
+
+	public int isSchoolInRegion(String region, String school) {
+		Document doc = manager.findDocWithSchool(school);
+		if(doc == null)
+			return 1;
+		String documentRegion = doc.getString("regionName");
+		if(documentRegion.equals(region))
+			return 0;
+		else
+			return 1;
+	}
+	
+	
 	public void closeConnection(){
 		manager.closeConnection();
 	}
+
+	
 }

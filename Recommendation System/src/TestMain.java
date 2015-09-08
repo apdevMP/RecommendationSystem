@@ -1,3 +1,9 @@
+import java.util.ArrayList;
+
+import org.bson.Document;
+
+import com.mongodb.client.FindIterable;
+
 
 public class TestMain {
 	
@@ -5,10 +11,16 @@ public class TestMain {
 
 		QueryManager queryManager = new QueryManager();
 		
-		System.out.println("Piemonte Code: " + queryManager.retrieveRegionCodeByRegionName("Piemonte"));
-		System.out.println("TO Code: " + queryManager.retrieveProvinceCodeByProvinceName("Torino"));
-		System.out.println("Agliè Code: " + queryManager.retrieveCityCodeByCityName("Agliè"));
-		queryManager.findWatchByScore(42);		
+		FindIterable<Document> iterable = queryManager.findWatchesByTeachingRole("EEEE_SOST_G");
+		for(Document d : iterable){
+			System.out.println(d.toJson());
+		}
+		
+		ArrayList<Document> list = Filter.filterByRegion(iterable, "Lazio");
+		for(Document d : list){
+			System.out.println(d.toJson());
+		}
+	
 		queryManager.closeConnection();
 	}
 
