@@ -35,7 +35,8 @@ public class DBManager {
 
 	private void startConnection() {
 		if (client == null) {
-			client = new MongoClient(SERVER_ADDRESS, PORT);
+				client = new MongoClient(SERVER_ADDRESS, PORT);
+			
 		} else {
 			System.out.println("Connection alrady started");
 		}

@@ -47,16 +47,13 @@ public class QueryManager {
 		return iterable;
 	}
 	
-	public void findLogsByTeachingRole(String teachingRole){
+	public FindIterable<Document> findLogsByTeachingRole(String teachingRole){
 		FindIterable<Document> iterable = manager.findLogsByTeachingRole(teachingRole);
-		int i= 1;
+		
 		for(Document doc : iterable){
-			System.out.println(i+")");
 			System.out.println(doc.toJson());
-			i++;
-			if(i>50)
-					break;
 		}
+		return iterable;
 	}
 	
 	public int isProvinceInRegion(String region,String province) {
