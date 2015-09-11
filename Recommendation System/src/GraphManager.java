@@ -62,23 +62,28 @@ public class GraphManager
 
 	}
 
+	
 	/**
-	 * Recupera il nome del comune a partire dal codice identificativo
-	 * 
+	 * Recupera il nome del comune a partire dal codice identificativo e lo restituisce
 	 * @param municipalityCode
+	 * @return
 	 * @throws SQLException
 	 */
-	public void queryMunicipalityName(String municipalityCode) throws SQLException
+	public String queryMunicipalityName(String municipalityCode) throws SQLException
 	{
 
 		Statement stmt = connection.createStatement();
 
 		//TODO
 		ResultSet rs = stmt.executeQuery("MATCH (n:School) WHERE n.municipalityCode = '" + municipalityCode + "' RETURN n.municipalityName LIMIT 1");
+		String municipality = null;
 		while (rs.next())
 		{
-			System.out.println(rs.getString("n.municipalityName"));
+			String appString = rs.getString("n.municipalityName");
+			if(appString != null)
+				municipality = appString;
 		}
-
+		return municipality;
 	}
 }
+

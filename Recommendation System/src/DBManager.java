@@ -127,7 +127,7 @@ public class DBManager {
 	public Document findDocWithMunicpality(String municipality) {
 		MongoCollection<Document> collection = getCollectionByName(MUNICIPALITIES_COLLECTION);
 		Document doc = collection.find(
-				new Document("province_code", municipality)).first();
+				new Document("municipality_name", municipality)).first();
 		return doc;
 	}
 
