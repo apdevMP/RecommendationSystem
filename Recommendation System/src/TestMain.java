@@ -21,6 +21,18 @@ public class TestMain {
 		ArrayList<Document> list = Filter.filterWatchesByRegion(iterable, "Sicilia");
 		for(Document d : list){
 			System.out.println(d.toJson());
+		GraphManager gManager = new GraphManager();
+		gManager.connectToGraph("neo4j", "vanessa");
+		try
+		{
+			//gManager.queryMunicipalityName("H194");
+			//gManager.queryMostQuotedSchoolInProvince("AG");
+			//gManager.queryMostQuotedSchoolInRegion(258);
+			gManager.queryMostQuotedSchoolInMunicipality("H194");
+		} catch (SQLException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	
 		UtilityMatrix um =new UtilityMatrix();

@@ -40,24 +40,70 @@ public class GraphManager
 	}
 
 	/**
-	 * Permette di recuperare la provincia con maggior numero di trasferimenti a
-	 * partire dalla regione
+	 * Permette di recuperare le scuole con maggior numero di trasferimenti in uscita all'interno di una provincia
 	 * 
 	 * @param region
 	 * @throws SQLException
 	 */
-	public void queryMostQuotedCity(String region) throws SQLException
+	public void queryMostQuotedSchoolInProvince(String provinceCode) throws SQLException
 	{
 
 		Statement stmt = connection.createStatement();
 
-		//		ResultSet rs = stmt.executeQuery("MATCH (n:School) RETURN n.code LIMIT 25");
-
-		//TODO
-		ResultSet rs = stmt.executeQuery("MATCH (n:School");
+		/*
+		 * per ora viene data la classifica in ordine di trasferimenti;
+		 * possiamo limitare il numero di risultati aggiungendo LIMIT
+		 */
+		ResultSet rs = stmt.executeQuery("MATCH (n:School)-[r:TRANSFER_MAIN]->c WHERE n.provinceCode = '"+provinceCode+"' RETURN n.code, count(r) AS number_of_connections ORDER BY number_of_connections DESC");
 		while (rs.next())
 		{
-			System.out.println(rs.getString("n.code"));
+			System.out.println(rs.getString("n.code")+"  ,#traferimenti in uscita:"+ rs.getString("number_of_connections"));
+		}
+
+	}
+	
+	
+	
+	/**
+	 * Permette di recuperare le scuole con maggior numero di trasferimenti in uscita all'interno di una regione
+	 * 
+	 * @param region
+	 * @throws SQLException
+	 */
+	public void queryMostQuotedSchoolInRegion(Integer regionId) throws SQLException
+	{
+
+		Statement stmt = connection.createStatement();
+
+		/*
+		 * per ora viene data la classifica in ordine di trasferimenti
+		 * e visualizzati i primi 10 risultati
+		 */
+		ResultSet rs = stmt.executeQuery("MATCH (n:School)-[r:TRANSFER_MAIN]->c WHERE n.regionId = "+regionId+" RETURN n.code, count(r) AS number_of_connections ORDER BY number_of_connections DESC LIMIT 10");
+		while (rs.next())
+		{
+			System.out.println(rs.getString("n.code")+"  ,#traferimenti in uscita:"+ rs.getString("number_of_connections"));
+		}
+
+	}
+	
+	
+	/**
+	 * Permette di recuperare le scuole con maggior numero di trasferimenti in uscita all'interno di un comune
+	 * 
+	 * @param region
+	 * @throws SQLException
+	 */
+	public void queryMostQuotedSchoolInMunicipality(String municipalityCode) throws SQLException
+	{
+
+		Statement stmt = connection.createStatement();
+
+		//dato che in un comune il numero di scuole è limitato,per ora le visualizziamo tutte nella classifica
+		ResultSet rs = stmt.executeQuery("MATCH (n:School)-[r:TRANSFER_MAIN]->c WHERE n.municipalityCode = '"+municipalityCode+"' RETURN n.code, count(r) AS number_of_connections ORDER BY number_of_connections DESC");
+		while (rs.next())
+		{
+			System.out.println(rs.getString("n.code")+"  ,#traferimenti in uscita:"+ rs.getString("number_of_connections"));
 		}
 
 	}
