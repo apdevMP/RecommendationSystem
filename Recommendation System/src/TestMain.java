@@ -1,3 +1,4 @@
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.bson.Document;
@@ -30,6 +31,14 @@ public class TestMain {
 		
 		GraphManager gManager = new GraphManager();
 		gManager.connectToGraph("neo4j", "vanessa");
+		try
+		{
+			gManager.queryMunicipalityName("H194");
+		} catch (SQLException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

@@ -8,6 +8,8 @@ import java.util.Properties;
 public class GraphManager
 {
 
+	private Connection	connection;
+
 	public GraphManager()
 	{
 
@@ -20,26 +22,62 @@ public class GraphManager
 		{
 			// Make sure Neo4j Driver is registered
 			Class.forName("org.neo4j.jdbc.Driver");
-			
+
 			//Authentication
 			Properties properties = new Properties();
 			properties.put("user", user);
 			properties.put("password", password);
 
 			// Connect
-			Connection con = DriverManager.getConnection("jdbc:neo4j://localhost:7474/",properties);
-			Statement stmt = con.createStatement();
-
-			ResultSet rs = stmt.executeQuery("MATCH (n:School) RETURN n.code LIMIT 25");
-			while (rs.next())
-			{
-				System.out.println(rs.getString("n.code"));
-			}
+			connection = DriverManager.getConnection("jdbc:neo4j://localhost:7474/", properties);
 
 		} catch (SQLException | ClassNotFoundException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * Permette di recuperare la provincia con maggior numero di trasferimenti a
+	 * partire dalla regione
+	 * 
+	 * @param region
+	 * @throws SQLException
+	 */
+	public void queryMostQuotedCity(String region) throws SQLException
+	{
+
+		Statement stmt = connection.createStatement();
+
+		//		ResultSet rs = stmt.executeQuery("MATCH (n:School) RETURN n.code LIMIT 25");
+
+		//TODO
+		ResultSet rs = stmt.executeQuery("MATCH (n:School");
+		while (rs.next())
+		{
+			System.out.println(rs.getString("n.code"));
+		}
+
+	}
+
+	/**
+	 * Recupera il nome del comune a partire dal codice identificativo
+	 * 
+	 * @param municipalityCode
+	 * @throws SQLException
+	 */
+	public void queryMunicipalityName(String municipalityCode) throws SQLException
+	{
+
+		Statement stmt = connection.createStatement();
+
+		//TODO
+		ResultSet rs = stmt.executeQuery("MATCH (n:School) WHERE n.municipalityCode = '" + municipalityCode + "' RETURN n.municipalityName LIMIT 1");
+		while (rs.next())
+		{
+			System.out.println(rs.getString("n.municipalityName"));
 		}
 
 	}
