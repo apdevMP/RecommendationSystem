@@ -33,7 +33,10 @@ public class TestMain {
 		gManager.connectToGraph("neo4j", "vanessa");
 		try
 		{
-			gManager.queryMunicipalityName("H194");
+			//gManager.queryMunicipalityName("H194");
+			//gManager.queryMostQuotedSchoolInProvince("AG");
+			//gManager.queryMostQuotedSchoolInRegion(258);
+			gManager.queryMostQuotedSchoolInMunicipality("H194");
 		} catch (SQLException e)
 		{
 			// TODO Auto-generated catch block
