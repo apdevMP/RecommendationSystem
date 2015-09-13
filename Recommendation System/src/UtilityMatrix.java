@@ -17,6 +17,11 @@ public class UtilityMatrix {
 	private static final String CONTEXT = "context";
 	private static final String USER_SCORE = "userScore";
 	private static final String EVENT_TYPE = "eventType";
+	private static final Object SCORE = "score";
+	private static final Object CODE_MUNICIPALITY = "codeMunicipality";
+	private static final Object CODE_PROVINCE = "codeProvince";
+	private static final Object ACTION = "action";
+	private static final Object ATTRIBUTES = "attributes";
 
 	private List<Long> matrixUser;
 	private List<String> matrixProvince;
@@ -40,14 +45,28 @@ public class UtilityMatrix {
 		}
 	}
 
-	private void addProvince(Document doc) {
+	private void addProvinceFromLog(Document doc) {
+		String province = doc.getString(CODE_PROVINCE);
+		if (!matrixProvince.contains(province)) {
+			matrixProvince.add(province);
+		}
+	}
+	
+	private void addProvinceFromWatch(Document doc) {
 		String province = doc.getString(KEY);
 		if (!matrixProvince.contains(province)) {
 			matrixProvince.add(province);
 		}
 	}
 
-	private void addMunicipality(Document doc) {
+	private void addMunicipalityFromLog(Document doc) {
+		String municipality = doc.getString(CODE_MUNICIPALITY);
+		if (!matrixMunicipality.contains(municipality)) {
+			matrixMunicipality.add(municipality);
+		}
+	}
+	
+	private void addMunicipalityFromWatch(Document doc) {
 		String municipality = doc.getString(KEY);
 		if (!matrixMunicipality.contains(municipality)) {
 			matrixMunicipality.add(municipality);
@@ -102,11 +121,11 @@ public class UtilityMatrix {
 			System.out.println(typeId);
 			switch ((int) typeId) {
 			case 1:
-				this.addProvince(target);
+				this.addProvinceFromWatch(target);
 				break;
 
 			case 2:
-				this.addMunicipality(target);
+				this.addMunicipalityFromWatch(target);
 				break;
 
 			case 3:
@@ -122,7 +141,7 @@ public class UtilityMatrix {
 			int indexUser = matrixUser.indexOf(userId);
 			Document target = (Document) doc.get(TARGET);
 			long typeId = target.getLong(TYPE_ID);
-		
+
 			int value = 0;
 			switch ((int) typeId) {
 			case 1:
@@ -132,8 +151,9 @@ public class UtilityMatrix {
 				Document ledProvince = (Document) doc.get(LAST_EVENT_DATA);
 				Document ctxProvince = (Document) ledProvince.get(CONTEXT);
 				int usProvince = ctxProvince.getInteger(USER_SCORE);
-				value = computeValue(score, usProvince, ledProvince.getLong(EVENT_TYPE));
-			
+				value = computeValue(score, usProvince,
+						ledProvince.getLong(EVENT_TYPE));
+
 				values.get(indexUser).set(indexProvince, value);
 				break;
 
@@ -142,10 +162,12 @@ public class UtilityMatrix {
 				int indexMunicipality = matrixMunicipality
 						.indexOf(municipality);
 				Document ledMunicipality = (Document) doc.get(LAST_EVENT_DATA);
-				Document ctxMunicipality = (Document) ledMunicipality.get(CONTEXT);
+				Document ctxMunicipality = (Document) ledMunicipality
+						.get(CONTEXT);
 				int usMunicipality = ctxMunicipality.getInteger(USER_SCORE);
-				value = computeValue(score, usMunicipality, ledMunicipality.getLong(EVENT_TYPE));
-				
+				value = computeValue(score, usMunicipality,
+						ledMunicipality.getLong(EVENT_TYPE));
+
 				values.get(indexUser).set(
 						indexMunicipality + matrixProvince.size(), value);
 				break;
@@ -156,9 +178,9 @@ public class UtilityMatrix {
 				Document ledSchool = (Document) doc.get(LAST_EVENT_DATA);
 				Document ctxSchool = (Document) ledSchool.get(CONTEXT);
 				int usSchool = ctxSchool.getInteger(USER_SCORE);
-				value = computeValue(score, usSchool, ledSchool.getLong(EVENT_TYPE));
-				
-				
+				value = computeValue(score, usSchool,
+						ledSchool.getLong(EVENT_TYPE));
+
 				values.get(indexUser).set(
 						indexSchool + matrixProvince.size()
 								+ matrixMunicipality.size(), value);
@@ -166,28 +188,81 @@ public class UtilityMatrix {
 			}
 		}
 	}
-	
-	public void fillMatrixWithLogs(ArrayList<Document> list) {
+
+	public void fillMatrixWithLogs(ArrayList<Document> list, int score) {
+		if (list.size() < 1) {
+			System.out.println("You must fill matrix with not empty list");
+		}
+
 		for (Document doc : list) {
-			System.out.println(doc.size());
+			this.addUser(doc);
+			values.add(new ArrayList<Integer>());
+
+			Document attributes = (Document) doc.get(ATTRIBUTES);
+			String action = doc.getString(ACTION);
+			switch (action) {
+			case "webapi_municipality_aggregates":
+				this.addProvinceFromLog(attributes);
+				break;
+
+			case "webapi_school_aggregates":
+				this.addMunicipalityFromLog(attributes);
+				break;
+			}
+
+		}
+
+		this.initializeValues();
+		for (Document doc : list) {
+			long userId = doc.getLong(USER_ID);
+			int indexUser = matrixUser.indexOf(userId);
+			Document attributes = (Document) doc.get(ATTRIBUTES);
+			String action = attributes.getString(ACTION);
+
+			int value = 0;
+			switch (action) {
+			case "webapi_municipality_aggregates":
+				//TODO DA finire
+				String province = attributes.getString(CODE_PROVINCE);
+				int indexProvince = matrixProvince.indexOf(province);
+				int usProvince = attributes.getInteger(SCORE);
+				value = computeValue(score, usProvince,1);
+
+				values.get(indexUser).set(indexProvince, value);
+				break;
+
+			case "webapi_school_aggregates":
+				String municipality = attributes.getString(CODE_MUNICIPALITY);
+				int indexMunicipality = matrixMunicipality
+						.indexOf(municipality);
+				int usMunicipality = attributes.getInteger(SCORE);
+				value = computeValue(score, usMunicipality,1);
+
+				values.get(indexUser).set(
+						indexMunicipality + matrixProvince.size(), value);
+				break;
+			}
 		}
 	}
-	
-	public void printUtilityMatrix(){
+
+	public void printUtilityMatrix() {
 		int i = 0;
-		for(Long userId : matrixUser){
-			System.out.println("[User:"+userId+"]");
+		for (Long userId : matrixUser) {
+			System.out.println("[User:" + userId + "]");
 			int j = 0;
-			for(String province: matrixProvince){
-				System.out.println("Province:"+province + " Value: ["+ values.get(i).get(j) +"]");
+			for (String province : matrixProvince) {
+				System.out.println("Province:" + province + " Value: ["
+						+ values.get(i).get(j) + "]");
 				j++;
 			}
-			for(String municipality: matrixMunicipality){
-				System.out.println("Municipality:"+municipality + " Value: ["+ values.get(i).get(j) +"]");
+			for (String municipality : matrixMunicipality) {
+				System.out.println("Municipality:" + municipality + " Value: ["
+						+ values.get(i).get(j) + "]");
 				j++;
 			}
-			for(String school: matrixSchool){
-				System.out.println("School:"+school + " Value: ["+ values.get(i).get(j) +"]");
+			for (String school : matrixSchool) {
+				System.out.println("School:" + school + " Value: ["
+						+ values.get(i).get(j) + "]");
 				j++;
 			}
 			i++;

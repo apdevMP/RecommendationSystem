@@ -25,6 +25,10 @@ public class DBManager {
 		setDatabase();
 	}
 
+	/**
+	 * Restituisce l'stanza del manager del database di MongoDB
+	 * @return
+	 */
 	public static DBManager getIstance() {
 
 		if (manager == null)
@@ -33,18 +37,27 @@ public class DBManager {
 
 	}
 
+	
+	/**
+	 * Avvia la connessione
+	 */
 	private void startConnection() {
 		if (client == null) {
-				client = new MongoClient(SERVER_ADDRESS, PORT);
-			
+			client = new MongoClient(SERVER_ADDRESS, PORT);
+
 		} else {
 			System.out.println("Connection alrady started");
 		}
 	}
 
+	/**
+	 * Chiude la connessione al database
+	 */
 	public void closeConnection() {
-		client.close();
-		client = null;
+		if (client != null) {
+			client.close();
+			client = null;
+		}
 	}
 
 	public void setDatabase() {
@@ -86,6 +99,11 @@ public class DBManager {
 		return doc;
 	}
 
+	/**
+	 * Recupera i watches con punteggio pari a quello passato come parametro
+	 * @param score punteggio dell'utente
+	 * @return lista dei documenti filtrati
+	 */
 	public FindIterable<Document> findWatchesByScore(int score) {
 
 		MongoCollection<Document> collection = getCollectionByName(WATCHES_COLLECTION);
@@ -99,6 +117,11 @@ public class DBManager {
 	 * public FindIterable<Document> findNearCities(){ FindIterable<Document>
 	 * iterable = null; return iterable; }
 	 */
+	/**
+	 * 
+	 * @param teachingRole
+	 * @return
+	 */
 	public FindIterable<Document> findWatchesByTeachingRole(String teachingRole) {
 
 		MongoCollection<Document> collection = getCollectionByName(WATCHES_COLLECTION);
@@ -108,11 +131,16 @@ public class DBManager {
 		return iterable;
 	}
 
+	/**
+	 * 
+	 * @param teachingRole
+	 * @return
+	 */
 	public FindIterable<Document> findLogsByTeachingRole(String teachingRole) {
 
 		MongoCollection<Document> collection = getCollectionByName(LOG_COLLECTION);
 		FindIterable<Document> iterable = collection.find(new Document(
-				"attributes.score", 30));
+				"attributes.teachingRoleCodeTo", teachingRole));
 
 		return iterable;
 	}
@@ -133,10 +161,21 @@ public class DBManager {
 
 	public Document findDocWithSchool(String school) {
 		MongoCollection<Document> collection = getCollectionByName(SCHOOL_COLLECTION);
-		Document doc = collection.find(new Document("code", school))
-				.first();
+		Document doc = collection.find(new Document("code", school)).first();
 		return doc;
 
 	}
 
+	public FindIterable<Document> findLogs() {
+		MongoCollection<Document> collection = getCollectionByName(LOG_COLLECTION);
+		FindIterable<Document> iterable = collection.find();
+		return iterable;
+	}
+
+	public FindIterable<Document> findLogsByAction(String action) {
+		MongoCollection<Document> collection = getCollectionByName(LOG_COLLECTION);
+		FindIterable<Document> iterable = collection.find(new Document(
+				"action", action));
+		return iterable;
+	}
 }
