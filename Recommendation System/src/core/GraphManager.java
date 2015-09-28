@@ -1,16 +1,18 @@
 package core;
+import java.awt.List;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class GraphManager
 {
 
 	private Connection	connection;
-	private String[] classCodesStrings;
+	
 
 	public GraphManager()
 	{
@@ -135,28 +137,28 @@ public class GraphManager
 	}
 	
 	
-	public void setClassCodes() throws SQLException
+	public ArrayList<String> retrieveClassCodes() throws SQLException
 	{
 		Statement stmt = connection.createStatement();
 
+		ArrayList<String> classCodeStrings = new ArrayList<>();
+		
 		//dato che in un comune il numero di scuole è limitato,per ora le visualizziamo tutte nella classifica
 		ResultSet rs = stmt.executeQuery("MATCH (n) WHERE has(n.teachingRoleArea) RETURN DISTINCT \"node\" as element, n.teachingRoleArea AS teachingRoleArea LIMIT 25 UNION ALL MATCH ()-[r]-() WHERE has(r.teachingRoleArea) RETURN DISTINCT \"relationship\" AS element, r.teachingRoleArea AS teachingRoleArea");
 		int count =0;
 		
 		while (rs.next())
 		{
-			classCodesStrings[count] = rs.getString("teachingRoleCode");
-			count++;
+			
 			System.out.println(rs.getString("teachingRoleArea"));
+			classCodeStrings.add(rs.getString("teachingRoleArea"));
+			count++;
 			
 		}
 		System.out.println("#classi:"+count);
-		
+		return classCodeStrings;
 	}
 	
-	public String[] getClassCodes()
-	{
-		return classCodesStrings;
-	}
+
 }
 
