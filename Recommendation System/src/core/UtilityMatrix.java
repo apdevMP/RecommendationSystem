@@ -1,10 +1,11 @@
+package core;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
 
 /**
- * Questa classe rappresenta la matrice di utilità ricavata dai dati
+ * Questa classe rappresenta la matrice di utilitï¿½ ricavata dai dati
  * 
  */
 public class UtilityMatrix {
@@ -31,7 +32,7 @@ public class UtilityMatrix {
 	private int placeSize;
 
 	/**
-	 * Costruttore di default per la matrice di utilità
+	 * Costruttore di default per la matrice di utilitï¿½
 	 */
 	public UtilityMatrix() {
 		matrixUser = new ArrayList<Long>();
@@ -118,7 +119,7 @@ public class UtilityMatrix {
 	 * Inizializza la matrice dei valori a 0
 	 */
 	private void initializeValues() {
-		// Si ricava la grandezza della matrice di utilità, data dalla somma
+		// Si ricava la grandezza della matrice di utilitï¿½, data dalla somma
 		// delle grandezze delle singole matrici
 		placeSize = matrixMunicipality.size() + matrixProvince.size()
 				+ matrixSchool.size();
@@ -141,11 +142,11 @@ public class UtilityMatrix {
 	private int computeValue(int score, int userScore, long eventType) {
 		int value = 0;
 
-		// se il punteggio è maggiore di quello dell'utente, allora viene
+		// se il punteggio ï¿½ maggiore di quello dell'utente, allora viene
 		// impostato il valore ad 1
 		if (userScore > score + 5) {
 			value = 1;
-			// si aggiunge una unità se il watch viene rimosso
+			// si aggiunge una unitï¿½ se il watch viene rimosso
 			if (eventType == 2) {
 				value++;
 			}
@@ -157,7 +158,7 @@ public class UtilityMatrix {
 			value = 2;
 		}
 
-		// se il punteggio è inferiore a quello dell'utente, allora viene
+		// se il punteggio ï¿½ inferiore a quello dell'utente, allora viene
 		// impostato 3
 		if (userScore <= score - 5)
 			value = 3;
@@ -165,7 +166,7 @@ public class UtilityMatrix {
 	}
 
 	/**
-	 * Riempie la matrice di utilità con i dati recuperati dai Watches
+	 * Riempie la matrice di utilitï¿½ con i dati recuperati dai Watches
 	 * 
 	 * @param list
 	 *            lista dei documenti filtrati per regione e per tipologia di
@@ -174,8 +175,8 @@ public class UtilityMatrix {
 	 *            punteggio dell'utente al quale suggerire luoghi
 	 */
 	public void fillMatrixWithWatches(ArrayList<Document> list, int score) {
-		// se la lista dei documenti è vuota, non viene riempita la matrice di
-		// utilità
+		// se la lista dei documenti ï¿½ vuota, non viene riempita la matrice di
+		// utilitï¿½
 		if (list.size() < 1) {
 			System.out.println("You must fill matrix with not empty list");
 		}
@@ -224,7 +225,7 @@ public class UtilityMatrix {
 			int value = 0;
 			switch ((int) typeId) {
 			case 1:
-				// La preferenza è sulla provincia, quindi si recupera l'indice
+				// La preferenza ï¿½ sulla provincia, quindi si recupera l'indice
 				// dalla matrice delle province assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String province = target.getString(KEY);
@@ -239,7 +240,7 @@ public class UtilityMatrix {
 				break;
 
 			case 2:
-				// La preferenza è sul comune, quindi si recupera l'indice
+				// La preferenza ï¿½ sul comune, quindi si recupera l'indice
 				// dalla matrice del comune assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String municipality = target.getString(KEY);
@@ -257,7 +258,7 @@ public class UtilityMatrix {
 				break;
 
 			case 3:
-				// La preferenza è sulla scuola, quindi si recupera l'indice
+				// La preferenza ï¿½ sulla scuola, quindi si recupera l'indice
 				// dalla matrice delle scuole assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String school = target.getString(KEY);
@@ -277,7 +278,7 @@ public class UtilityMatrix {
 	}
 
 	/**
-	 * Riempie la matrice di utilità con i dati recuperati dal log
+	 * Riempie la matrice di utilitï¿½ con i dati recuperati dal log
 	 * 
 	 * @param list
 	 *            lista dei documenti filtrati per regione e per tipologia di
@@ -286,8 +287,8 @@ public class UtilityMatrix {
 	 *            punteggio dell'utente al quale suggerire luoghi
 	 */
 	public void fillMatrixWithLogs(ArrayList<Document> list, int score) {
-		// se la lista dei documenti è vuota, non viene riempita la matrice di
-		// utilità
+		// se la lista dei documenti ï¿½ vuota, non viene riempita la matrice di
+		// utilitï¿½
 		if (list.size() < 1) {
 			System.out.println("You must fill matrix with not empty list");
 		}
@@ -330,7 +331,7 @@ public class UtilityMatrix {
 			int value = 0;
 			switch (action) {
 			case "webapi_municipality_aggregates":
-				// La preferenza è sulla provincia, quindi si recupera l'indice
+				// La preferenza ï¿½ sulla provincia, quindi si recupera l'indice
 				// dalla matrice delle province assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String province = attributes.getString(CODE_PROVINCE);
@@ -343,7 +344,7 @@ public class UtilityMatrix {
 				break;
 
 			case "webapi_school_aggregates":
-				// La preferenza è sul comune, quindi si recupera l'indice
+				// La preferenza ï¿½ sul comune, quindi si recupera l'indice
 				// dalla matrice del comune assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String municipality = attributes.getString(CODE_MUNICIPALITY);
@@ -360,7 +361,7 @@ public class UtilityMatrix {
 	}
 
 	/**
-	 * Stampa la matrice di utilità
+	 * Stampa la matrice di utilitï¿½
 	 */
 	public void printUtilityMatrix() {
 		int i = 0;

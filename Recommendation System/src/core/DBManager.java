@@ -1,3 +1,4 @@
+package core;
 import org.bson.Document;
 
 import com.mongodb.MongoClient;
