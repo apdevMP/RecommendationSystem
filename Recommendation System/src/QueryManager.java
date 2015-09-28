@@ -101,7 +101,7 @@ public class QueryManager {
 	 */
 	public int isMunicipalityInRegion(String region, String municipality_code) {
 		GraphManager gManager = new GraphManager();
-		gManager.connectToGraph("neo4j", "ilaria10");
+		gManager.connectToGraph("neo4j", "vanessa");
 		String municipality = null;
 		try {
 			municipality = gManager.queryMunicipalityName(municipality_code);

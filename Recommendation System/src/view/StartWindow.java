@@ -21,6 +21,8 @@ import javax.swing.JTextPane;
 
 import java.awt.ScrollPane;
 import java.awt.TextArea;
+import java.lang.reflect.Method;
+import java.sql.SQLException;
 
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
@@ -41,6 +43,8 @@ public class StartWindow
 	private String[]			regionStrings	= { "ABRUZZO", "BASILICATA", "CALABRIA", "CAMPANIA", "EMILIA ROMAGNA", "FRIULI VENEZIA GIULIA",
 			"LAZIO", "LIGURIA", "LOMBARDIA", "LAZIO", "MOLISE", "PIEMONTE", "PUGLIA", "SARDEGNA", "SICILIA", "TOSCANA", "TRENTINO ALTO ADIGE",
 			"UMBRIA", "VALLE D'AOSTA", "VENETO" };
+	
+	private String[] rangeStrings = {"I", "II", "III", "IV", "I coda", "II coda", "III coda", "IV coda"};
 
 	/**
 	 * Di prova per vedere se l'interfaccia veniva creata bene
@@ -54,12 +58,14 @@ public class StartWindow
 				{
 					StartWindow window = new StartWindow();
 					window.frame.setVisible(true);
+
 				} catch (Exception e)
 				{
 					e.printStackTrace();
 				}
 			}
 		});
+
 	}
 
 	/**
@@ -114,7 +120,7 @@ public class StartWindow
 		lblRange.setBounds(6, 158, 61, 16);
 		panelData.add(lblRange);
 
-		comboBoxRange = new JComboBox<String>();
+		comboBoxRange = new JComboBox(rangeStrings);
 		comboBoxRange.setBounds(6, 182, 154, 27);
 		panelData.add(comboBoxRange);
 
@@ -160,24 +166,26 @@ public class StartWindow
 	{
 		return textArea;
 	}
-	
-	public String getRegion(){
-		
+
+	public String getRegion()
+	{
+
 		return comboBoxRegion.getSelectedItem().toString();
 	}
-	
-	public Double getScore(){
+
+	public Double getScore()
+	{
 		return Double.parseDouble(textFieldScore.getText());
 	}
-	
+
 	public String getClassCode()
 	{
 		return comboBoxClass.getSelectedItem().toString();
 	}
-	
+
 	public Integer getRange()
 	{
 		return (Integer) comboBoxRange.getSelectedItem();
 	}
-	
+
 }
