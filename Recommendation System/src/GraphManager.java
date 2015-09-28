@@ -9,6 +9,7 @@ public class GraphManager
 {
 
 	private Connection	connection;
+	private String[] classCodesStrings;
 
 	public GraphManager()
 	{
@@ -130,6 +131,31 @@ public class GraphManager
 				municipality = appString;
 		}
 		return municipality;
+	}
+	
+	
+	public void setClassCodes() throws SQLException
+	{
+		Statement stmt = connection.createStatement();
+
+		//dato che in un comune il numero di scuole è limitato,per ora le visualizziamo tutte nella classifica
+		ResultSet rs = stmt.executeQuery("MATCH (n) WHERE has(n.teachingRoleArea) RETURN DISTINCT \"node\" as element, n.teachingRoleArea AS teachingRoleArea LIMIT 25 UNION ALL MATCH ()-[r]-() WHERE has(r.teachingRoleArea) RETURN DISTINCT \"relationship\" AS element, r.teachingRoleArea AS teachingRoleArea");
+		int count =0;
+		
+		while (rs.next())
+		{
+			classCodesStrings[count] = rs.getString("teachingRoleCode");
+			count++;
+			System.out.println(rs.getString("teachingRoleArea"));
+			
+		}
+		System.out.println("#classi:"+count);
+		
+	}
+	
+	public String[] getClassCodes()
+	{
+		return classCodesStrings;
 	}
 }
 
