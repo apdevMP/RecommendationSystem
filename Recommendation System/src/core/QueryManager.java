@@ -1,7 +1,7 @@
 package core;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,39 +10,30 @@ import org.bson.Document;
 
 import com.mongodb.client.FindIterable;
 
+/**
+ * Classe di servizio che si frappone tra il sistema e il DBManager
+ * 
+ */
 public class QueryManager {
 
 	private DBManager manager;
 
+	/**
+	 * Costruttore di default
+	 */
 	public QueryManager() {
 		manager = DBManager.getIstance();
 	}
 
-	public int retrieveRegionCodeByRegionName(String regionName) {
-		int code = 0;
-		Document document = manager.retrieveRegionCodeByName(regionName);
-		code = document.getInteger("region_id");
-
-		return code;
-	}
-
-	public int retrieveProvinceCodeByProvinceName(String provinceName) {
-		int code = 0;
-		Document document = manager.retrieveProvinceCodeByName(provinceName);
-		code = document.getInteger("province_id");
-
-		return code;
-	}
-
-	public int retrieveCityCodeByCityName(String cityName) {
-		int code = 0;
-		Document document = manager.retrieveCityCodeByName(cityName);
-		code = document.getInteger("municipality_id");
-
-		return code;
+	/**
+	 * Chiude la connessione col DBManager e con il database di MongoDB
+	 */
+	public void closeConnection() {
+		manager.closeConnection();
 	}
 
 	/**
+	 * Recupera i documenti per punteggio e li stampa
 	 * 
 	 * @param score
 	 */
@@ -54,9 +45,11 @@ public class QueryManager {
 	}
 
 	/**
+	 * Recupera i documenti dai watches filtrati per materia insegnata
 	 * 
 	 * @param teachingRole
-	 * @return
+	 *            materia insegnata
+	 * @return lista di documenti filtrati
 	 */
 	public FindIterable<Document> findWatchesByTeachingRole(String teachingRole) {
 		FindIterable<Document> iterable = manager
@@ -65,9 +58,12 @@ public class QueryManager {
 	}
 
 	/**
-	 * Recupera la lista di azioni eseguite dagli utenti,filtrate per la materia insegnata
+	 * Recupera la lista di azioni eseguite dagli utenti(log),filtrate per la
+	 * materia insegnata
+	 * 
 	 * @param teachingRole
-	 * @return
+	 *            materia insegnata
+	 * @return lista di documenti filtrati
 	 */
 	public FindIterable<Document> findLogsByTeachingRole(String teachingRole) {
 		FindIterable<Document> iterable = manager
@@ -77,16 +73,24 @@ public class QueryManager {
 	}
 
 	/**
+	 * Verifica se la provincia "province" è presente all'interno della regione
+	 * "region"
 	 * 
 	 * @param region
+	 *            regione
 	 * @param province
-	 * @return
+	 *            provincia
+	 * @return 0 se presente,1 altrimenti
 	 */
 	public int isProvinceInRegion(String region, String province) {
 
 		Document doc = manager.findDocWithProvince(province);
+		// se non viene recuperato alcun documento restituisce 1
 		if (doc == null)
 			return 1;
+
+		// recupero la regione dal documento ed effettuo il confronto tra
+		// stringhe
 		String documentRegion = doc.getString("region_name");
 		if (documentRegion.equals(region))
 			return 0;
@@ -95,14 +99,21 @@ public class QueryManager {
 	}
 
 	/**
+	 * Verifica se il comune rapppresentato dal suo codice è presente
+	 * all'interno della regione "region"
 	 * 
 	 * @param region
+	 *            regione
 	 * @param municipality_code
-	 * @return
+	 *            codice del comune
+	 * @return 0 se presente,1 altrimenti
 	 */
 	public int isMunicipalityInRegion(String region, String municipality_code) {
+		// Si effettua la connessione al grafo presente in neo4j
 		GraphManager gManager = new GraphManager();
 		gManager.connectToGraph("neo4j", "vanessa");
+
+		// Si recupera il nome del comune dal codice
 		String municipality = null;
 		try {
 			municipality = gManager.queryMunicipalityName(municipality_code);
@@ -111,13 +122,18 @@ public class QueryManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		// Se la stringa è null,restituisco non presente
 		if (municipality == null)
 			return 1;
 
+		// Viene recuperato il documento avente il comune trovato in precedenza
 		Document doc = manager.findDocWithMunicpality(municipality);
 		if (doc == null)
 			return 1;
 
+		// recupero la regione dal documento ed effettuo il confronto tra
+		// stringhe
 		String documentRegion = doc.getString("region_name");
 		if (documentRegion.equals(region))
 			return 0;
@@ -126,15 +142,24 @@ public class QueryManager {
 	}
 
 	/**
+	 * Verifica se la scuola rapppresentata dal suo codice è presente
+	 * all'interno della regione "region"
 	 * 
 	 * @param region
+	 *            regione
 	 * @param school
-	 * @return
+	 *            codice della scuola
+	 * @return 0 se presente,1 altrimenti
 	 */
 	public int isSchoolInRegion(String region, String school) {
+		// recupero il documento che contiene il codice della scuola e verifico
+		// se esiste
 		Document doc = manager.findDocWithSchool(school);
 		if (doc == null)
 			return 1;
+
+		// recupero la regione dal documento ed effettuo il confronto tra
+		// stringhe
 		String documentRegion = doc.getString("regionName");
 		if (documentRegion.equals(region))
 			return 0;
@@ -143,13 +168,18 @@ public class QueryManager {
 	}
 
 	/**
+	 * Recupera la lista delle possibili azioni che si possono eseguire dal log
+	 * e le stampa su file
 	 * 
-	 * @return
+	 * @return lista di azioni
 	 */
 	public ArrayList<String> getLogAction() {
+		
+		//Viene inizializzata la lista delle azioni e vengono recuperati tutti documentii del log
 		ArrayList<String> actionList = new ArrayList<String>();
 		FindIterable<Document> iterable = manager.findLogs();
 
+		//Si inizializzano le classi per la scrittura su file 
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream("azioni.txt");
@@ -160,6 +190,7 @@ public class QueryManager {
 		@SuppressWarnings("resource")
 		PrintStream write = new PrintStream(fos);
 
+		//vengono salavate tutte le azioni una volta sola
 		for (Document doc : iterable) {
 			String action = doc.getString("action");
 
@@ -172,13 +203,13 @@ public class QueryManager {
 
 	}
 
-	public void closeConnection() {
-		manager.closeConnection();
-	}
-
-	public void getLogsByAction(String stringAction) {
+	/**
+	 * Scrive su file i log filtrati per un'azione specifica
+	 * @param action azione
+	 */
+	public void getLogsByAction(String action) {
 		FindIterable<Document> iterable = manager
-				.findLogsByAction(stringAction);
+				.findLogsByAction(action);
 
 		FileOutputStream fos = null;
 		try {

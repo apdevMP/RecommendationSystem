@@ -1,4 +1,5 @@
 package core;
+
 import org.bson.Document;
 
 import com.mongodb.MongoClient;
@@ -6,6 +7,10 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+/**
+ * Classe che gestisce la connessione con il database e le query da effettuare
+ * 
+ */
 public class DBManager {
 
 	private static final String SERVER_ADDRESS = "localhost";
@@ -28,6 +33,7 @@ public class DBManager {
 
 	/**
 	 * Restituisce l'stanza del manager del database di MongoDB
+	 * 
 	 * @return
 	 */
 	public static DBManager getIstance() {
@@ -38,11 +44,12 @@ public class DBManager {
 
 	}
 
-	
 	/**
 	 * Avvia la connessione
 	 */
 	private void startConnection() {
+		// Se client è null allora occorre inizializzare la connessione,
+		// altrimenti già esiste
 		if (client == null) {
 			client = new MongoClient(SERVER_ADDRESS, PORT);
 
@@ -61,48 +68,40 @@ public class DBManager {
 		}
 	}
 
+	/**
+	 * Imposta il database con quello denominato con DATABASE_NAME
+	 */
 	public void setDatabase() {
-
 		database = client.getDatabase(DATABASE_NAME);
 	}
 
+	/**
+	 * Recupera il database sul quale è possibile effettuare query
+	 * 
+	 * @return
+	 */
 	public MongoDatabase getDatabase() {
 		return database;
 	}
 
+	/**
+	 * Recupera la collezione di documenti di MongoDB dal nome
+	 * 
+	 * @param collectionName
+	 *            nome della collezione
+	 * @return collezione di documenti di MongoDB
+	 */
 	public MongoCollection<Document> getCollectionByName(String collectionName) {
 		MongoCollection<Document> collection = database
 				.getCollection(collectionName);
 		return collection;
 	}
 
-	public Document retrieveRegionCodeByName(String regionName) {
-
-		MongoCollection<Document> collection = getCollectionByName(MUNICIPALITIES_COLLECTION);
-		Document doc = collection.find(new Document("region_name", regionName))
-				.first();
-		return doc;
-	}
-
-	public Document retrieveProvinceCodeByName(String provinceName) {
-
-		MongoCollection<Document> collection = getCollectionByName(MUNICIPALITIES_COLLECTION);
-		Document doc = collection.find(
-				new Document("province_name", provinceName)).first();
-		return doc;
-	}
-
-	public Document retrieveCityCodeByName(String cityName) {
-
-		MongoCollection<Document> collection = getCollectionByName(MUNICIPALITIES_COLLECTION);
-		Document doc = collection.find(
-				new Document("municipality_name", cityName)).first();
-		return doc;
-	}
-
 	/**
 	 * Recupera i watches con punteggio pari a quello passato come parametro
-	 * @param score punteggio dell'utente
+	 * 
+	 * @param score
+	 *            punteggio dell'utente
 	 * @return lista dei documenti filtrati
 	 */
 	public FindIterable<Document> findWatchesByScore(int score) {
@@ -118,10 +117,14 @@ public class DBManager {
 	 * public FindIterable<Document> findNearCities(){ FindIterable<Document>
 	 * iterable = null; return iterable; }
 	 */
+
 	/**
+	 * Recupera una lista di documenti dai Watches filtrati per la materia
+	 * insegnata
 	 * 
 	 * @param teachingRole
-	 * @return
+	 *            codice della materia insegnata
+	 * @return lista di documenti
 	 */
 	public FindIterable<Document> findWatchesByTeachingRole(String teachingRole) {
 
@@ -133,9 +136,11 @@ public class DBManager {
 	}
 
 	/**
+	 * Recupera una lista di documenti dal Log filtrato per la materia insegnata
 	 * 
 	 * @param teachingRole
-	 * @return
+	 *            codice della materia insegnata
+	 * @return lista di documenti
 	 */
 	public FindIterable<Document> findLogsByTeachingRole(String teachingRole) {
 
@@ -146,6 +151,13 @@ public class DBManager {
 		return iterable;
 	}
 
+	/**
+	 * Recupera un documento contenente la provincia passata
+	 * 
+	 * @param province
+	 *            provincia da cercare
+	 * @return documento contente province
+	 */
 	public Document findDocWithProvince(String province) {
 		MongoCollection<Document> collection = getCollectionByName(MUNICIPALITIES_COLLECTION);
 		Document doc = collection.find(new Document("province_code", province))
@@ -153,6 +165,13 @@ public class DBManager {
 		return doc;
 	}
 
+	/**
+	 * Recupera un documento contenente il comune passato
+	 * 
+	 * @param municipality
+	 *            comune da cercare
+	 * @return documento contente municipality
+	 */
 	public Document findDocWithMunicpality(String municipality) {
 		MongoCollection<Document> collection = getCollectionByName(MUNICIPALITIES_COLLECTION);
 		Document doc = collection.find(
@@ -160,6 +179,13 @@ public class DBManager {
 		return doc;
 	}
 
+	/**
+	 * Recupera un documento contenente la scuola passata
+	 * 
+	 * @param school
+	 *            scuola da cercare
+	 * @return documento contente school
+	 */
 	public Document findDocWithSchool(String school) {
 		MongoCollection<Document> collection = getCollectionByName(SCHOOL_COLLECTION);
 		Document doc = collection.find(new Document("code", school)).first();
@@ -167,12 +193,25 @@ public class DBManager {
 
 	}
 
+	/**
+	 * Recupera la lista di documenti contenuti nel Log
+	 * 
+	 * @return lista di documenti del log
+	 */
 	public FindIterable<Document> findLogs() {
 		MongoCollection<Document> collection = getCollectionByName(LOG_COLLECTION);
 		FindIterable<Document> iterable = collection.find();
 		return iterable;
 	}
 
+	/**
+	 * Recupera la lista di documenti contenuti nel log, filtrati per l'azione
+	 * compiuta
+	 * 
+	 * @param action
+	 *            azione compiuta dagli utenti
+	 * @return lista di documenti
+	 */
 	public FindIterable<Document> findLogsByAction(String action) {
 		MongoCollection<Document> collection = getCollectionByName(LOG_COLLECTION);
 		FindIterable<Document> iterable = collection.find(new Document(

@@ -1,7 +1,10 @@
 package core;
 import java.util.ArrayList;
 
-
+/**
+ * Classe per rappresentare il profilo (forse non serve)
+ *
+ */
 public class Profile {
 	private long id;
 	private String name;
