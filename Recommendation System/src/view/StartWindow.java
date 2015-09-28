@@ -23,11 +23,14 @@ import java.awt.ScrollPane;
 import java.awt.TextArea;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JTextArea;
 import javax.swing.JComboBox;
+
+import core.GraphManager;
 
 public class StartWindow
 {
@@ -39,24 +42,32 @@ public class StartWindow
 	private JComboBox<String>	comboBoxRange;
 	private JButton				btnGo;
 	private JTextArea			textArea;
+	private static GraphManager	gManager;
 
 	private String[]			regionStrings	= { "ABRUZZO", "BASILICATA", "CALABRIA", "CAMPANIA", "EMILIA ROMAGNA", "FRIULI VENEZIA GIULIA",
 			"LAZIO", "LIGURIA", "LOMBARDIA", "LAZIO", "MOLISE", "PIEMONTE", "PUGLIA", "SARDEGNA", "SICILIA", "TOSCANA", "TRENTINO ALTO ADIGE",
 			"UMBRIA", "VALLE D'AOSTA", "VENETO" };
-	
-	private String[] rangeStrings = {"I", "II", "III", "IV", "I coda", "II coda", "III coda", "IV coda"};
+
+	private String[]			rangeStrings	= { "I", "II", "III", "IV", "I coda", "II coda", "III coda", "IV coda" };
 
 	/**
 	 * Di prova per vedere se l'interfaccia veniva creata bene
 	 */
 	public static void main(String[] args)
 	{
+
+
+		
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run()
 			{
 				try
 				{
 					StartWindow window = new StartWindow();
+
+					
+
 					window.frame.setVisible(true);
 
 				} catch (Exception e)
@@ -102,8 +113,24 @@ public class StartWindow
 		JLabel lblClass = new JLabel("Classe di Concorso");
 		lblClass.setBounds(6, 44, 126, 16);
 		panelData.add(lblClass);
+		
+		
+		gManager = new GraphManager();
+		gManager.connectToGraph("neo4j", "vanessa");
+		ArrayList<String> classCodesArrayList = new ArrayList<>();
+		try
+		{
+			 classCodesArrayList = gManager.retrieveClassCodes();
+		} catch (SQLException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
-		comboBoxClass = new JComboBox<String>();
+		String[] classCodesArray = new String[classCodesArrayList.size()];
+		classCodesArray = classCodesArrayList.toArray(classCodesArray);
+		
+		comboBoxClass = new JComboBox(classCodesArray);
 		comboBoxClass.setBounds(6, 62, 154, 27);
 		panelData.add(comboBoxClass);
 
