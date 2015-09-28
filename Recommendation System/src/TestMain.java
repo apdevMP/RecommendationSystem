@@ -56,6 +56,10 @@ public class TestMain {
 		um.fillMatrixWithWatches(listWatches, 45);
 		um.printUtilityMatrix();
 
+		UtilityMatrix um2 = new UtilityMatrix();
+		um2.fillMatrixWithLogs(listLogs, 45);
+		um2.printUtilityMatrix();
+		
 		queryManager.closeConnection();
 
 	}
