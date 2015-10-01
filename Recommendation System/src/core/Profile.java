@@ -1,21 +1,24 @@
 package core;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Classe per rappresentare il profilo (forse non serve)
+ * Classe per rappresentare il profilo 
  *
  */
 public class Profile {
 	private long id;
 	private String name;
-	private ArrayList<String> regionList;
-	private ArrayList<String> provinceList;
-	private ArrayList<String> municipalityList;
-	private ArrayList<String> schoolList;
+	private String teachingRole;
+	private double score;
+	private List<String> provinceList;
+	private List<String> municipalityList;
+	private List<String> schoolList;
 	
-	public Profile(long id){
+	public Profile(long id, String teachingRole, double score){
 		this.id = id;
-		this.regionList = new ArrayList<String>();
+		this.teachingRole = teachingRole;
+		this.score =  score;
 		this.provinceList = new ArrayList<String>();
 		this.municipalityList = new ArrayList<String>();
 		this.schoolList = new ArrayList<String>();
@@ -37,25 +40,20 @@ public class Profile {
 		return name;
 	}
 	
-	public ArrayList<String> getRegionList(){
-		return regionList;
+	public String getTeachingRole(){
+		return teachingRole;
 	}
 	
-	public ArrayList<String> getProvinceList(){
+	public List<String> getProvinceList(){
 		return provinceList;
 	}
 	
-	public ArrayList<String> getMunicipalityList(){
+	public List<String> getMunicipalityList(){
 		return municipalityList;
 	}
 	
-	public ArrayList<String> getSchoolList(){
+	public List<String> getSchoolList(){
 		return schoolList;
-	}
-	
-	
-	public void addRegion(String region){
-		regionList.add(region);
 	}
 	
 	public void addProvince(String province){
@@ -68,6 +66,11 @@ public class Profile {
 	
 	public void addSchool(String school){
 		schoolList.add(school);
+	}
+
+	public static Profile createProfile(long id,String teachingRole,double score) {
+		Profile profile = new Profile(id,teachingRole,score);
+		return profile;
 	}
 	
 }

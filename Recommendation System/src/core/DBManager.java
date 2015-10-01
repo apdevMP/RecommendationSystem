@@ -2,6 +2,7 @@ package core;
 
 import org.bson.Document;
 
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -20,7 +21,8 @@ public class DBManager {
 	private static final String MUNICIPALITIES_COLLECTION = "municipalities";
 	private static final String SCHOOL_COLLECTION = "school";
 	private static final String WATCHES_COLLECTION = "watch";
-
+	private static final String PROFILE_COLLECTION = "profile";
+	
 	private static MongoClient client = null;
 
 	private MongoDatabase database;
@@ -217,5 +219,24 @@ public class DBManager {
 		FindIterable<Document> iterable = collection.find(new Document(
 				"action", action));
 		return iterable;
+	}
+
+	/**
+	 * Recupera il profilo dell'utente all'interno del sistema
+	 * 
+	 * @param id
+	 * @return profilo utente, altrimenti null
+	 */
+	public Document retrieveProfile(long id) {
+		MongoCollection<Document> collection =  getCollectionByName(PROFILE_COLLECTION);
+		Document document = collection.find(new Document("id",id)).first();
+		return document;
+	}
+
+	public void saveProfile(Document doc) {
+		
+		MongoCollection<Document> collection =  getCollectionByName(PROFILE_COLLECTION);
+		collection.insertOne(doc);
+		System.out.println("salvato document");
 	}
 }

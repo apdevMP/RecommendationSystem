@@ -1,4 +1,5 @@
 package core;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,9 @@ public class UtilityMatrix {
 	private List<String> matrixProvince;
 	private List<String> matrixMunicipality;
 	private List<String> matrixSchool;
-	private ArrayList<ArrayList<Integer>> values;
-	private int placeSize;
+	private List<ArrayList<Integer>> provinceValues;
+	private List<ArrayList<Integer>> municipalityValues;
+	private List<ArrayList<Integer>> schoolValues;
 
 	/**
 	 * Costruttore di default per la matrice di utilitï¿½
@@ -39,7 +41,10 @@ public class UtilityMatrix {
 		matrixProvince = new ArrayList<String>();
 		matrixMunicipality = new ArrayList<String>();
 		matrixSchool = new ArrayList<String>();
-		values = new ArrayList<ArrayList<Integer>>();
+		provinceValues = new ArrayList<ArrayList<Integer>>();
+		municipalityValues = new ArrayList<ArrayList<Integer>>();
+		schoolValues = new ArrayList<ArrayList<Integer>>();
+
 	}
 
 	/**
@@ -119,13 +124,22 @@ public class UtilityMatrix {
 	 * Inizializza la matrice dei valori a 0
 	 */
 	private void initializeValues() {
-		// Si ricava la grandezza della matrice di utilitï¿½, data dalla somma
-		// delle grandezze delle singole matrici
-		placeSize = matrixMunicipality.size() + matrixProvince.size()
-				+ matrixSchool.size();
+		int i = 0;
 
-		for (ArrayList<Integer> it : values) {
-			for (int i = 0; i < placeSize; i++) {
+		for (ArrayList<Integer> it : provinceValues) {
+			for (i = 0; i < matrixProvince.size(); i++) {
+				it.add(0);
+			}
+		}
+
+		for (ArrayList<Integer> it : municipalityValues) {
+			for (i = 0; i < matrixMunicipality.size(); i++) {
+				it.add(0);
+			}
+		}
+
+		for (ArrayList<Integer> it : schoolValues) {
+			for (i = 0; i < matrixSchool.size(); i++) {
 				it.add(0);
 			}
 		}
@@ -139,34 +153,20 @@ public class UtilityMatrix {
 	 * @param eventType
 	 * @return valore calcolato
 	 */
-	private int computeValue(int score, int userScore, long eventType) {
+	private int computeValue(long eventType) {
 		int value = 0;
 
-		// se il punteggio ï¿½ maggiore di quello dell'utente, allora viene
-		// impostato il valore ad 1
-		if (userScore > score + 5) {
-			value = 1;
-			// si aggiunge una unitï¿½ se il watch viene rimosso
-			if (eventType == 2) {
-				value++;
-			}
-		}
-
-		// se il punteggio si trova all'interno di un determinato intervallo,
-		// allora viene impostato 2
-		if (userScore <= score + 5 && userScore >= score - 5) {
+		if (eventType == 2) {
 			value = 2;
+		} else {
+			value = 1;
 		}
 
-		// se il punteggio ï¿½ inferiore a quello dell'utente, allora viene
-		// impostato 3
-		if (userScore <= score - 5)
-			value = 3;
 		return value;
 	}
 
 	/**
-	 * Riempie la matrice di utilitï¿½ con i dati recuperati dai Watches
+	 * Riempie la matrice di utilità con i dati recuperati dai Watches
 	 * 
 	 * @param list
 	 *            lista dei documenti filtrati per regione e per tipologia di
@@ -174,9 +174,9 @@ public class UtilityMatrix {
 	 * @param score
 	 *            punteggio dell'utente al quale suggerire luoghi
 	 */
-	public void fillMatrixWithWatches(ArrayList<Document> list, int score) {
-		// se la lista dei documenti ï¿½ vuota, non viene riempita la matrice di
-		// utilitï¿½
+	public void fillMatrixWithWatches(ArrayList<Document> list) {
+		// se la lista dei documenti è vuota, non viene riempita la matrice di
+		// utilità
 		if (list.size() < 1) {
 			System.out.println("You must fill matrix with not empty list");
 		}
@@ -185,7 +185,9 @@ public class UtilityMatrix {
 			// Vengono aggiunti gli utenti, se non presenti, e gli array di
 			// interi relativi ai valori da assegnare
 			this.addUser(doc);
-			values.add(new ArrayList<Integer>());
+			provinceValues.add(new ArrayList<Integer>());
+			municipalityValues.add(new ArrayList<Integer>());
+			schoolValues.add(new ArrayList<Integer>());
 
 			// Si recupera il tipo di watch eseguito:
 			// 1 : Provincia
@@ -225,53 +227,43 @@ public class UtilityMatrix {
 			int value = 0;
 			switch ((int) typeId) {
 			case 1:
-				// La preferenza ï¿½ sulla provincia, quindi si recupera l'indice
+				// La preferenza è sulla provincia, quindi si recupera
+				// l'indice
 				// dalla matrice delle province assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String province = target.getString(KEY);
 				int indexProvince = matrixProvince.indexOf(province);
 				Document ledProvince = (Document) doc.get(LAST_EVENT_DATA);
-				Document ctxProvince = (Document) ledProvince.get(CONTEXT);
-				int usProvince = ctxProvince.getInteger(USER_SCORE);
-				value = computeValue(score, usProvince,
-						ledProvince.getLong(EVENT_TYPE));
+				value = computeValue(ledProvince.getLong(EVENT_TYPE));
 
-				values.get(indexUser).set(indexProvince, value);
+				provinceValues.get(indexUser).set(indexProvince, value);
 				break;
 
 			case 2:
-				// La preferenza ï¿½ sul comune, quindi si recupera l'indice
+				// La preferenza è sul comune, quindi si recupera l'indice
 				// dalla matrice del comune assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String municipality = target.getString(KEY);
 				int indexMunicipality = matrixMunicipality
 						.indexOf(municipality);
 				Document ledMunicipality = (Document) doc.get(LAST_EVENT_DATA);
-				Document ctxMunicipality = (Document) ledMunicipality
-						.get(CONTEXT);
-				int usMunicipality = ctxMunicipality.getInteger(USER_SCORE);
-				value = computeValue(score, usMunicipality,
-						ledMunicipality.getLong(EVENT_TYPE));
 
-				values.get(indexUser).set(
-						indexMunicipality + matrixProvince.size(), value);
+				value = computeValue(ledMunicipality.getLong(EVENT_TYPE));
+
+				municipalityValues.get(indexUser).set(indexMunicipality, value);
 				break;
 
 			case 3:
-				// La preferenza ï¿½ sulla scuola, quindi si recupera l'indice
+				// La preferenza è sulla scuola, quindi si recupera l'indice
 				// dalla matrice delle scuole assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String school = target.getString(KEY);
 				int indexSchool = matrixSchool.indexOf(school);
 				Document ledSchool = (Document) doc.get(LAST_EVENT_DATA);
-				Document ctxSchool = (Document) ledSchool.get(CONTEXT);
-				int usSchool = ctxSchool.getInteger(USER_SCORE);
-				value = computeValue(score, usSchool,
-						ledSchool.getLong(EVENT_TYPE));
 
-				values.get(indexUser).set(
-						indexSchool + matrixProvince.size()
-								+ matrixMunicipality.size(), value);
+				value = computeValue(ledSchool.getLong(EVENT_TYPE));
+
+				schoolValues.get(indexUser).set(indexSchool, value);
 				break;
 			}
 		}
@@ -286,7 +278,7 @@ public class UtilityMatrix {
 	 * @param score
 	 *            punteggio dell'utente al quale suggerire luoghi
 	 */
-	public void fillMatrixWithLogs(ArrayList<Document> list, int score) {
+	public void fillMatrixWithLogs(ArrayList<Document> list) {
 		// se la lista dei documenti ï¿½ vuota, non viene riempita la matrice di
 		// utilitï¿½
 		if (list.size() < 1) {
@@ -297,7 +289,8 @@ public class UtilityMatrix {
 			// Vengono aggiunti gli utenti, se non presenti, e gli array di
 			// interi relativi ai valori da assegnare
 			this.addUser(doc);
-			values.add(new ArrayList<Integer>());
+			provinceValues.add(new ArrayList<Integer>());
+			municipalityValues.add(new ArrayList<Integer>());
 
 			// Si recupera il tipo di log eseguito dal campo "action":
 			// webapi_municipality_aggregates : Provincia
@@ -331,16 +324,16 @@ public class UtilityMatrix {
 			int value = 0;
 			switch (action) {
 			case "webapi_municipality_aggregates":
-				// La preferenza ï¿½ sulla provincia, quindi si recupera l'indice
+				// La preferenza ï¿½ sulla provincia, quindi si recupera
+				// l'indice
 				// dalla matrice delle province assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String province = attributes.getString(CODE_PROVINCE);
 				int indexProvince = matrixProvince.indexOf(province);
-				long usProvince = attributes.getLong(SCORE);
 
-				value = computeValue(score, (int) usProvince, 1);
+				value = computeValue(1);
 
-				values.get(indexUser).set(indexProvince, value);
+				provinceValues.get(indexUser).set(indexProvince, value);
 				break;
 
 			case "webapi_school_aggregates":
@@ -350,11 +343,10 @@ public class UtilityMatrix {
 				String municipality = attributes.getString(CODE_MUNICIPALITY);
 				int indexMunicipality = matrixMunicipality
 						.indexOf(municipality);
-				int usMunicipality = attributes.getInteger(SCORE);
-				value = computeValue(score, usMunicipality, 1);
 
-				values.get(indexUser).set(
-						indexMunicipality + matrixProvince.size(), value);
+				value = computeValue(1);
+
+				municipalityValues.get(indexUser).set(indexMunicipality, value);
 				break;
 			}
 		}
@@ -370,17 +362,20 @@ public class UtilityMatrix {
 			int j = 0;
 			for (String province : matrixProvince) {
 				System.out.println("Province:" + province + " Value: ["
-						+ values.get(i).get(j) + "]");
+						+ provinceValues.get(i).get(j) + "]");
 				j++;
 			}
+			j = 0;
 			for (String municipality : matrixMunicipality) {
 				System.out.println("Municipality:" + municipality + " Value: ["
-						+ values.get(i).get(j) + "]");
+						+ municipalityValues.get(i).get(j) + "]");
 				j++;
 			}
+			j = 0;
 			for (String school : matrixSchool) {
+
 				System.out.println("School:" + school + " Value: ["
-						+ values.get(i).get(j) + "]");
+						+ schoolValues.get(i).get(j) + "]");
 				j++;
 			}
 			i++;

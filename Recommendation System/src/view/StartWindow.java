@@ -30,6 +30,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.JTextArea;
 import javax.swing.JComboBox;
 
+import controller.Controller;
+
 import core.GraphManager;
 
 public class StartWindow
@@ -44,9 +46,9 @@ public class StartWindow
 	private JTextArea			textArea;
 	private static GraphManager	gManager;
 
-	private String[]			regionStrings	= { "ABRUZZO", "BASILICATA", "CALABRIA", "CAMPANIA", "EMILIA ROMAGNA", "FRIULI VENEZIA GIULIA",
-			"LAZIO", "LIGURIA", "LOMBARDIA", "LAZIO", "MOLISE", "PIEMONTE", "PUGLIA", "SARDEGNA", "SICILIA", "TOSCANA", "TRENTINO ALTO ADIGE",
-			"UMBRIA", "VALLE D'AOSTA", "VENETO" };
+	private String[]			regionStrings	= { "Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna", "Friuli-Venezia Giulia",
+			"Lazio", "Liguria", "Lombardia", "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia", "Toscana", "Trentino-Alto Adige",
+			"Umbria", "Valle d'Aosta", "Veneto" };
 
 	private String[]			rangeStrings	= { "I", "II", "III", "IV", "I coda", "II coda", "III coda", "IV coda" };
 
@@ -69,6 +71,8 @@ public class StartWindow
 					
 
 					window.frame.setVisible(true);
+					Controller controller = new Controller(window);
+					controller.recommend();
 
 				} catch (Exception e)
 				{
@@ -116,7 +120,7 @@ public class StartWindow
 		
 		
 		gManager = new GraphManager();
-		gManager.connectToGraph("neo4j", "vanessa");
+		gManager.connectToGraph("neo4j", "ilaria10");
 		ArrayList<String> classCodesArrayList = new ArrayList<>();
 		try
 		{

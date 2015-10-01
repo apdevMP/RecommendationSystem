@@ -5,10 +5,14 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bson.Document;
 
+import com.google.gson.Gson;
+import com.mongodb.DBObject;
 import com.mongodb.client.FindIterable;
+import com.mongodb.util.JSON;
 
 /**
  * Classe di servizio che si frappone tra il sistema e il DBManager
@@ -111,7 +115,7 @@ public class QueryManager {
 	public int isMunicipalityInRegion(String region, String municipality_code) {
 		// Si effettua la connessione al grafo presente in neo4j
 		GraphManager gManager = new GraphManager();
-		gManager.connectToGraph("neo4j", "vanessa");
+		gManager.connectToGraph("neo4j", "ilaria10");
 
 		// Si recupera il nome del comune dal codice
 		String municipality = null;
@@ -227,6 +231,36 @@ public class QueryManager {
 
 		}
 
+	}
+
+	/**
+	 * Recupera il profilo dell'utente dal db o altrimenti ne crea uno
+	 * @param id
+	 * @return
+	 */
+	public Profile retrieveProfile(long id,String teachingRole,double score) {
+		Profile profile = null;
+		
+		Document doc = manager.retrieveProfile(id);
+		if(doc == null){
+			profile = Profile.createProfile(id, teachingRole, score);
+			this.saveProfile(profile);
+		}
+		else{
+			String profileString = doc.toJson();
+			Gson gson = new Gson();
+			profile = gson.fromJson(profileString, Profile.class);
+		
+		}
+		return profile;
+	}
+
+	public void saveProfile(Profile profile) {
+		Gson gson = new Gson();
+		String jsonProfile = gson.toJson(profile);
+		Document document = Document.parse(jsonProfile); 
+		
+		manager.saveProfile(document);
 	}
 
 }
