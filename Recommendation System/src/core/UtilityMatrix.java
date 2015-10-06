@@ -47,6 +47,39 @@ public class UtilityMatrix {
 
 	}
 
+	public long getUser(int index) {
+		return matrixUser.get(index);
+	}
+
+	public String getProvince(int index) {
+		return matrixProvince.get(index);
+	}
+
+	public String getSchool(int index) {
+		return matrixSchool.get(index);
+	}
+
+	public String getMunicipality(int index) {
+		return matrixMunicipality.get(index);
+	}
+
+	public List<Long> getUserMatrix() {
+		return matrixUser;
+	}
+
+	public List<String> getProvinceMatrix() {
+		return matrixProvince;
+	}
+
+	public List<String> getMunicipalityMatrix() {
+		return matrixMunicipality;
+	}
+
+	public List<String> getSchoolMatrix() {
+		return matrixSchool;
+	}
+	
+
 	/**
 	 * Aggiunge un utente, se non presente, alla matrice degli utenti
 	 * 
@@ -379,6 +412,38 @@ public class UtilityMatrix {
 				j++;
 			}
 			i++;
+		}
+	}
+
+	/**
+	 * Metodo per unire la matrice proveniente dai watches con quella
+	 * proveniente dai logs
+	 * 
+	 * @param toMerge
+	 *            matrice proveniente dai log
+	 */
+	public void mergeUtilityMatrix(UtilityMatrix toMerge) {
+		ArrayList<Long> toMergeUser = (ArrayList<Long>) toMerge.getUserMatrix();
+		for(long user : toMergeUser){
+			if(matrixUser.contains(user)){
+				int indexUser =  matrixUser.indexOf(user);
+				int size = toMerge.getProvinceMatrix().size();
+				List<String> toMergeProvinceMatrix = toMerge.getProvinceMatrix();
+				for(int i = 0; i < size;i++){
+					String provinceToMerge = toMergeProvinceMatrix.get(i);
+					if(matrixProvince.contains(provinceToMerge)){
+						int indexProvince = matrixProvince.indexOf(provinceToMerge);
+						ArrayList<Integer> userProvinceValues = provinceValues.get(indexProvince); 
+					    
+					}
+					else{
+						
+					}
+				}
+			}
+			else{
+				
+			}
 		}
 	}
 }
