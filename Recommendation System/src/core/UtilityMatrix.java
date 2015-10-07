@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
+import org.neo4j.cypherdsl.grammar.ForEach;
 
 /**
  * Questa classe rappresenta la matrice di utilitï¿½ ricavata dai dati
@@ -78,7 +79,6 @@ public class UtilityMatrix {
 	public List<String> getSchoolMatrix() {
 		return matrixSchool;
 	}
-	
 
 	/**
 	 * Aggiunge un utente, se non presente, alla matrice degli utenti
@@ -313,7 +313,7 @@ public class UtilityMatrix {
 	 */
 	public void fillMatrixWithLogs(ArrayList<Document> list) {
 		// se la lista dei documenti ï¿½ vuota, non viene riempita la matrice di
-		// utilitï¿½
+		// utilità
 		if (list.size() < 1) {
 			System.out.println("You must fill matrix with not empty list");
 		}
@@ -357,8 +357,7 @@ public class UtilityMatrix {
 			int value = 0;
 			switch (action) {
 			case "webapi_municipality_aggregates":
-				// La preferenza ï¿½ sulla provincia, quindi si recupera
-				// l'indice
+				// La preferenza è sulla provincia, quindi si recupera l'indice
 				// dalla matrice delle province assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String province = attributes.getString(CODE_PROVINCE);
@@ -370,7 +369,7 @@ public class UtilityMatrix {
 				break;
 
 			case "webapi_school_aggregates":
-				// La preferenza ï¿½ sul comune, quindi si recupera l'indice
+				// La preferenza è sul comune, quindi si recupera l'indice
 				// dalla matrice del comune assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String municipality = attributes.getString(CODE_MUNICIPALITY);
@@ -386,7 +385,7 @@ public class UtilityMatrix {
 	}
 
 	/**
-	 * Stampa la matrice di utilitï¿½
+	 * Stampa la matrice di utilità
 	 */
 	public void printUtilityMatrix() {
 		int i = 0;
@@ -415,6 +414,173 @@ public class UtilityMatrix {
 		}
 	}
 
+	private void setValueByUserAndProvince(long user, String province, int value) {
+
+		int indexUser = matrixUser.indexOf(user);
+		int indexProvince = matrixProvince.indexOf(province);
+
+		provinceValues.get(indexUser).set(indexProvince, value);
+
+	}
+
+	private int getValueByUserAndProvince(long user, String province) {
+		int value = 0;
+		int indexUser = matrixUser.indexOf(user);
+		int indexProvince = matrixProvince.indexOf(province);
+		value = provinceValues.get(indexUser).get(indexProvince);
+		return value;
+
+	}
+
+	private void mergeProvinceList(long userId, UtilityMatrix toMerge,
+			boolean isPresent) {
+
+		if (isPresent == false) {
+			matrixUser.add(userId);
+			provinceValues.add(new ArrayList<Integer>());
+			int indexUser = matrixUser.indexOf(userId);
+			for (int i = 0; i < matrixProvince.size(); i++) {
+				provinceValues.get(indexUser).add(0);
+			}
+		}
+
+		List<String> provinceToMergeList = toMerge.getProvinceMatrix();
+		int indexUser = matrixUser.indexOf(userId);
+		for (String province : provinceToMergeList) {
+			if (matrixProvince.contains(province)) {
+
+				int valueLog = toMerge.getValueByUserAndProvince(userId,
+						province);
+				int valueWatch = getValueByUserAndProvince(userId, province);
+				int maxValue = Utils.getMax(valueLog, valueWatch);
+				setValueByUserAndProvince(userId, province, maxValue);
+			} else {
+				int valueLog = toMerge.getValueByUserAndProvince(userId,
+						province);
+				matrixProvince.add(province);
+				provinceValues.get(indexUser).add(valueLog);
+				int cont = 0;
+				for (long id : matrixUser) {
+					if (id != userId) {
+						provinceValues.get(cont).add(0);
+					}
+					cont++;
+				}
+
+			}
+		}
+	}
+
+	private void mergeMunicipalityList(long userId, UtilityMatrix toMerge,
+			boolean isPresent) {
+
+		if (isPresent == false) {
+		
+			municipalityValues.add(new ArrayList<Integer>());
+			int indexUser = matrixUser.indexOf(userId);
+			for (int i = 0; i < matrixMunicipality.size(); i++) {
+				municipalityValues.get(indexUser).add(0);
+			}
+		}
+
+		List<String> municipalityToMergeList = toMerge.getMunicipalityMatrix();
+		int indexUser = matrixUser.indexOf(userId);
+		for (String municipality : municipalityToMergeList) {
+			if (matrixMunicipality.contains(municipality)) {
+
+				int valueLog = toMerge.getValueByUserAndMunicipality(userId,
+						municipality);
+				int valueWatch = getValueByUserAndMunicipality(userId,
+						municipality);
+				int maxValue = Utils.getMax(valueLog, valueWatch);
+				setValueByUserAndMunicipality(userId, municipality, maxValue);
+			} else {
+				int valueLog = toMerge.getValueByUserAndMunicipality(userId,
+						municipality);
+				matrixMunicipality.add(municipality);
+				municipalityValues.get(indexUser).add(valueLog);
+				int cont = 0;
+				for (long id : matrixUser) {
+					if (id != userId) {
+						municipalityValues.get(cont).add(0);
+					}
+					cont++;
+				}
+
+			}
+		}
+	}
+
+	private void setValueByUserAndMunicipality(long userId,
+			String municipality, int value) {
+		int indexUser = matrixUser.indexOf(userId);
+		int indexMunicipality = matrixMunicipality.indexOf(municipality);
+
+		municipalityValues.get(indexUser).set(indexMunicipality, value);
+	}
+
+	private int getValueByUserAndMunicipality(long user, String municipality) {
+		int value = 0;
+		int indexUser = matrixUser.indexOf(user);
+		int indexMunicipality = matrixMunicipality.indexOf(municipality);
+		value = municipalityValues.get(indexUser).get(indexMunicipality);
+		return value;
+
+	}
+
+	private void mergeSchoolList(long userId, UtilityMatrix toMerge,
+			boolean isPresent) {
+
+		if (isPresent == false) {
+			
+			schoolValues.add(new ArrayList<Integer>());
+			int indexUser = matrixUser.indexOf(userId);
+			for (int i = 0; i < matrixSchool.size(); i++) {
+				schoolValues.get(indexUser).add(0);
+			}
+		}
+
+		List<String> schoolToMergeList = toMerge.getSchoolMatrix();
+		int indexUser = matrixUser.indexOf(userId);
+		for (String school : schoolToMergeList) {
+			if (matrixSchool.contains(school)) {
+
+				int valueLog = toMerge.getValueByUserAndSchool(userId, school);
+				int valueWatch = getValueByUserAndSchool(userId, school);
+				int maxValue = Utils.getMax(valueLog, valueWatch);
+				setValueByUserAndSchool(userId, school, maxValue);
+			} else {
+				int valueLog = toMerge.getValueByUserAndSchool(userId, school);
+				matrixSchool.add(school);
+				schoolValues.get(indexUser).add(valueLog);
+				int cont = 0;
+				for (long id : matrixUser) {
+					if (id != userId) {
+						schoolValues.get(cont).add(0);
+					}
+					cont++;
+				}
+
+			}
+		}
+	}
+
+	private void setValueByUserAndSchool(long user, String school, int value) {
+		int indexUser = matrixUser.indexOf(user);
+		int indexSchool = matrixSchool.indexOf(school);
+
+		schoolValues.get(indexUser).set(indexSchool, value);
+
+	}
+
+	private int getValueByUserAndSchool(long user, String school) {
+		int value = 0;
+		int indexUser = matrixUser.indexOf(user);
+		int indexSchool = matrixSchool.indexOf(school);
+		value = schoolValues.get(indexUser).get(indexSchool);
+		return value;
+	}
+
 	/**
 	 * Metodo per unire la matrice proveniente dai watches con quella
 	 * proveniente dai logs
@@ -423,27 +589,13 @@ public class UtilityMatrix {
 	 *            matrice proveniente dai log
 	 */
 	public void mergeUtilityMatrix(UtilityMatrix toMerge) {
-		ArrayList<Long> toMergeUser = (ArrayList<Long>) toMerge.getUserMatrix();
-		for(long user : toMergeUser){
-			if(matrixUser.contains(user)){
-				int indexUser =  matrixUser.indexOf(user);
-				int size = toMerge.getProvinceMatrix().size();
-				List<String> toMergeProvinceMatrix = toMerge.getProvinceMatrix();
-				for(int i = 0; i < size;i++){
-					String provinceToMerge = toMergeProvinceMatrix.get(i);
-					if(matrixProvince.contains(provinceToMerge)){
-						int indexProvince = matrixProvince.indexOf(provinceToMerge);
-						ArrayList<Integer> userProvinceValues = provinceValues.get(indexProvince); 
-					    
-					}
-					else{
-						
-					}
-				}
-			}
-			else{
-				
-			}
+
+		List<Long> userToMerge = toMerge.getUserMatrix();
+		for (long userId : userToMerge) {
+			boolean containsUser = matrixUser.contains(userId);
+			mergeProvinceList(userId, toMerge, containsUser);
+			mergeMunicipalityList(userId, toMerge, containsUser);
+			mergeSchoolList(userId, toMerge, containsUser);
 		}
 	}
 }

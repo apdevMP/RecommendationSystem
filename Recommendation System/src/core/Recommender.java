@@ -49,6 +49,10 @@ public class Recommender {
 		UtilityMatrix um2 = new UtilityMatrix();
 		um2.fillMatrixWithLogs(listLogs);
 		um2.printUtilityMatrix();
+		
+		um.mergeUtilityMatrix(um2);
+		System.out.println("+++++++++++++++++ MERGE ++++++++++++++++++++++");
+		um.printUtilityMatrix();
 	}
 
 	public void recommedByProvince(String province) {
