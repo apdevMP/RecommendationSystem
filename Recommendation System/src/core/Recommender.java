@@ -42,7 +42,7 @@ public class Recommender {
 			System.out.println(document.toJson());
 		}
 		
-		UtilityMatrix um = new UtilityMatrix();
+		/*UtilityMatrix um = new UtilityMatrix();
 		um.fillMatrixWithWatches(listWatches);
 		um.printUtilityMatrix();
 
@@ -51,8 +51,14 @@ public class Recommender {
 		um2.printUtilityMatrix();
 		
 		um.mergeUtilityMatrix(um2);
-		System.out.println("+++++++++++++++++ MERGE ++++++++++++++++++++++");
+		
 		um.printUtilityMatrix();
+		*/
+		
+		UtilityMatrixService ums = new UtilityMatrixService();
+		UtilityMatrix uMatrix = ums.createUtilityMatrix(listWatches, listLogs);
+		System.out.println("+++++++++++++++++ MERGE ++++++++++++++++++++++");
+		uMatrix.printUtilityMatrix();
 	}
 
 	public void recommedByProvince(String province) {
