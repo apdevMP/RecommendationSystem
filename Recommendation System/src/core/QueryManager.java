@@ -77,7 +77,7 @@ public class QueryManager {
 	}
 
 	/**
-	 * Verifica se la provincia "province" è presente all'interno della regione
+	 * Verifica se la provincia "province" ï¿½ presente all'interno della regione
 	 * "region"
 	 * 
 	 * @param region
@@ -103,7 +103,7 @@ public class QueryManager {
 	}
 
 	/**
-	 * Verifica se il comune rapppresentato dal suo codice è presente
+	 * Verifica se il comune rapppresentato dal suo codice ï¿½ presente
 	 * all'interno della regione "region"
 	 * 
 	 * @param region
@@ -114,8 +114,8 @@ public class QueryManager {
 	 */
 	public int isMunicipalityInRegion(String region, String municipality_code) {
 		// Si effettua la connessione al grafo presente in neo4j
-		GraphManager gManager = new GraphManager();
-		gManager.connectToGraph("neo4j", "ilaria10");
+		GraphManager gManager = GraphManager.getIstance();
+		//gManager.connectToGraph("neo4j", "vanessa");
 
 		// Si recupera il nome del comune dal codice
 		String municipality = null;
@@ -127,7 +127,7 @@ public class QueryManager {
 			e.printStackTrace();
 		}
 
-		// Se la stringa è null,restituisco non presente
+		// Se la stringa ï¿½ null,restituisco non presente
 		if (municipality == null)
 			return 1;
 
@@ -146,7 +146,7 @@ public class QueryManager {
 	}
 
 	/**
-	 * Verifica se la scuola rapppresentata dal suo codice è presente
+	 * Verifica se la scuola rapppresentata dal suo codice ï¿½ presente
 	 * all'interno della regione "region"
 	 * 
 	 * @param region

@@ -119,8 +119,8 @@ public class StartWindow
 		panelData.add(lblClass);
 		
 		
-		gManager = new GraphManager();
-		gManager.connectToGraph("neo4j", "ilaria10");
+		gManager = GraphManager.getIstance();
+	//	gManager.connectToGraph("neo4j", "vanessa");
 		ArrayList<String> classCodesArrayList = new ArrayList<>();
 		try
 		{

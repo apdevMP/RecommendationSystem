@@ -35,6 +35,7 @@ public class Recommender {
 		ArrayList<Document> listLogs = Filter
 				.filterLogsByRegion(itLogs, region);
 
+		
 		for(Document document : listWatches){
 			System.out.println(document.toJson());
 		}
