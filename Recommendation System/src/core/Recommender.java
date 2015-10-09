@@ -21,6 +21,9 @@ public class Recommender {
 	 * @param region
 	 */
 	public void recommedByRegion(String region) {
+		
+		
+		
 		QueryManager queryManager = new QueryManager();
 		String teachingRole = userProfile.getTeachingRole();
 

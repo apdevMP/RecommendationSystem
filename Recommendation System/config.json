@@ -1,0 +1,15 @@
+{
+	"mongo_server_address" : "localhost",
+	"mongo_port" : 27017,
+	"mongodb_name" : "user_data",
+	"log_collection" : "log",
+	"municipalities_collection" : "municipalities",
+	"school_collection" : "school",
+	"watches_collection" : "watch",
+	"profile_collestion" : "profile",
+	"neo_username" : "neo4j",
+	"neo_password" : "vanessa",
+	"neo_server_address" : "localhost",
+	"neo_port" : 7474
+
+}

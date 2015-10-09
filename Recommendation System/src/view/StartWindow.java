@@ -21,6 +21,9 @@ import javax.swing.JTextPane;
 
 import java.awt.ScrollPane;
 import java.awt.TextArea;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,8 +33,11 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.JTextArea;
 import javax.swing.JComboBox;
 
-import controller.Controller;
+import utils.Configuration;
 
+import com.google.gson.Gson;
+
+import controller.Controller;
 import core.GraphManager;
 
 public class StartWindow
@@ -45,6 +51,7 @@ public class StartWindow
 	private JButton				btnGo;
 	private JTextArea			textArea;
 	private static GraphManager	gManager;
+	public static Configuration configuration;
 
 	private String[]			regionStrings	= { "Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna", "Friuli-Venezia Giulia",
 			"Lazio", "Liguria", "Lombardia", "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia", "Toscana", "Trentino-Alto Adige",
@@ -119,6 +126,11 @@ public class StartWindow
 		panelData.add(lblClass);
 		
 		
+		
+		//retrieveValues("config.json");
+		
+		Configuration.getIstance();
+		
 		gManager = GraphManager.getIstance();
 	//	gManager.connectToGraph("neo4j", "vanessa");
 		ArrayList<String> classCodesArrayList = new ArrayList<>();
@@ -188,6 +200,8 @@ public class StartWindow
 
 	}
 
+	
+
 	public JButton getButton()
 	{
 		return btnGo;
@@ -217,6 +231,28 @@ public class StartWindow
 	public Integer getRange()
 	{
 		return (Integer) comboBoxRange.getSelectedItem();
+	}
+	
+	
+	private void retrieveValues(String path)
+	{
+		// TODO Auto-generated method stub
+				Gson gson = new Gson();
+				BufferedReader br = null;
+
+				try
+				{
+					br = new BufferedReader(new FileReader(path));
+				} catch (FileNotFoundException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				configuration = Configuration.getIstance();
+				configuration = gson.fromJson(br, Configuration.class);
+				
+				System.out.println("Config: mongo add:"+ configuration.getMongo_server_address()+ " "+configuration.getMunicipalities_collection());
+		
 	}
 
 }

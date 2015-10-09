@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.bson.Document;
 
+import utils.Configuration;
+
 import com.google.gson.Gson;
 import com.mongodb.DBObject;
 import com.mongodb.client.FindIterable;
@@ -21,12 +23,14 @@ import com.mongodb.util.JSON;
 public class QueryManager {
 
 	private DBManager manager;
+	private static Configuration configuration;
 
 	/**
 	 * Costruttore di default
 	 */
 	public QueryManager() {
 		manager = DBManager.getIstance();
+		configuration = Configuration.getIstance();
 	}
 
 	/**
@@ -114,6 +118,7 @@ public class QueryManager {
 	 */
 	public int isMunicipalityInRegion(String region, String municipality_code) {
 		// Si effettua la connessione al grafo presente in neo4j
+		
 		GraphManager gManager = GraphManager.getIstance();
 		//gManager.connectToGraph("neo4j", "vanessa");
 

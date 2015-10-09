@@ -9,26 +9,36 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import utils.Configuration;
+
 /**
  * @author Vanessa
  * 
  * Classe GraphManager per la gestione delle connessioni e delle query al db di
  * neo4j. Implementato come singleton per una corretta gestione delle
- * connessioni.  
+ * connessioni.
  *
  */
 public class GraphManager
 {
 
-	private Connection			connection;
-	private static GraphManager	manager	= null;
+	private Connection				connection;
+	private static GraphManager		manager			= null;
+	private static Configuration	configuration	= null;
 
 	private GraphManager()
 	{
-		connectToGraph("neo4j", "vanessa");
-	}
+		if (configuration == null)
+		{
+			configuration = Configuration.getIstance();
 
-	
+		}
+		String neo_usernameString = configuration.getNeo_username();
+		String neo_passwordString = configuration.getNeo_password();
+		System.out.println(configuration.getMongo_port());
+		System.out.println("GraphManager, username=" + neo_usernameString + ", password=" + neo_passwordString);
+		connectToGraph(neo_usernameString, neo_passwordString);
+	}
 
 	/**
 	 * Restituisce l'stanza del manager del database di Neo4j
@@ -37,7 +47,7 @@ public class GraphManager
 	 */
 	public static GraphManager getIstance()
 	{
-
+		
 		if (manager == null)
 			manager = new GraphManager();
 		return manager;
