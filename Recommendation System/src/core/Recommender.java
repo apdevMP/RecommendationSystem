@@ -17,22 +17,24 @@ public class Recommender {
 	}
 
 	/**
-	 * 
+	 * Metodo per trovare i suggerimenti da fare ad un utente che ricerca una regione
 	 * @param region
 	 */
 	public void recommedByRegion(String region) {
-		
-		
-		
+
+		//istanzio un queryManager per recuperare dati dalle collezioni
 		QueryManager queryManager = new QueryManager();
+		
+		//si recupera la materia di insegnamento dell'utente
 		String teachingRole = userProfile.getTeachingRole();
 
+		//si recupera la lista di watch e di log in base alla materia di insegnamento
 		FindIterable<Document> itWatches = queryManager
 				.findWatchesByTeachingRole(teachingRole);
-
 		FindIterable<Document> itLogs = queryManager
 				.findLogsByTeachingRole(teachingRole);
 		
+		//le liste di watch e log vengono filtrate per regione
 		ArrayList<Document> listWatches = Filter.filterWatchesByRegion(
 				itWatches, region);
 		ArrayList<Document> listLogs = Filter
@@ -46,19 +48,7 @@ public class Recommender {
 			System.out.println(document.toJson());
 		}
 		
-		/*UtilityMatrix um = new UtilityMatrix();
-		um.fillMatrixWithWatches(listWatches);
-		um.printUtilityMatrix();
-
-		UtilityMatrix um2 = new UtilityMatrix();
-		um2.fillMatrixWithLogs(listLogs);
-		um2.printUtilityMatrix();
-		
-		um.mergeUtilityMatrix(um2);
-		
-		um.printUtilityMatrix();
-		*/
-		
+		//dalle liste viene creata la matrice di utilit�
 		UtilityMatrixService ums = new UtilityMatrixService();
 		UtilityMatrix uMatrix = ums.createUtilityMatrix(listWatches, listLogs);
 		System.out.println("+++++++++++++++++ MERGE ++++++++++++++++++++++");
