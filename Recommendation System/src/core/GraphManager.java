@@ -37,7 +37,7 @@ public class GraphManager
 	 */
 	public static GraphManager getIstance()
 	{
-
+		//Se l'istanza è nulla ne crea una altrimenti la restituisce
 		if (manager == null)
 			manager = new GraphManager();
 		return manager;
@@ -58,7 +58,8 @@ public class GraphManager
 			properties.put("password", password);
 
 			// Connect
-			connection = DriverManager.getConnection("jdbc:neo4j://localhost:7474/", properties);
+			connection = DriverManager.getConnection(
+					"jdbc:neo4j://localhost:7474/", properties);
 
 		} catch (SQLException | ClassNotFoundException e)
 		{
