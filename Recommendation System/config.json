@@ -6,7 +6,7 @@
 	"municipalities_collection" : "municipalities",
 	"school_collection" : "school",
 	"watches_collection" : "watch",
-	"profile_collestion" : "profile",
+	"profile_collection" : "profile",
 	"neo_username" : "neo4j",
 	"neo_password" : "vanessa",
 	"neo_server_address" : "localhost",
