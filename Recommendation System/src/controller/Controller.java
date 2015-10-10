@@ -31,6 +31,7 @@ public class Controller
 
 	private StartWindow		window;
 	private ActionListener	listener;
+	private static Configuration configuration;
 
 	/**
 	 * Costruttore
@@ -39,6 +40,11 @@ public class Controller
 	 */
 	public Controller(StartWindow window)
 	{
+		if (configuration == null)
+		{
+			configuration = Configuration.getIstance();
+
+		}
 		this.window = window;
 	};
 

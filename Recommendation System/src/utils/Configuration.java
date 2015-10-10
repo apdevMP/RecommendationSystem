@@ -34,7 +34,7 @@ public class Configuration
 
 	private Configuration()
 	{
-		//retrieveValues("config.json");
+		
 	}
 
 	/**
@@ -259,10 +259,21 @@ public class Configuration
 					e.printStackTrace();
 				}
 				//configuration = Configuration.getIstance();
-				configuration = gson.fromJson(br, Configuration.class);
-				
-				System.out.println("Config: mongo add:"+ configuration.getMongo_server_address()+ " "+configuration.getMunicipalities_collection());
-		
+				configuration = gson.fromJson(br, Configuration.class);		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "Configuration [getMongo_server_address()=" + getMongo_server_address() + ", getMongo_port()=" + getMongo_port()
+				+ ", getMongodb_name()=" + getMongodb_name() + ", getLog_collection()=" + getLog_collection() + ", getMunicipalities_collection()="
+				+ getMunicipalities_collection() + ", getSchool_collection()=" + getSchool_collection() + ", getWatches_collection()="
+				+ getWatches_collection() + ", getProfile_collection()=" + getProfile_collection() + ", getNeo_username()=" + getNeo_username()
+				+ ", getNeo_password()=" + getNeo_password() + ", getNeo_server_address()=" + getNeo_server_address() + ", getNeo_port()="
+				+ getNeo_port() + "]";
 	}
 
 }

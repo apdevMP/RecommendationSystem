@@ -23,14 +23,14 @@ import com.mongodb.util.JSON;
 public class QueryManager {
 
 	private DBManager manager;
-	private static Configuration configuration;
+//	private static Configuration configuration = null;
 
 	/**
 	 * Costruttore di default
 	 */
 	public QueryManager() {
 		manager = DBManager.getIstance();
-		configuration = Configuration.getIstance();
+	//	configuration = Configuration.getIstance();
 	}
 
 	/**
