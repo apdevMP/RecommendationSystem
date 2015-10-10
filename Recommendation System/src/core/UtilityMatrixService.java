@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.bson.Document;
 
+import utils.Utils;
+
 /**
- * Classe di servizio per creare,modificare e lavorare sulle matrici di utilità
+ * Classe di servizio per creare,modificare e lavorare sulle matrici di utilitï¿½
  * 
  */
 public class UtilityMatrixService {
@@ -25,7 +27,7 @@ public class UtilityMatrixService {
 	}
 
 	/**
-	 * Restituisce la matrice di utilità proveniente dai Watches
+	 * Restituisce la matrice di utilitï¿½ proveniente dai Watches
 	 * 
 	 * @return
 	 */
@@ -34,7 +36,7 @@ public class UtilityMatrixService {
 	}
 
 	/**
-	 * Imposta la matrice di utilità proveniente dai Watches
+	 * Imposta la matrice di utilitï¿½ proveniente dai Watches
 	 * 
 	 * @param umFromWatch
 	 */
@@ -43,7 +45,7 @@ public class UtilityMatrixService {
 	}
 
 	/**
-	 * Restituisce la matrice di utilità proveniente dai Log
+	 * Restituisce la matrice di utilitï¿½ proveniente dai Log
 	 * 
 	 * @return
 	 */
@@ -52,7 +54,7 @@ public class UtilityMatrixService {
 	}
 
 	/**
-	 * Imposta la matrice di utilità proveniente dai Log
+	 * Imposta la matrice di utilitï¿½ proveniente dai Log
 	 * 
 	 * @param umFromLog
 	 */
@@ -61,7 +63,7 @@ public class UtilityMatrixService {
 	}
 
 	/**
-	 * Restituisce la matrice di utilità completa
+	 * Restituisce la matrice di utilitï¿½ completa
 	 * 
 	 * @return
 	 */
@@ -70,7 +72,7 @@ public class UtilityMatrixService {
 	}
 
 	/**
-	 * Imposta la matrice di utilità completa
+	 * Imposta la matrice di utilitï¿½ completa
 	 * 
 	 * @param umMerge
 	 */
@@ -79,7 +81,7 @@ public class UtilityMatrixService {
 	}
 
 	/**
-	 * Riempie le matrici di utilità relative ai Watches e al log di navigazione
+	 * Riempie le matrici di utilitï¿½ relative ai Watches e al log di navigazione
 	 * 
 	 * @param listFromWatch
 	 *            lista di watch filtrata
@@ -89,11 +91,11 @@ public class UtilityMatrixService {
 	public void fillMatrix(List<Document> listFromWatch,
 			List<Document> listFromLog) {
 
-		// riempie e stampa la matrice di utilità relativa ai watches
+		// riempie e stampa la matrice di utilitï¿½ relativa ai watches
 		umFromWatch.fillMatrixWithWatches(listFromWatch);
 		umFromWatch.printUtilityMatrix();
 
-		// riempie e stampa la matrice di utilità relativa al log
+		// riempie e stampa la matrice di utilitï¿½ relativa al log
 		umFromLog.fillMatrixWithLogs(listFromLog);
 		umFromLog.printUtilityMatrix();
 	}
@@ -104,14 +106,14 @@ public class UtilityMatrixService {
 	 * @param userId
 	 *            id dell'utente
 	 * @param isPresent
-	 *            verifica se l'utente sia già presente
+	 *            verifica se l'utente sia giï¿½ presente
 	 */
 	public void mergeProvinceList(long userId, boolean isPresent) {
 
 		// recupera la lista degli utenti
 		List<Long> matrixUser = umMerge.getUserMatrix();
 
-		// Se l'utente non è presente si aggiunge alla lista
+		// Se l'utente non ï¿½ presente si aggiunge alla lista
 		if (isPresent == false) {
 			matrixUser.add(userId);
 
@@ -127,7 +129,7 @@ public class UtilityMatrixService {
 			}
 		}
 
-		// si recupera la lista delle province dalla matrice di utilità relativa
+		// si recupera la lista delle province dalla matrice di utilitï¿½ relativa
 		// al log di navigazione
 		List<String> provinceToMergeList = umFromLog.getProvinceMatrix();
 
@@ -139,9 +141,9 @@ public class UtilityMatrixService {
 		int valueLog, valueWatch, maxValue;
 
 		// Si verifica per ogni provincia presente nella lista se essa sia
-		// all'interno della matrice di utilità dei watches
+		// all'interno della matrice di utilitï¿½ dei watches
 		for (String province : provinceToMergeList) {
-			// la provincia è presente
+			// la provincia ï¿½ presente
 			if (umMerge.getProvinceMatrix().contains(province)) {
 
 				// si recuperano i valori contenuti nelle matrici di log e
@@ -151,11 +153,11 @@ public class UtilityMatrixService {
 				valueWatch = umMerge
 						.getValueByUserAndProvince(userId, province);
 				// si prende il massimo valore tra quelli recuperati e lo si
-				// assegna alla matrice di utilità
+				// assegna alla matrice di utilitï¿½
 				maxValue = Utils.getMax(valueLog, valueWatch);
 				umMerge.setValueByUserAndProvince(userId, province, maxValue);
 			}
-			// la provincia non è presente
+			// la provincia non ï¿½ presente
 			else {
 				// si recupera il valore dalla matrice di log
 				valueLog = umFromLog
@@ -186,7 +188,7 @@ public class UtilityMatrixService {
 	 * @param userId
 	 *            id dell'utente
 	 * @param isPresent
-	 *            verifica se l'utente sia già presente
+	 *            verifica se l'utente sia giï¿½ presente
 	 */
 	public void mergeMunicipalityList(long userId, boolean isPresent) {
 
@@ -206,7 +208,7 @@ public class UtilityMatrixService {
 			}
 		}
 
-		// si recupera la lista dei comuni dalla matrice di utilità relativa
+		// si recupera la lista dei comuni dalla matrice di utilitï¿½ relativa
 		// al log di navigazione
 		List<String> municipalityToMergeList = umFromLog
 				.getMunicipalityMatrix();
@@ -219,9 +221,9 @@ public class UtilityMatrixService {
 		int valueLog, valueWatch, maxValue;
 
 		// Si verifica per ogni comune presente nella lista, se esso sia
-		// all'interno della matrice di utilità dei watches
+		// all'interno della matrice di utilitï¿½ dei watches
 		for (String municipality : municipalityToMergeList) {
-			// il comune è presente
+			// il comune ï¿½ presente
 			if (umMerge.getMunicipalityMatrix().contains(municipality)) {
 
 				// si recuperano i valori contenuti nelle matrici di log e
@@ -231,12 +233,12 @@ public class UtilityMatrixService {
 				valueWatch = umMerge.getValueByUserAndMunicipality(userId,
 						municipality);
 				// si prende il massimo valore tra quelli recuperati e lo si
-				// assegna alla matrice di utilità
+				// assegna alla matrice di utilitï¿½
 				maxValue = Utils.getMax(valueLog, valueWatch);
 				umMerge.setValueByUserAndMunicipality(userId, municipality,
 						maxValue);
 			}
-			// il comune non è presente
+			// il comune non ï¿½ presente
 			else {
 				// si recupera il valore dalla matrice di log
 				valueLog = umFromLog.getValueByUserAndMunicipality(userId,
@@ -267,7 +269,7 @@ public class UtilityMatrixService {
 	 * @param userId
 	 *            id dell'utente
 	 * @param isPresent
-	 *            verifica se l'utente sia già presente
+	 *            verifica se l'utente sia giï¿½ presente
 	 */
 	public void mergeSchoolList(long userId, boolean isPresent) {
 
@@ -287,7 +289,7 @@ public class UtilityMatrixService {
 			}
 		}
 
-		// si recupera la lista delle scuole dalla matrice di utilità relativa
+		// si recupera la lista delle scuole dalla matrice di utilitï¿½ relativa
 		// al log di navigazione
 		List<String> schoolToMergeList = umFromLog.getSchoolMatrix();
 
@@ -299,7 +301,7 @@ public class UtilityMatrixService {
 		int valueLog, valueWatch, maxValue;
 
 		for (String school : schoolToMergeList) {
-			// la scuola è presente
+			// la scuola ï¿½ presente
 			if (umMerge.getSchoolMatrix().contains(school)) {
 
 				// si recuperano i valori contenuti nelle matrici di log e
@@ -308,11 +310,11 @@ public class UtilityMatrixService {
 				valueWatch = umMerge.getValueByUserAndSchool(userId, school);
 
 				// si prende il massimo valore tra quelli recuperati e lo si
-				// assegna alla matrice di utilità
+				// assegna alla matrice di utilitï¿½
 				maxValue = Utils.getMax(valueLog, valueWatch);
 				umMerge.setValueByUserAndSchool(userId, school, maxValue);
 			}
-			// la scuola non è presente
+			// la scuola non ï¿½ presente
 			else {
 				// si recupera il valore dalla matrice di log
 				valueLog = umFromLog.getValueByUserAndSchool(userId, school);
@@ -337,7 +339,7 @@ public class UtilityMatrixService {
 	}
 
 	/**
-	 * Metodo che esegue il merge tra due matrici di utilità. Il merge viene
+	 * Metodo che esegue il merge tra due matrici di utilitï¿½. Il merge viene
 	 * eseguito unendo alla matrice dei watches quella proveniente dal log di
 	 * navigazione
 	 */
@@ -350,7 +352,7 @@ public class UtilityMatrixService {
 		List<Long> userToMerge = umFromLog.getUserMatrix();
 		List<Long> matrixUser = umMerge.getUserMatrix();
 
-		// per ogni utente della matrice di log, si verifica se è contenuto
+		// per ogni utente della matrice di log, si verifica se ï¿½ contenuto
 		// all'interno di quella dei watches in maniera da aggiungere la sua
 		// riga o meno all'interno della matrice finale
 		for (long userId : userToMerge) {
@@ -367,19 +369,19 @@ public class UtilityMatrixService {
 
 	/**
 	 * Metodo che, date le liste di documenti provenienti dai watch e dal log,
-	 * resituisce la matrice di utilità generale
+	 * resituisce la matrice di utilitï¿½ generale
 	 * 
 	 * @param listFromWatch
 	 * @param listFromLog
-	 * @return Matrice di Utilità completa
+	 * @return Matrice di Utilitï¿½ completa
 	 */
 	public UtilityMatrix createUtilityMatrix(List<Document> listFromWatch,
 			List<Document> listFromLog) {
-		// riempie le due matrici di utilità provenienti da watches e log di
+		// riempie le due matrici di utilitï¿½ provenienti da watches e log di
 		// navigazione
 		fillMatrix(listFromWatch, listFromLog);
 
-		// unisce le due matrici di utilità in una sola che viene restituita
+		// unisce le due matrici di utilitï¿½ in una sola che viene restituita
 		mergeMatrix();
 		return umMerge;
 	}
