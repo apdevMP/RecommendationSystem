@@ -314,7 +314,7 @@ public class UtilityMatrixService {
 				maxValue = Utils.getMax(valueLog, valueWatch);
 				umMerge.setValueByUserAndSchool(userId, school, maxValue);
 			}
-			// la scuola non ï¿½ presente
+			// la scuola non è presente
 			else {
 				// si recupera il valore dalla matrice di log
 				valueLog = umFromLog.getValueByUserAndSchool(userId, school);

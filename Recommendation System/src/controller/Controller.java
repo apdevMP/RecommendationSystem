@@ -15,7 +15,7 @@ import com.google.gson.Gson;
 
 import core.Profile;
 import core.QueryManager;
-import core.Recommender;
+import core.RecommenderService;
 import utils.Configuration;
 import view.StartWindow;
 
@@ -70,8 +70,8 @@ public class Controller
 				long id = 0;
 
 				Profile userProfile = retrieveProfileFromDb(id, teachingRole, score);
-				Recommender recommender = new Recommender(userProfile);
-				recommender.recommedByRegion(region);
+				RecommenderService recommender = new RecommenderService(userProfile);
+				recommender.recommendByRegion(region);
 				// quando viene cliccato il bottone di avvio, comincia la
 				// ricerca dei suggerimenti
 				//startSearch();
