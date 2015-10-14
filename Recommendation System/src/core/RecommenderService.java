@@ -22,50 +22,71 @@ import org.bson.Document;
 
 import com.mongodb.client.FindIterable;
 
-public class RecommenderService {
+public class RecommenderService
+{
 
-	private Profile userProfile;
+	private Profile	userProfile;
 
-	public RecommenderService(Profile profile) {
+	public RecommenderService(Profile profile)
+	{
 		userProfile = profile;
 	}
 
 	/**
-	 * Metodo per trovare i suggerimenti da fare ad un utente che ricerca una regione
+	 * Metodo per trovare i suggerimenti da fare ad un utente che ricerca una
+	 * regione
+	 * 
 	 * @param region
 	 */
-	public void recommendByRegion(String region) {
+	public void recommendByRegion(String region)
+	{
 
 		UtilityMatrixCreator creator = new UtilityMatrixCreator(userProfile, region);
 		UtilityMatrix matrix = creator.createUtilityMatrix();
 		creator.saveMatrix(matrix);
-		
-		try {
+
+		try
+		{
 			DataModel model = new FileDataModel(new File("matrix.csv"));
 			UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
-			UserNeighborhood neighborhood =new NearestNUserNeighborhood(3, similarity, model);
+			UserNeighborhood neighborhood = new NearestNUserNeighborhood(2, similarity, model);
 			Recommender recommender = new GenericUserBasedRecommender(model, neighborhood, similarity);
 			Recommender cachingRecommender = new CachingRecommender(recommender);
 			List<RecommendedItem> recommendedItems = cachingRecommender.recommend(71027, 3);
-			for(RecommendedItem item : recommendedItems){
-				item.toString();
+			
+			
+			System.out.println("Creata lista items");
+			
+			if (!recommendedItems.isEmpty())
+			{
+				for (RecommendedItem item : recommendedItems)
+				{
+					System.out.println("id:" + item.getItemID() + ",value:" + item.getValue());
+				}
+			} else
+			{
+				System.out.println("la lista è vuota");
 			}
-		} catch (IOException | TasteException e) {
+		} catch (IOException | TasteException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-	}
-
-	public void recommendByProvince(String province) {
 
 	}
 
-	public void recommendByMunicipality(String municipality) {
+	public void recommendByProvince(String province)
+	{
 
 	}
 
-	public void recommendBySchool(String school) {
+	public void recommendByMunicipality(String municipality)
+	{
+
+	}
+
+	public void recommendBySchool(String school)
+	{
 
 	}
 }

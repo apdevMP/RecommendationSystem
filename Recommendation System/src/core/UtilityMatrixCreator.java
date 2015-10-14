@@ -82,14 +82,14 @@ public class UtilityMatrixCreator
 
 					long provinceId = queryManager.retrieveProvinceId(province);
 
-					System.out.println("provincia:" + province + ",id:" + provinceId);
+					//System.out.println("provincia:" + province + ",id:" + provinceId);
 
 					writer.append(String.valueOf(user) + "," + provinceId + "," + String.valueOf(value) + "\n");
 				}
 				List<String> municipalityList = matrix.getMunicipalityMatrix();
 				for (String municipality : municipalityList)
 				{
-					System.out.println("trovato comune: "+municipality);
+					//System.out.println("trovato comune: "+municipality);
 					
 					double value = (double) matrix.getValueByUserAndMunicipality(user, municipality);
 					
