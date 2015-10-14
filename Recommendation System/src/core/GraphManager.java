@@ -176,6 +176,30 @@ public class GraphManager
 		return municipality;
 	}
 
+	
+	
+	
+	/**
+	 * @param municipalityCode
+	 * @return
+	 * @throws SQLException
+	 */
+	public long queryMunicipalityId(String municipalityCode) throws SQLException
+	{
+		Statement stmt = connection.createStatement();
+
+		//TODO
+		ResultSet rs = stmt.executeQuery("MATCH (n:School) WHERE n.municipalityCode = '" + municipalityCode + "' RETURN n.municipalityId LIMIT 1");
+		long municipalityId = 0;
+		while (rs.next())
+		{
+			long appString = rs.getLong("n.municipalityId");
+			if (appString != 0)
+				municipalityId = appString;
+		}
+		return municipalityId;
+	}
+
 	public ArrayList<String> retrieveClassCodes() throws SQLException
 	{
 		Statement stmt = connection.createStatement();
@@ -190,12 +214,12 @@ public class GraphManager
 		while (rs.next())
 		{
 
-			System.out.println(rs.getString("teachingRoleArea"));
+			//System.out.println(rs.getString("teachingRoleArea"));
 			classCodeStrings.add(rs.getString("teachingRoleArea"));
 			count++;
 
 		}
-		System.out.println("#classi:" + count);
+		//System.out.println("#classi:" + count);
 		return classCodeStrings;
 	}
 

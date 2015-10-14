@@ -47,6 +47,7 @@ public class Filter {
 			switch ((int) typeId) {
 			case 1:
 				String province = target.getString(KEY);
+				System.out.println("provincia:"+province);
 				result = queryManager.isProvinceInRegion(region, province);
 				if (result == 0) {
 					list.add(document);

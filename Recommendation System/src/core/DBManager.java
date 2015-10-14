@@ -192,6 +192,14 @@ public class DBManager
 		Document doc = collection.find(new Document("municipality_name", municipality)).first();
 		return doc;
 	}
+	
+	
+	public Document findDocWithMunicipalityCode(String municipalityCode){
+		
+		MongoCollection<Document> collection = getCollectionByName(configuration.getMunicipalities_collection());
+		Document doc = collection.find(new Document("municipality_istat_code", municipalityCode)).first();
+		return doc;
+	}
 
 	/**
 	 * Recupera un documento contenente la scuola passata

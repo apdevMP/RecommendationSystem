@@ -20,23 +20,27 @@ import com.mongodb.util.JSON;
  * Classe di servizio che si frappone tra il sistema e il DBManager
  * 
  */
-public class QueryManager {
+public class QueryManager
+{
 
-	private DBManager manager;
-//	private static Configuration configuration = null;
+	private DBManager	manager;
+
+	//	private static Configuration configuration = null;
 
 	/**
 	 * Costruttore di default
 	 */
-	public QueryManager() {
+	public QueryManager()
+	{
 		manager = DBManager.getIstance();
-	//	configuration = Configuration.getIstance();
+		//	configuration = Configuration.getIstance();
 	}
 
 	/**
 	 * Chiude la connessione col DBManager e con il database di MongoDB
 	 */
-	public void closeConnection() {
+	public void closeConnection()
+	{
 		manager.closeConnection();
 	}
 
@@ -45,9 +49,11 @@ public class QueryManager {
 	 * 
 	 * @param score
 	 */
-	public void findWatchesByScore(int score) {
+	public void findWatchesByScore(int score)
+	{
 		FindIterable<Document> iterable = manager.findWatchesByScore(score);
-		for (Document doc : iterable) {
+		for (Document doc : iterable)
+		{
 			System.out.println(doc.toJson());
 		}
 	}
@@ -55,13 +61,12 @@ public class QueryManager {
 	/**
 	 * Recupera i documenti dai watches filtrati per materia insegnata
 	 * 
-	 * @param teachingRole
-	 *            materia insegnata
+	 * @param teachingRole materia insegnata
 	 * @return lista di documenti filtrati
 	 */
-	public FindIterable<Document> findWatchesByTeachingRole(String teachingRole) {
-		FindIterable<Document> iterable = manager
-				.findWatchesByTeachingRole(teachingRole);
+	public FindIterable<Document> findWatchesByTeachingRole(String teachingRole)
+	{
+		FindIterable<Document> iterable = manager.findWatchesByTeachingRole(teachingRole);
 		return iterable;
 	}
 
@@ -69,13 +74,12 @@ public class QueryManager {
 	 * Recupera la lista di azioni eseguite dagli utenti(log),filtrate per la
 	 * materia insegnata
 	 * 
-	 * @param teachingRole
-	 *            materia insegnata
+	 * @param teachingRole materia insegnata
 	 * @return lista di documenti filtrati
 	 */
-	public FindIterable<Document> findLogsByTeachingRole(String teachingRole) {
-		FindIterable<Document> iterable = manager
-				.findLogsByTeachingRole(teachingRole);
+	public FindIterable<Document> findLogsByTeachingRole(String teachingRole)
+	{
+		FindIterable<Document> iterable = manager.findLogsByTeachingRole(teachingRole);
 
 		return iterable;
 	}
@@ -84,13 +88,12 @@ public class QueryManager {
 	 * Verifica se la provincia "province" � presente all'interno della regione
 	 * "region"
 	 * 
-	 * @param region
-	 *            regione
-	 * @param province
-	 *            provincia
+	 * @param region regione
+	 * @param province provincia
 	 * @return 0 se presente,1 altrimenti
 	 */
-	public int isProvinceInRegion(String region, String province) {
+	public int isProvinceInRegion(String region, String province)
+	{
 
 		Document doc = manager.findDocWithProvince(province);
 		// se non viene recuperato alcun documento restituisce 1
@@ -110,24 +113,25 @@ public class QueryManager {
 	 * Verifica se il comune rapppresentato dal suo codice � presente
 	 * all'interno della regione "region"
 	 * 
-	 * @param region
-	 *            regione
-	 * @param municipality_code
-	 *            codice del comune
+	 * @param region regione
+	 * @param municipality_code codice del comune
 	 * @return 0 se presente,1 altrimenti
 	 */
-	public int isMunicipalityInRegion(String region, String municipality_code) {
+	public int isMunicipalityInRegion(String region, String municipality_code)
+	{
 		// Si effettua la connessione al grafo presente in neo4j
-		
+
 		GraphManager gManager = GraphManager.getIstance();
 		//gManager.connectToGraph("neo4j", "vanessa");
 
 		// Si recupera il nome del comune dal codice
 		String municipality = null;
-		try {
+		try
+		{
 			municipality = gManager.queryMunicipalityName(municipality_code);
 
-		} catch (SQLException e) {
+		} catch (SQLException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -154,13 +158,12 @@ public class QueryManager {
 	 * Verifica se la scuola rapppresentata dal suo codice � presente
 	 * all'interno della regione "region"
 	 * 
-	 * @param region
-	 *            regione
-	 * @param school
-	 *            codice della scuola
+	 * @param region regione
+	 * @param school codice della scuola
 	 * @return 0 se presente,1 altrimenti
 	 */
-	public int isSchoolInRegion(String region, String school) {
+	public int isSchoolInRegion(String region, String school)
+	{
 		// recupero il documento che contiene il codice della scuola e verifico
 		// se esiste
 		Document doc = manager.findDocWithSchool(school);
@@ -182,17 +185,20 @@ public class QueryManager {
 	 * 
 	 * @return lista di azioni
 	 */
-	public ArrayList<String> getLogAction() {
-		
+	public ArrayList<String> getLogAction()
+	{
+
 		//Viene inizializzata la lista delle azioni e vengono recuperati tutti documentii del log
 		ArrayList<String> actionList = new ArrayList<String>();
 		FindIterable<Document> iterable = manager.findLogs();
 
 		//Si inizializzano le classi per la scrittura su file 
 		FileOutputStream fos = null;
-		try {
+		try
+		{
 			fos = new FileOutputStream("azioni.txt");
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -200,10 +206,12 @@ public class QueryManager {
 		PrintStream write = new PrintStream(fos);
 
 		//vengono salavate tutte le azioni una volta sola
-		for (Document doc : iterable) {
+		for (Document doc : iterable)
+		{
 			String action = doc.getString("action");
 
-			if (!actionList.contains(action)) {
+			if (!actionList.contains(action))
+			{
 				actionList.add(action);
 				write.println(doc.toJson());
 			}
@@ -214,23 +222,27 @@ public class QueryManager {
 
 	/**
 	 * Scrive su file i log filtrati per un'azione specifica
+	 * 
 	 * @param action azione
 	 */
-	public void getLogsByAction(String action) {
-		FindIterable<Document> iterable = manager
-				.findLogsByAction(action);
+	public void getLogsByAction(String action)
+	{
+		FindIterable<Document> iterable = manager.findLogsByAction(action);
 
 		FileOutputStream fos = null;
-		try {
+		try
+		{
 			fos = new FileOutputStream("prova.txt");
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		PrintStream write = new PrintStream(fos);
 
-		for (Document doc : iterable) {
+		for (Document doc : iterable)
+		{
 
 			write.println(doc.toJson());
 
@@ -240,32 +252,65 @@ public class QueryManager {
 
 	/**
 	 * Recupera il profilo dell'utente dal db o altrimenti ne crea uno
+	 * 
 	 * @param id
 	 * @return
 	 */
-	public Profile retrieveProfile(long id,String teachingRole,double score) {
+	public Profile retrieveProfile(long id, String teachingRole, double score)
+	{
 		Profile profile = null;
-		
+
 		Document doc = manager.retrieveProfile(id);
-		if(doc == null){
+		if (doc == null)
+		{
 			profile = Profile.createProfile(id, teachingRole, score);
 			this.saveProfile(profile);
-		}
-		else{
+		} else
+		{
 			String profileString = doc.toJson();
 			Gson gson = new Gson();
 			profile = gson.fromJson(profileString, Profile.class);
-		
+
 		}
 		return profile;
 	}
 
-	public void saveProfile(Profile profile) {
+	public void saveProfile(Profile profile)
+	{
 		Gson gson = new Gson();
 		String jsonProfile = gson.toJson(profile);
-		Document document = Document.parse(jsonProfile); 
-		
+		Document document = Document.parse(jsonProfile);
+
 		manager.saveProfile(document);
+	}
+
+	/**
+	 * Recupera il codice identificativo della provincia passata per argomento,
+	 * effettuando una query sul file municipality.csv
+	 * 
+	 * @param provinceCode sigla della provincia
+	 * @return codice identificativo della provincia
+	 */
+	public int retrieveProvinceId(String provinceCode)
+	{
+		Document document = manager.findDocWithProvince(provinceCode);
+		return document.getInteger("province_id");
+	}
+	
+	public long retrieveMunicipalityId(String municipalityCode)
+	{
+		GraphManager gmanager = GraphManager.getIstance();
+		long id = 0;
+		try
+		{
+			id = gmanager.queryMunicipalityId(municipalityCode);
+		} catch (SQLException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return id;
 	}
 
 }

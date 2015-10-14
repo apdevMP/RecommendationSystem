@@ -51,11 +51,11 @@ public class StartWindow
 	private JButton				btnGo;
 	private JTextArea			textArea;
 	private static GraphManager	gManager;
-	public static Configuration configuration;
+	public static Configuration	configuration;
 
 	private String[]			regionStrings	= { "Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna", "Friuli-Venezia Giulia",
-			"Lazio", "Liguria", "Lombardia", "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia", "Toscana", "Trentino-Alto Adige",
-			"Umbria", "Valle d'Aosta", "Veneto" };
+			"Lazio", "Liguria", "Lombardia", "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia", "Toscana", "Trentino-Alto Adige", "Umbria",
+			"Valle d'Aosta", "Veneto"			};
 
 	private String[]			rangeStrings	= { "I", "II", "III", "IV", "I coda", "II coda", "III coda", "IV coda" };
 
@@ -65,17 +65,12 @@ public class StartWindow
 	public static void main(String[] args)
 	{
 
-
-		
-		
 		EventQueue.invokeLater(new Runnable() {
 			public void run()
 			{
 				try
 				{
 					StartWindow window = new StartWindow();
-
-					
 
 					window.frame.setVisible(true);
 					Controller controller = new Controller(window);
@@ -124,19 +119,17 @@ public class StartWindow
 		JLabel lblClass = new JLabel("Classe di Concorso");
 		lblClass.setBounds(6, 44, 126, 16);
 		panelData.add(lblClass);
-		
-		
-		
+
 		//retrieveValues("config.json");
-		
+
 		Configuration.getIstance();
-		
+
 		gManager = GraphManager.getIstance();
-	//	gManager.connectToGraph("neo4j", "vanessa");
+		//	gManager.connectToGraph("neo4j", "vanessa");
 		ArrayList<String> classCodesArrayList = new ArrayList<>();
 		try
 		{
-			 classCodesArrayList = gManager.retrieveClassCodes();
+			classCodesArrayList = gManager.retrieveClassCodes();
 		} catch (SQLException e1)
 		{
 			// TODO Auto-generated catch block
@@ -145,7 +138,7 @@ public class StartWindow
 
 		String[] classCodesArray = new String[classCodesArrayList.size()];
 		classCodesArray = classCodesArrayList.toArray(classCodesArray);
-		
+
 		comboBoxClass = new JComboBox(classCodesArray);
 		comboBoxClass.setBounds(6, 62, 154, 27);
 		panelData.add(comboBoxClass);
@@ -200,8 +193,6 @@ public class StartWindow
 
 	}
 
-	
-
 	public JButton getButton()
 	{
 		return btnGo;
@@ -232,27 +223,24 @@ public class StartWindow
 	{
 		return (Integer) comboBoxRange.getSelectedItem();
 	}
-	
-	
+
 	private void retrieveValues(String path)
 	{
 		// TODO Auto-generated method stub
-				Gson gson = new Gson();
-				BufferedReader br = null;
+		Gson gson = new Gson();
+		BufferedReader br = null;
 
-				try
-				{
-					br = new BufferedReader(new FileReader(path));
-				} catch (FileNotFoundException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				configuration = Configuration.getIstance();
-				configuration = gson.fromJson(br, Configuration.class);
-				
-				System.out.println("Config: mongo add:"+ configuration.getMongo_server_address()+ " "+configuration.getMunicipalities_collection());
-		
+		try
+		{
+			br = new BufferedReader(new FileReader(path));
+		} catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		configuration = Configuration.getIstance();
+		configuration = gson.fromJson(br, Configuration.class);
+
 	}
 
 }
