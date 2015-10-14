@@ -1,389 +1,117 @@
 package core;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
 
-import utils.Utils;
+import com.mongodb.client.FindIterable;
 
-/**
- * Classe di servizio per creare,modificare e lavorare sulle matrici di utilitï¿½
- * 
- */
-public class UtilityMatrixService {
+public class UtilityMatrixService
+{
 
-	private UtilityMatrix umFromWatch;
-	private UtilityMatrix umFromLog;
-	private UtilityMatrix umMerge;
+	private Profile			userProfile;
+	private String			region;
+	private QueryManager	queryManager;
 
-	/**
-	 * Costruttore di default
-	 */
-	public UtilityMatrixService() {
-		umFromWatch = new UtilityMatrix();
-		umFromLog = new UtilityMatrix();
-		umMerge = new UtilityMatrix();
+	public UtilityMatrixService()
+	{
+
 	}
 
-	/**
-	 * Restituisce la matrice di utilitï¿½ proveniente dai Watches
-	 * 
-	 * @return
-	 */
-	public UtilityMatrix getUmFromWatch() {
-		return umFromWatch;
+	public UtilityMatrixService(Profile profile, String region)
+	{
+		this.userProfile = profile;
+		this.region = region;
 	}
 
-	/**
-	 * Imposta la matrice di utilitï¿½ proveniente dai Watches
-	 * 
-	 * @param umFromWatch
-	 */
-	public void setUmFromWatch(UtilityMatrix umFromWatch) {
-		this.umFromWatch = umFromWatch;
-	}
+	public UtilityMatrix createUtilityMatrix()
+	{
+		// istanzio un queryManager per recuperare dati dalle collezioni
+		queryManager = new QueryManager();
 
-	/**
-	 * Restituisce la matrice di utilitï¿½ proveniente dai Log
-	 * 
-	 * @return
-	 */
-	public UtilityMatrix getUmFromLog() {
-		return umFromLog;
-	}
+		// si recupera la materia di insegnamento dell'utente
+		String teachingRole = userProfile.getTeachingRole();
 
-	/**
-	 * Imposta la matrice di utilitï¿½ proveniente dai Log
-	 * 
-	 * @param umFromLog
-	 */
-	public void setUmFromLog(UtilityMatrix umFromLog) {
-		this.umFromLog = umFromLog;
-	}
+		// si recupera la lista di watch e di log in base alla materia di
+		// insegnamento
+		FindIterable<Document> itWatches = queryManager.findWatchesByTeachingRole(teachingRole);
+		FindIterable<Document> itLogs = queryManager.findLogsByTeachingRole(teachingRole);
 
-	/**
-	 * Restituisce la matrice di utilitï¿½ completa
-	 * 
-	 * @return
-	 */
-	public UtilityMatrix getUmMerge() {
-		return umMerge;
-	}
+		// le liste di watch e log vengono filtrate per regione
+		ArrayList<Document> listWatches = Filter.filterWatchesByRegion(itWatches, region);
+		ArrayList<Document> listLogs = Filter.filterLogsByRegion(itLogs, region);
 
-	/**
-	 * Imposta la matrice di utilitï¿½ completa
-	 * 
-	 * @param umMerge
-	 */
-	public void setUmMerge(UtilityMatrix umMerge) {
-		this.umMerge = umMerge;
-	}
-
-	/**
-	 * Riempie le matrici di utilitï¿½ relative ai Watches e al log di navigazione
-	 * 
-	 * @param listFromWatch
-	 *            lista di watch filtrata
-	 * @param listFromLog
-	 *            lista di log filtrata
-	 */
-	public void fillMatrix(List<Document> listFromWatch,
-			List<Document> listFromLog) {
-
-		// riempie e stampa la matrice di utilitï¿½ relativa ai watches
-		umFromWatch.fillMatrixWithWatches(listFromWatch);
-		umFromWatch.printUtilityMatrix();
-
-		// riempie e stampa la matrice di utilitï¿½ relativa al log
-		umFromLog.fillMatrixWithLogs(listFromLog);
-		umFromLog.printUtilityMatrix();
-	}
-
-	/**
-	 * Metodo che permette di effettuare il merge tra le liste di province
-	 * 
-	 * @param userId
-	 *            id dell'utente
-	 * @param isPresent
-	 *            verifica se l'utente sia giï¿½ presente
-	 */
-	public void mergeProvinceList(long userId, boolean isPresent) {
-
-		// recupera la lista degli utenti
-		List<Long> matrixUser = umMerge.getUserMatrix();
-
-		// Se l'utente non ï¿½ presente si aggiunge alla lista
-		if (isPresent == false) {
-			matrixUser.add(userId);
-
-			// si aggiunge la lista relativa all'utente aggiunto
-			umMerge.getProvinceValues().add(new ArrayList<Integer>());
-
-			// si recupera l'indice dell'utente all'interno della lista e si
-			// inzializzano i valori relativi alle province della matrice di
-			// merge a 0
-			int indexUser = matrixUser.indexOf(userId);
-			for (int i = 0; i < umMerge.getProvinceMatrix().size(); i++) {
-				umMerge.getProvinceValues().get(indexUser).add(0);
-			}
+		for (Document document : listWatches)
+		{
+			System.out.println(document.toJson());
+		}
+		for (Document document : listLogs)
+		{
+			System.out.println(document.toJson());
 		}
 
-		// si recupera la lista delle province dalla matrice di utilitï¿½ relativa
-		// al log di navigazione
-		List<String> provinceToMergeList = umFromLog.getProvinceMatrix();
+		// dalle liste viene creata la matrice di utilitï¿½
+		UtilityMatrixCreator ums = new UtilityMatrixCreator();
+		UtilityMatrix uMatrix = ums.createUtilityMatrix(listWatches, listLogs);
+		System.out.println("+++++++++++++++++ MERGE ++++++++++++++++++++++");
+		//uMatrix.printUtilityMatrix();
+		return uMatrix;
+	}
 
-		// recupera l'indice dell'utente e inizializza delle variabili di
-		// appoggio che conterranno rispettivamente il valore presente nella
-		// matrice dei log,il valore presente nella matrice dei watches ed
-		// infine il massimo valore tra esi
-		int indexUser = matrixUser.indexOf(userId);
-		int valueLog, valueWatch, maxValue;
+	public void saveMatrix(UtilityMatrix matrix)
+	{
+		try
+		{
+			FileWriter writer = new FileWriter("matrix.csv");
+			List<Long> userList = matrix.getUserMatrix();
+			for (long user : userList)
+			{
+				List<String> provinceList = matrix.getProvinceMatrix();
+				for (String province : provinceList)
+				{
+					double value = (double) matrix.getValueByUserAndProvince(user, province);
+					/*
+					 * Dato che il Recommender di Mahout richiede che i dati
+					 * presenti nel csv siano di tipo Long, al posto della sigla
+					 * della procincia si recupera e scrive il codice
+					 * identificativo, utilizzando il file municipality.csv
+					 */
 
-		// Si verifica per ogni provincia presente nella lista se essa sia
-		// all'interno della matrice di utilitï¿½ dei watches
-		for (String province : provinceToMergeList) {
-			// la provincia ï¿½ presente
-			if (umMerge.getProvinceMatrix().contains(province)) {
+					long provinceId = queryManager.retrieveProvinceId(province);
 
-				// si recuperano i valori contenuti nelle matrici di log e
-				// watches
-				valueLog = umFromLog
-						.getValueByUserAndProvince(userId, province);
-				valueWatch = umMerge
-						.getValueByUserAndProvince(userId, province);
-				// si prende il massimo valore tra quelli recuperati e lo si
-				// assegna alla matrice di utilitï¿½
-				maxValue = Utils.getMax(valueLog, valueWatch);
-				umMerge.setValueByUserAndProvince(userId, province, maxValue);
-			}
-			// la provincia non ï¿½ presente
-			else {
-				// si recupera il valore dalla matrice di log
-				valueLog = umFromLog
-						.getValueByUserAndProvince(userId, province);
-				// si aggiunge la provincia alla matrice e le si assegna il
-				// valore recuperato
-				umMerge.getProvinceMatrix().add(province);
-				umMerge.getProvinceValues().get(indexUser).add(valueLog);
+					//System.out.println("provincia:" + province + ",id:" + provinceId);
 
-				int cont = 0;
-				// per ogni utente presente nela lista (se diverso da quello che
-				// si sta verificando) si assegna 0 alla colonna relativa alla
-				// provincia
-				for (long id : matrixUser) {
-					if (id != userId) {
-						umMerge.getProvinceValues().get(cont).add(0);
-					}
-					cont++;
+					writer.append(String.valueOf(user) + "," + provinceId + "," + String.valueOf(value) + "\n");
 				}
-
-			}
-		}
-	}
-
-	/**
-	 * Metodo che permette di effettuare il merge tra le liste dei comuni
-	 * 
-	 * @param userId
-	 *            id dell'utente
-	 * @param isPresent
-	 *            verifica se l'utente sia giï¿½ presente
-	 */
-	public void mergeMunicipalityList(long userId, boolean isPresent) {
-
-		// recupera la lista degli utenti
-		List<Long> matrixUser = umMerge.getUserMatrix();
-
-		if (isPresent == false) {
-			// si aggiunge la lista relativa all'utente aggiunto e non presente
-			umMerge.getMunicipalityValues().add(new ArrayList<Integer>());
-
-			// si recupera l'indice dell'utente all'interno della lista e si
-			// inzializzano i valori relativi ai comuni della matrice di
-			// merge a 0
-			int indexUser = matrixUser.indexOf(userId);
-			for (int i = 0; i < umMerge.getMunicipalityMatrix().size(); i++) {
-				umMerge.getMunicipalityValues().get(indexUser).add(0);
-			}
-		}
-
-		// si recupera la lista dei comuni dalla matrice di utilitï¿½ relativa
-		// al log di navigazione
-		List<String> municipalityToMergeList = umFromLog
-				.getMunicipalityMatrix();
-
-		// recupera l'indice dell'utente e inizializza delle variabili di
-		// appoggio che conterranno rispettivamente il valore presente nella
-		// matrice dei log,il valore presente neella matrice dei watches ed
-		// infine il massimo valore tra esi
-		int indexUser = matrixUser.indexOf(userId);
-		int valueLog, valueWatch, maxValue;
-
-		// Si verifica per ogni comune presente nella lista, se esso sia
-		// all'interno della matrice di utilitï¿½ dei watches
-		for (String municipality : municipalityToMergeList) {
-			// il comune ï¿½ presente
-			if (umMerge.getMunicipalityMatrix().contains(municipality)) {
-
-				// si recuperano i valori contenuti nelle matrici di log e
-				// watches
-				valueLog = umFromLog.getValueByUserAndMunicipality(userId,
-						municipality);
-				valueWatch = umMerge.getValueByUserAndMunicipality(userId,
-						municipality);
-				// si prende il massimo valore tra quelli recuperati e lo si
-				// assegna alla matrice di utilitï¿½
-				maxValue = Utils.getMax(valueLog, valueWatch);
-				umMerge.setValueByUserAndMunicipality(userId, municipality,
-						maxValue);
-			}
-			// il comune non ï¿½ presente
-			else {
-				// si recupera il valore dalla matrice di log
-				valueLog = umFromLog.getValueByUserAndMunicipality(userId,
-						municipality);
-				// si aggiunge il comune alla matrice e gli si assegna il
-				// valore recuperato
-				umMerge.getMunicipalityMatrix().add(municipality);
-				umMerge.getMunicipalityValues().get(indexUser).add(valueLog);
-
-				int cont = 0;
-				// per ogni utente presente nela lista (se diverso da quello che
-				// si sta verificando) si assegna 0 alla colonna relativa al
-				// comune
-				for (long id : matrixUser) {
-					if (id != userId) {
-						umMerge.getMunicipalityValues().get(cont).add(0);
-					}
-					cont++;
+				List<String> municipalityList = matrix.getMunicipalityMatrix();
+				for (String municipality : municipalityList)
+				{
+					//System.out.println("trovato comune: "+municipality);
+					
+					double value = (double) matrix.getValueByUserAndMunicipality(user, municipality);
+					
+					long municipalityId = queryManager.retrieveMunicipalityId(municipality);
+					System.out.println("comune:" + municipality + ",id:" + municipalityId);
+					writer.append(String.valueOf(user) + "," + municipalityId + "," + String.valueOf(value) + "\n");
 				}
-
-			}
-		}
-	}
-
-	/**
-	 * Metodo che permette di effettuare il merge tra le liste delle scuole
-	 * 
-	 * @param userId
-	 *            id dell'utente
-	 * @param isPresent
-	 *            verifica se l'utente sia giï¿½ presente
-	 */
-	public void mergeSchoolList(long userId, boolean isPresent) {
-
-		// recupera la lista degli utenti
-		List<Long> matrixUser = umMerge.getUserMatrix();
-
-		if (isPresent == false) {
-			// si aggiunge la lista relativa all'utente aggiunto e non presente
-			umMerge.getSchoolValues().add(new ArrayList<Integer>());
-
-			// si recupera l'indice dell'utente all'interno della lista e si
-			// inzializzano i valori relativi alle scuole della matrice di
-			// merge a 0
-			int indexUser = matrixUser.indexOf(userId);
-			for (int i = 0; i < umMerge.getSchoolMatrix().size(); i++) {
-				umMerge.getSchoolValues().get(indexUser).add(0);
-			}
-		}
-
-		// si recupera la lista delle scuole dalla matrice di utilitï¿½ relativa
-		// al log di navigazione
-		List<String> schoolToMergeList = umFromLog.getSchoolMatrix();
-
-		// recupera l'indice dell'utente e inizializza delle variabili di
-		// appoggio che conterranno rispettivamente il valore presente nella
-		// matrice dei log,il valore presente nella matrice dei watches ed
-		// infine il massimo valore tra esi
-		int indexUser = matrixUser.indexOf(userId);
-		int valueLog, valueWatch, maxValue;
-
-		for (String school : schoolToMergeList) {
-			// la scuola ï¿½ presente
-			if (umMerge.getSchoolMatrix().contains(school)) {
-
-				// si recuperano i valori contenuti nelle matrici di log e
-				// watches
-				valueLog = umFromLog.getValueByUserAndSchool(userId, school);
-				valueWatch = umMerge.getValueByUserAndSchool(userId, school);
-
-				// si prende il massimo valore tra quelli recuperati e lo si
-				// assegna alla matrice di utilitï¿½
-				maxValue = Utils.getMax(valueLog, valueWatch);
-				umMerge.setValueByUserAndSchool(userId, school, maxValue);
-			}
-			// la scuola non è presente
-			else {
-				// si recupera il valore dalla matrice di log
-				valueLog = umFromLog.getValueByUserAndSchool(userId, school);
-				// si aggiunge la scuola alla matrice e gli si assegna il
-				// valore recuperato
-				umMerge.getSchoolMatrix().add(school);
-				umMerge.getSchoolValues().get(indexUser).add(valueLog);
-
-				// per ogni utente presente nela lista (se diverso da quello che
-				// si sta verificando) si assegna 0 alla colonna relativa alla
-				// scuola
-				int cont = 0;
-				for (long id : matrixUser) {
-					if (id != userId) {
-						umMerge.getSchoolValues().get(cont).add(0);
-					}
-					cont++;
+				List<String> schoolList = matrix.getSchoolMatrix();
+				for (String school : schoolList)
+				{
+					double value = (double) matrix.getValueByUserAndSchool(user, school);
+					writer.append(String.valueOf(user) + "," + school + "," + String.valueOf(value) + "\n");
 				}
-
 			}
+			writer.flush();
+			writer.close();
+		} catch (IOException e)
+		{
+			System.out.println("File not Found!!!");
+			e.printStackTrace();
 		}
-	}
 
-	/**
-	 * Metodo che esegue il merge tra due matrici di utilitï¿½. Il merge viene
-	 * eseguito unendo alla matrice dei watches quella proveniente dal log di
-	 * navigazione
-	 */
-	public void mergeMatrix() {
-
-		// viene assegnata la matrice dei watches a quella di merge
-		umMerge = umFromWatch;
-
-		// si recuperano le liste degli utenti dellee due matrici
-		List<Long> userToMerge = umFromLog.getUserMatrix();
-		List<Long> matrixUser = umMerge.getUserMatrix();
-
-		// per ogni utente della matrice di log, si verifica se ï¿½ contenuto
-		// all'interno di quella dei watches in maniera da aggiungere la sua
-		// riga o meno all'interno della matrice finale
-		for (long userId : userToMerge) {
-
-			// verifica se l'utente sia presente
-			boolean containsUser = matrixUser.contains(userId);
-
-			// unisco le liste delle province,dei comuni e delle scuole
-			mergeProvinceList(userId, containsUser);
-			mergeMunicipalityList(userId, containsUser);
-			mergeSchoolList(userId, containsUser);
-		}
-	}
-
-	/**
-	 * Metodo che, date le liste di documenti provenienti dai watch e dal log,
-	 * resituisce la matrice di utilitï¿½ generale
-	 * 
-	 * @param listFromWatch
-	 * @param listFromLog
-	 * @return Matrice di Utilitï¿½ completa
-	 */
-	public UtilityMatrix createUtilityMatrix(List<Document> listFromWatch,
-			List<Document> listFromLog) {
-		// riempie le due matrici di utilitï¿½ provenienti da watches e log di
-		// navigazione
-		fillMatrix(listFromWatch, listFromLog);
-
-		// unisce le due matrici di utilitï¿½ in una sola che viene restituita
-		mergeMatrix();
-		return umMerge;
 	}
 
 }

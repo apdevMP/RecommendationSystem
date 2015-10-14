@@ -41,7 +41,7 @@ public class RecommenderService
 	public void recommendByRegion(String region)
 	{
 
-		UtilityMatrixCreator creator = new UtilityMatrixCreator(userProfile, region);
+		UtilityMatrixService creator = new UtilityMatrixService(userProfile, region);
 		UtilityMatrix matrix = creator.createUtilityMatrix();
 		creator.saveMatrix(matrix);
 
