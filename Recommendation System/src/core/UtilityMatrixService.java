@@ -41,16 +41,20 @@ public class UtilityMatrixService
 		FindIterable<Document> itLogs = queryManager.findLogsByTeachingRole(teachingRole);
 
 		// le liste di watch e log vengono filtrate per regione
-		ArrayList<Document> listWatches = Filter.filterWatchesByRegion(itWatches, region);
-		ArrayList<Document> listLogs = Filter.filterLogsByRegion(itLogs, region);
-
-		for (Document document : listWatches)
+		//ArrayList<Document> listWatches = Filter.filterWatchesByRegion(itWatches, region);
+		//ArrayList<Document> listLogs = Filter.filterLogsByRegion(itLogs, region);
+		ArrayList<Document> listWatches = new ArrayList<Document>();
+		ArrayList<Document> listLogs = new 	ArrayList<Document>();
+		
+		for (Document document : itWatches)
 		{
-			System.out.println(document.toJson());
+			listWatches.add(document);
+			//System.out.println(document.toJson());
 		}
-		for (Document document : listLogs)
+		for (Document document : itLogs)
 		{
-			System.out.println(document.toJson());
+			listLogs.add(document);
+			//System.out.println(document.toJson());
 		}
 
 		// dalle liste viene creata la matrice di utilit�

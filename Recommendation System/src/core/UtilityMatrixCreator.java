@@ -8,7 +8,7 @@ import org.bson.Document;
 import utils.Utils;
 
 /**
- * Classe di servizio per creare,modificare e lavorare sulle matrici di utilitï¿½
+ * Classe di servizio per creare,modificare e lavorare sulle matrici di utilità
  * 
  */
 public class UtilityMatrixCreator {
@@ -45,7 +45,7 @@ public class UtilityMatrixCreator {
 	}
 
 	/**
-	 * Restituisce la matrice di utilitï¿½ proveniente dai Log
+	 * Restituisce la matrice di utilità proveniente dai Log
 	 * 
 	 * @return
 	 */
