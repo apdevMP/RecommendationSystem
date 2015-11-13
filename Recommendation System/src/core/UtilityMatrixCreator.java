@@ -8,7 +8,7 @@ import org.bson.Document;
 import utils.Utils;
 
 /**
- * Classe di servizio per creare,modificare e lavorare sulle matrici di utilità
+ * Classe di servizio per creare,modificare e lavorare sulle matrici di utilitï¿½
  * 
  */
 public class UtilityMatrixCreator {
@@ -45,7 +45,7 @@ public class UtilityMatrixCreator {
 	}
 
 	/**
-	 * Restituisce la matrice di utilità proveniente dai Log
+	 * Restituisce la matrice di utilitï¿½ proveniente dai Log
 	 * 
 	 * @return
 	 */
@@ -93,11 +93,11 @@ public class UtilityMatrixCreator {
 
 		// riempie e stampa la matrice di utilitï¿½ relativa ai watches
 		umFromWatch.fillMatrixWithWatches(listFromWatch);
-		umFromWatch.printUtilityMatrix();
+	//	umFromWatch.printUtilityMatrix();
 
 		// riempie e stampa la matrice di utilitï¿½ relativa al log
 		umFromLog.fillMatrixWithLogs(listFromLog);
-		umFromLog.printUtilityMatrix();
+	//	umFromLog.printUtilityMatrix();
 	}
 
 	/**
@@ -314,7 +314,7 @@ public class UtilityMatrixCreator {
 				maxValue = Utils.getMax(valueLog, valueWatch);
 				umMerge.setValueByUserAndSchool(userId, school, maxValue);
 			}
-			// la scuola non è presente
+			// la scuola non ï¿½ presente
 			else {
 				// si recupera il valore dalla matrice di log
 				valueLog = umFromLog.getValueByUserAndSchool(userId, school);
