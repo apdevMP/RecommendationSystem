@@ -154,7 +154,9 @@ public class UtilityMatrixCreator {
 						.getValueByUserAndProvince(userId, province);
 				// si prende il massimo valore tra quelli recuperati e lo si
 				// assegna alla matrice di utilit�
-				maxValue = Utils.getMax(valueLog, valueWatch);
+				//TODO
+				//maxValue = Utils.getMax(valueLog, valueWatch);
+				maxValue = valueLog+valueWatch;
 				umMerge.setValueByUserAndProvince(userId, province, maxValue);
 			}
 			// la provincia non � presente
@@ -234,7 +236,9 @@ public class UtilityMatrixCreator {
 						municipality);
 				// si prende il massimo valore tra quelli recuperati e lo si
 				// assegna alla matrice di utilit�
-				maxValue = Utils.getMax(valueLog, valueWatch);
+				//TODO
+				maxValue = valueLog+valueWatch;
+				//maxValue = Utils.getMax(valueLog, valueWatch);
 				umMerge.setValueByUserAndMunicipality(userId, municipality,
 						maxValue);
 			}
@@ -311,7 +315,10 @@ public class UtilityMatrixCreator {
 
 				// si prende il massimo valore tra quelli recuperati e lo si
 				// assegna alla matrice di utilit�
-				maxValue = Utils.getMax(valueLog, valueWatch);
+				
+				//TODO
+				maxValue = valueLog+valueWatch;
+			//	maxValue = Utils.getMax(valueLog, valueWatch);
 				umMerge.setValueByUserAndSchool(userId, school, maxValue);
 			}
 			// la scuola non � presente

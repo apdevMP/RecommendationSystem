@@ -77,9 +77,10 @@ public class UtilityMatrixService
 
 	public void saveMatrix(UtilityMatrix matrix)
 	{
+		System.out.println("Saving data...");
 		try
 		{
-			FileWriter writer = new FileWriter("new_versionMap.csv");
+			FileWriter writer = new FileWriter("matrix_value.csv");
 			List<Long> userList = matrix.getUserMatrix();
 			List<String> provinceList = matrix.getProvinceMatrix();
 			List<String> municipalityList = matrix.getMunicipalityMatrix();
@@ -90,6 +91,7 @@ public class UtilityMatrixService
 
 			long counter = 0;
 			map = new HashMap<String, Long>();
+			System.out.println("counter="+counter+"...province");
 			for(String provinceCodeString : provinceList){
 				Long i = map.get(provinceCodeString);
 				if (i == null)
@@ -100,6 +102,7 @@ public class UtilityMatrixService
 					++counter;
 				}
 			}
+			System.out.println("counter="+counter+"...comuni");
 			for(String municipalityCodeString : municipalityList){
 				Long i = map.get(municipalityCodeString);
 				if (i == null)
@@ -110,6 +113,8 @@ public class UtilityMatrixService
 					++counter;
 				}
 			}
+			
+			System.out.println("counter="+counter+"...scuole");
 			for (String schoolCodeString : schoolList)
 			{
 
@@ -123,7 +128,7 @@ public class UtilityMatrixService
 				}
 			}
 			
-			System.out.println("counter:"+counter);
+			System.out.println("counter totale:"+counter);
 
 			for (long user : userList)
 			{
@@ -172,11 +177,14 @@ public class UtilityMatrixService
 			}
 			writer.flush();
 			writer.close();
+			
+			System.out.println("Data saved!");
 		} catch (IOException e)
 		{
 			System.out.println("File not Found!!!");
 			e.printStackTrace();
 		}
+		
 
 	}
 
