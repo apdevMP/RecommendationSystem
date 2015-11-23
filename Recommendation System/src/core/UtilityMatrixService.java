@@ -19,6 +19,8 @@ public class UtilityMatrixService
 	private Profile			userProfile;
 	private String			region;
 	private QueryManager	queryManager;
+	private Map<String, Long> itemsMap;
+	private Map<String, Long> categoriesMap;
 
 	public UtilityMatrixService()
 	{
@@ -29,6 +31,9 @@ public class UtilityMatrixService
 	{
 		this.userProfile = profile;
 		this.region = region;
+		
+		this.categoriesMap = new HashMap<String, Long>();
+	
 	}
 
 	public UtilityMatrix createUtilityMatrix()
@@ -86,48 +91,51 @@ public class UtilityMatrixService
 			List<String> municipalityList = matrix.getMunicipalityMatrix();
 			List<String> schoolList = matrix.getSchoolMatrix();
 
-			//prova mapping
-			Map<String, Long> map;
 
 			long counter = 0;
-			map = new HashMap<String, Long>();
+			this.itemsMap = new HashMap<String, Long>();
 			System.out.println("counter="+counter+"...province");
 			for(String provinceCodeString : provinceList){
-				Long i = map.get(provinceCodeString);
+				Long i = itemsMap.get(provinceCodeString);
 				if (i == null)
 				{
-					map.put(provinceCodeString, counter);
-					//	System.out.println("MAP: "+schoolCodeString+","+counter);
-					i = (long) counter;
-					++counter;
-				}
-			}
-			System.out.println("counter="+counter+"...comuni");
-			for(String municipalityCodeString : municipalityList){
-				Long i = map.get(municipalityCodeString);
-				if (i == null)
-				{
-					map.put(municipalityCodeString, counter);
+					itemsMap.put(provinceCodeString, counter);
 					//	System.out.println("MAP: "+schoolCodeString+","+counter);
 					i = (long) counter;
 					++counter;
 				}
 			}
 			
+			this.categoriesMap.put("province", counter);
+			System.out.println("counter="+counter+"...comuni");
+			for(String municipalityCodeString : municipalityList){
+				Long i = itemsMap.get(municipalityCodeString);
+				if (i == null)
+				{
+					itemsMap.put(municipalityCodeString, counter);
+					//	System.out.println("MAP: "+schoolCodeString+","+counter);
+					i = (long) counter;
+					++counter;
+				}
+			}
+			
+			this.categoriesMap.put("comuni", counter);
 			System.out.println("counter="+counter+"...scuole");
 			for (String schoolCodeString : schoolList)
 			{
 
-				Long i = map.get(schoolCodeString);
+				Long i = itemsMap.get(schoolCodeString);
 				if (i == null)
 				{
-					map.put(schoolCodeString, counter);
+					itemsMap.put(schoolCodeString, counter);
 					//	System.out.println("MAP: "+schoolCodeString+","+counter);
 					i = (long) counter;
 					++counter;
 				}
 			}
 			
+			
+			this.categoriesMap.put("scuole", counter);
 			System.out.println("counter totale:"+counter);
 
 			for (long user : userList)
@@ -148,7 +156,7 @@ public class UtilityMatrixService
 					//System.out.println("provincia:" + province + ",id:" + provinceId);
 
 					if(value > 0)
-					writer.append(String.valueOf(user) + "," + map.get(province) + "," + String.valueOf(value) + "\n");
+					writer.append(String.valueOf(user) + "," + itemsMap.get(province) + "," + String.valueOf(value) + "\n");
 				}
 			//	List<String> municipalityList = matrix.getMunicipalityMatrix();
 				for (String municipality : municipalityList)
@@ -158,7 +166,7 @@ public class UtilityMatrixService
 				//	long municipalityId = queryManager.retrieveMunicipalityId(municipality);
 			//		System.out.println("comune:" + municipality + ",id:" + municipalityId);
 					if (value != 0)
-						writer.append(String.valueOf(user) + "," + map.get(municipality) + "," + String.valueOf(value) + "\n");
+						writer.append(String.valueOf(user) + "," + itemsMap.get(municipality) + "," + String.valueOf(value) + "\n");
 				}
 
 				//System.out.println(schoolList);
@@ -168,7 +176,7 @@ public class UtilityMatrixService
 					double value = (double) matrix.getValueByUserAndSchool(user, school);
 					
 					if(value > 0)
-						writer.append(String.valueOf(user) + "," + map.get(school) + "," + String.valueOf(value) + "\n");
+						writer.append(String.valueOf(user) + "," + itemsMap.get(school) + "," + String.valueOf(value) + "\n");
 					//	System.out.println("trovata scuola:" + String.valueOf(user) + "," + map.get(school) + "," + school + ","
 					//			+ String.valueOf(value));
 					
@@ -186,6 +194,14 @@ public class UtilityMatrixService
 		}
 		
 
+	}
+	
+	public Map<String, Long>getItemsMap(){
+	 return	this.itemsMap;
+	}
+	
+	public Map<String, Long> getCategoriesMap(){
+		return this.categoriesMap;
 	}
 
 }
