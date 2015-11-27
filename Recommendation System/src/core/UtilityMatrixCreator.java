@@ -386,9 +386,11 @@ public class UtilityMatrixCreator {
 			List<Document> listFromLog) {
 		// riempie le due matrici di utilit� provenienti da watches e log di
 		// navigazione
+		System.out.println("Filling matrix from logs and watches..");
 		fillMatrix(listFromWatch, listFromLog);
 
 		// unisce le due matrici di utilit� in una sola che viene restituita
+		System.out.println("Merging matrixes..");
 		mergeMatrix();
 		return umMerge;
 	}

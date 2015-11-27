@@ -51,8 +51,10 @@ public class UtilityMatrixService
 		// si recupera la lista di watch e di log in base alla materia di
 		// insegnamento
 	//	FindIterable<Document> itWatches = queryManager.findWatchesByTeachingRole(teachingRole);
+		System.out.println("Finding watches..");
 		FindIterable<Document> itWatches = queryManager.findWatches();
 	//	FindIterable<Document> itLogs = queryManager.findLogsByTeachingRole(teachingRole);
+		System.out.println("Findind logs..");;
 		FindIterable<Document> itLogs = queryManager.getLogsByAction(actions);
 
 		// le liste di watch e log vengono filtrate per regione
@@ -72,10 +74,10 @@ public class UtilityMatrixService
 			//System.out.println(document.toJson());
 		}
 
+		System.out.println("Creating utility matrix..");
 		// dalle liste viene creata la matrice di utilit�
 		UtilityMatrixCreator ums = new UtilityMatrixCreator();
 		UtilityMatrix uMatrix = ums.createUtilityMatrix(listWatches, listLogs);
-		System.out.println("+++++++++++++++++ MERGE ++++++++++++++++++++++");
 		//uMatrix.printUtilityMatrix();
 		return uMatrix;
 	}
@@ -94,9 +96,12 @@ public class UtilityMatrixService
 
 			long counter = 0;
 			this.itemsMap = new HashMap<String, Long>();
-			System.out.println("counter="+counter+"...province");
+			System.out.println("counter="+counter+"...inizio province");
 			for(String provinceCodeString : provinceList){
+			//	System.out.println(provinceCodeString);
+				
 				Long i = itemsMap.get(provinceCodeString);
+				
 				if (i == null)
 				{
 					itemsMap.put(provinceCodeString, counter);
@@ -107,8 +112,10 @@ public class UtilityMatrixService
 			}
 			
 			this.categoriesMap.put("province", counter);
-			System.out.println("counter="+counter+"...comuni");
+			System.out.println("categoriesMap, province:"+categoriesMap.get("province"));
+			System.out.println("counter="+counter+"...inizio comuni");
 			for(String municipalityCodeString : municipalityList){
+				//System.out.println(municipalityCodeString);
 				Long i = itemsMap.get(municipalityCodeString);
 				if (i == null)
 				{
@@ -120,10 +127,11 @@ public class UtilityMatrixService
 			}
 			
 			this.categoriesMap.put("comuni", counter);
-			System.out.println("counter="+counter+"...scuole");
+			System.out.println("categoriesMap, comuni:"+categoriesMap.get("comuni"));
+			System.out.println("counter="+counter+"...inizio scuole");
 			for (String schoolCodeString : schoolList)
 			{
-
+				//System.out.println(schoolCodeString);
 				Long i = itemsMap.get(schoolCodeString);
 				if (i == null)
 				{
@@ -136,6 +144,7 @@ public class UtilityMatrixService
 			
 			
 			this.categoriesMap.put("scuole", counter);
+			System.out.println("categoriesMap, scuole:"+categoriesMap.get("scuole"));
 			System.out.println("counter totale:"+counter);
 
 			for (long user : userList)
