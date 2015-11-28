@@ -14,7 +14,7 @@ public class TestMain {
 		
 		QueryManager qm = new QueryManager();
 		
-		Profile profile = qm.retrieveProfile(1,"Italiano",50);
+		Profile profile = qm.retrieveProfile(1,"Italiano",50, null);
 		
 	//	QueryManager queryManager = new QueryManager();
 //

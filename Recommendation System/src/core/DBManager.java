@@ -1,9 +1,18 @@
 package core;
 
+import java.awt.List;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
+import javax.print.Doc;
+
 import org.bson.Document;
 
 import utils.Configuration;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
@@ -162,7 +171,8 @@ public class DBManager
 	{
 
 		MongoCollection<Document> collection = getCollectionByName(configuration.getLog_collection());
-		FindIterable<Document> iterable = collection.find(new Document("attributes.teachingRoleCodeTo", teachingRole));
+		FindIterable<Document> iterable = collection.find(new Document("$or", Arrays.asList(new Document("attributes.teachingRoleCodeTo",
+				teachingRole), new Document("attributes.codTeachingRoles", teachingRole).append("action", "webapi_get_best_schools"))));
 
 		return iterable;
 	}
@@ -192,10 +202,10 @@ public class DBManager
 		Document doc = collection.find(new Document("municipality_name", municipality)).first();
 		return doc;
 	}
-	
-	
-	public Document findDocWithMunicipalityCode(String municipalityCode){
-		
+
+	public Document findDocWithMunicipalityCode(String municipalityCode)
+	{
+
 		MongoCollection<Document> collection = getCollectionByName(configuration.getMunicipalities_collection());
 		Document doc = collection.find(new Document("municipality_istat_code", municipalityCode)).first();
 		return doc;
@@ -211,6 +221,7 @@ public class DBManager
 	{
 		MongoCollection<Document> collection = getCollectionByName(configuration.getSchool_collection());
 		Document doc = collection.find(new Document("code", school)).first();
+		System.out.println(doc.get("code"));
 		return doc;
 
 	}
@@ -234,10 +245,11 @@ public class DBManager
 	 * @param action azione compiuta dagli utenti
 	 * @return lista di documenti
 	 */
-	public FindIterable<Document> findLogsByAction(String action)
+	public FindIterable<Document> findLogsByAction(String[] action)
 	{
 		MongoCollection<Document> collection = getCollectionByName(configuration.getLog_collection());
-		FindIterable<Document> iterable = collection.find(new Document("action", action));
+		FindIterable<Document> iterable = collection.find(new Document("$or", Arrays.asList(new Document("action",
+				action[0]), new Document("action", action[1]), new Document("action", action[2]))));
 		return iterable;
 	}
 
@@ -261,4 +273,20 @@ public class DBManager
 		collection.insertOne(doc);
 		System.out.println("salvato document");
 	}
+
+	/**
+	 * Recupera una lista di documenti dai Watches insegnata
+	 * 
+	 * @param teachingRole codice della materia insegnata
+	 * @return lista di documenti
+	 */
+	public FindIterable<Document> findWatches()
+	{
+
+		MongoCollection<Document> collection = getCollectionByName(configuration.getWatches_collection());
+		FindIterable<Document> iterable = collection.find();
+
+		return iterable;
+	}
+
 }

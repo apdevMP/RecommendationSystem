@@ -1,5 +1,6 @@
 package core;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -155,7 +156,6 @@ public class RankingService
 			}
 
 			//TODO CLASSIFICAZIONE IN BASE AL TEACHING ROLE
-			
 
 		}
 	}
@@ -183,27 +183,36 @@ public class RankingService
 	public void rankSchools()
 	{
 
-		/*
-		 * per ogni id rappresentante una scuola all'interno della lista degli
-		 * id delle scuole raccomandate, recupera la regione corrispondente in
-		 * modo da poter poi filtrare in base alla distanza dalla regione
-		 * dell'utente. Dovranno essere mostrate prima le scuole appartenenti
-		 * alla regione dell'utente, per cui si incrementa il campo ranking
-		 * relativo al CustomRecommendedItem nel caso in cui la scuola sia
-		 * all'interno della regione dell'utente.˙
-		 */
-
 		for (CustomRecommendedItem school : schoolsIdList)
 		{
 
-			//FIXME non ricordo se l'id che prendavamo era preso dal csv o dai grafi
-			//TODO va cambiato il metodo
-			if (queryManager.isSchoolInRegion(userPosition, school.getRealID()) == 0)
-			{
+			String realID = school.getRealID();
 
+			/*
+			 * CLASSIFICAZIONE IN BASE ALLA POSIZIONE 
+			 * se la scuola trovata si trova all'interno della regione scelta dall'utente allora aumenta
+			 * il suo ranking
+			 */
+			if (queryManager.isSchoolInRegion(userPosition, realID) == 0)
+			{
+				System.out.println("Scuola:" + realID + " in " + userPosition);
+				school.setRanking(school.getRanking() + 1);
 			}
 
-			//TODO CLASSIFICAZIONE IN BASE AL TEACHING ROLE
+			/*
+			 * CLASSIFICAZIONE IN BASE AL TEACHING ROLE 
+			 * Se la scuola prevede tra le materie di insegnamento quella dell'utente, allora aumenta il
+			 * suo ranking
+			 */
+			try
+			{
+				if (queryManager.isSchoolQuotedForTeachingRole(realID, teachingRole));
+				school.setRanking(school.getRanking() + 1);
+				
+			} catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 	}

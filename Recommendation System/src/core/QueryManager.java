@@ -225,28 +225,11 @@ public class QueryManager
 	 * 
 	 * @param action azione
 	 */
-	public void getLogsByAction(String action)
+	public FindIterable<Document> getLogsByAction(String[] action)
 	{
+
 		FindIterable<Document> iterable = manager.findLogsByAction(action);
-
-		FileOutputStream fos = null;
-		try
-		{
-			fos = new FileOutputStream("prova.txt");
-		} catch (FileNotFoundException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		PrintStream write = new PrintStream(fos);
-
-		for (Document doc : iterable)
-		{
-
-			write.println(doc.toJson());
-
-		}
+		return iterable;
 
 	}
 
@@ -256,14 +239,14 @@ public class QueryManager
 	 * @param id
 	 * @return
 	 */
-	public Profile retrieveProfile(long id, String teachingRole, double score)
+	public Profile retrieveProfile(long id, String teachingRole, double score, String position)
 	{
 		Profile profile = null;
 
 		Document doc = manager.retrieveProfile(id);
 		if (doc == null)
 		{
-			profile = Profile.createProfile(id, teachingRole, score);
+			profile = Profile.createProfile(id, teachingRole, score, position);
 			this.saveProfile(profile);
 		} else
 		{
@@ -296,7 +279,14 @@ public class QueryManager
 		Document document = manager.findDocWithProvince(provinceCode);
 		return document.getInteger("province_id");
 	}
-	
+
+	/**
+	 * Recupera il codice identificativo del comune il cui codice istat è
+	 * passato per argomento, effettuando una query sul file municipality.csv
+	 * 
+	 * @param municipalityCode codice istat del comune
+	 * @return codice identificativo del comune
+	 */
 	public long retrieveMunicipalityId(String municipalityCode)
 	{
 		GraphManager gmanager = GraphManager.getIstance();
@@ -309,8 +299,76 @@ public class QueryManager
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
+		//
 		return id;
+	}
+
+	/**
+	 * Usato in fase di classificazione Controlla sul grafo se la provincia è
+	 * adatta per il teaching role dell'utente
+	 * 
+	 * @return
+	 */
+	public boolean isProvinceQuotedForTeachingRole()
+	{
+		GraphManager graphManager = GraphManager.getIstance();
+		
+		
+		
+		return false;
+
+	}
+
+	/**
+	 * Usato in fase di classificazione Controlla sul grafo se il comune è
+	 * adatto per il teaching role dell'utente
+	 * 
+	 * @return
+	 */
+	public boolean isMunicipalityQuotedForTeachingRole()
+	{
+		return false;
+
+	}
+
+	/**
+	 * Usato in fase di classificazione Controlla sul grafo se la scuola è
+	 * adatta per il teaching role dell'utente
+	 * 
+	 * @return true se la scuola prevede il teachingRole passato come materia di insegnamento
+	 * @throws SQLException 
+	 */
+	public boolean isSchoolQuotedForTeachingRole(String schoolId, String teachingRole) throws SQLException
+	{
+		GraphManager graphManager = GraphManager.getIstance();
+		return graphManager.queryTeachingRoleInSchool(schoolId, teachingRole);
+		
+	}
+
+	/**
+	 * Recupera i documenti dai watches
+	 * 
+	 * @param teachingRole materia insegnata
+	 * @return lista di documenti filtrati
+	 */
+	public FindIterable<Document> findWatches()
+	{
+		FindIterable<Document> iterable = manager.findWatches();
+		return iterable;
+	}
+
+	/**
+	 * Recupera la lista di azioni eseguite dagli utenti(log)
+	 * 
+	 * @param teachingRole materia insegnata
+	 * @return lista di documenti filtrati
+	 */
+	public FindIterable<Document> findLogs()
+	{
+		FindIterable<Document> iterable = manager.findLogs();
+
+		return iterable;
 	}
 
 }

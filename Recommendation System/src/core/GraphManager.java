@@ -81,6 +81,53 @@ public class GraphManager
 
 	/**
 	 * Permette di recuperare le scuole con maggior numero di trasferimenti in
+	 * uscita all'interno di una regione
+	 * 
+	 * @param regionName
+	 * @throws SQLException
+	 */
+	public void queryMostQuotedSchoolsInRegion(String regionName) throws SQLException
+	{
+
+		/*
+		 * MATCH (n:School {provinceCode:"RG"})-[o:TRANSFER_MAIN]->c OPTIONAL
+		 * MATCH (n:School {provinceCode:"RG"})<-[i:TRANSFER_MAIN]-c RETURN
+		 * distinct n.municipalityCode, count(o) AS outgoing, count(i) AS input,
+		 * count(o)-count(i) AS difference ORDER BY outgoing - input DESC
+		 */
+
+		/*
+		 * SOLO USCENTI MATCH (n:School
+		 * {provinceCode:"RG"})-[o:TRANSFER_MAIN]->c RETURN distinct
+		 * n.municipalityCode, n.municipalityName, count(o) AS outgoing ORDER BY
+		 * outgoing DESC
+		 */
+
+		/*
+		 * SOLO ENTRANTI MATCH c-[i:TRANSFER_MAIN]->(n:School
+		 * {provinceCode:"RG"}) RETURN distinct n.municipalityCode,
+		 * n.municipalityName, count(i) AS incoming ORDER BY incoming DESC
+		 */
+
+		Statement stmt = connection.createStatement();
+
+		/*
+		 * per ora viene data la classifica in ordine di trasferimenti; possiamo
+		 * limitare il numero di risultati aggiungendo LIMIT
+		 */
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {regionName:'" + regionName + "'}) " + "WITH size((n)-[:TRANSFERS]->()) as outgoing,  "
+				+ "size((n)<-[:TRANSFERS]-()) as incoming, n " + "WHERE (outgoing - incoming) > 0 "
+				+ "RETURN n.code,incoming, out, (out - in) as diff " + "ORDER BY diff DESC");
+		while (rs.next())
+		{
+			System.out.println(rs.getString("n.code") + "  ,uscenti:" + rs.getInt("outgoing") + ",entranti:" + rs.getInt("incoming") + ",diff:"
+					+ rs.getInt("diff"));
+		}
+
+	}
+
+	/**
+	 * Permette di recuperare le scuole con maggior numero di trasferimenti in
 	 * uscita all'interno di una provincia
 	 * 
 	 * @param region
@@ -126,6 +173,31 @@ public class GraphManager
 		{
 			System.out.println(rs.getString("n.code") + "  ,#traferimenti in uscita:" + rs.getString("number_of_connections"));
 		}
+
+	}
+
+	/**
+	 * Controlla se una scuola prevede il teachingRole passato per argomento come ruolo di insegnamento al suo interno.
+	 * Si presume che, se ci sono stati trasferimenti in uscita per quel ruolo, allora la scuola risponda al requisito.
+	 * 
+	 * @param schoolId id della scuola
+	 * @return true se la scuola ha posti liberi per l'area di insegnamento
+	 * specificata
+	 * @throws SQLException
+	 */
+	public boolean queryTeachingRoleInSchool(String schoolId, String teachingRole) throws SQLException
+	{
+
+		Statement stmt = connection.createStatement();
+
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'})-[r:TRANSFER_MAIN]->() WHERE r.teachingRoleArea = '"
+				+ teachingRole + "' RETURN count(r) as numberOfResults");
+
+		//se ci sono stati trasferimenti in uscita per quel teachingRole, allora restituisce true
+		if (rs.getInt("numberOfResults") != 0)
+			return true;
+		else
+			return false;
 
 	}
 
@@ -176,9 +248,6 @@ public class GraphManager
 		return municipality;
 	}
 
-	
-	
-	
 	/**
 	 * @param municipalityCode
 	 * @return

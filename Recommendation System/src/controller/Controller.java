@@ -29,9 +29,9 @@ import view.StartWindow;
 public class Controller
 {
 
-	private StartWindow		window;
-	private ActionListener	listener;
-	private static Configuration configuration;
+	private StartWindow				window;
+	private ActionListener			listener;
+	private static Configuration	configuration;
 
 	/**
 	 * Costruttore
@@ -54,7 +54,6 @@ public class Controller
 	 */
 	public void recommend()
 	{
-		
 
 		listener = new ActionListener() {
 
@@ -65,12 +64,16 @@ public class Controller
 				// recupero dei dati inseriti dall'utente
 				String teachingRole = window.getClassCode();
 				String region = window.getRegion();
-				Double score = window.getScore();
+			//	Double score = window.getScore();
+				Double score = 2.0;
 				//Integer range = window.getRange();
 				long id = 0;
 
-				Profile userProfile = retrieveProfileFromDb(id, teachingRole, score);
+			//	Profile userProfile = retrieveProfileFromDb(id, teachingRole, score);
+				Profile userProfile = new Profile(id, teachingRole, score, region);
+				System.out.println("Profile:"+userProfile.toString());
 				RecommenderService recommender = new RecommenderService(userProfile);
+				//System.out.println("Region:"+region);
 				recommender.recommendByRegion(region);
 				// quando viene cliccato il bottone di avvio, comincia la
 				// ricerca dei suggerimenti
@@ -78,11 +81,11 @@ public class Controller
 
 			}
 
-			private Profile retrieveProfileFromDb(long id, String teachingRole, double score)
+			private Profile retrieveProfileFromDb(long id, String teachingRole, double score, String position)
 			{
 				Profile profile = null;
 				QueryManager qm = new QueryManager();
-				profile = qm.retrieveProfile(id, teachingRole, score);
+				profile = qm.retrieveProfile(id, teachingRole, score, position);
 				return profile;
 			}
 		};

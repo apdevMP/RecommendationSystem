@@ -103,6 +103,7 @@ public class Filter {
 			int result = 0;
 			String action = document.getString("action");
 			Document attributes = (Document) document.get("attributes");
+			if(action == null) continue;
 			switch (action) {
 			case "webapi_province_aggregates":
 
