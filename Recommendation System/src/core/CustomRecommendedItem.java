@@ -12,7 +12,7 @@ public class CustomRecommendedItem implements RecommendedItem, Comparable<Custom
 
 
 	private long	id;
-	private float	value;
+	private float	value;	//valore assegnato dall'algoritmo di raccomandazione
 	private int		ranking	= 0;	//punteggio
 	private String	realID;		//stringa atta a contenere il vero id dell'item (non quello numerico assegnato per la raccomandazione)
 

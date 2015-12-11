@@ -2,6 +2,8 @@ package core;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -65,8 +67,9 @@ public class RankingService
 					if (entry.getValue().compareTo(itemId) == 0)
 					{
 						String realId = entry.getKey();
-						//		System.out.println("Real ID = " + realId);
+
 						CustomRecommendedItem customProvince = new CustomRecommendedItem(itemId, item.getValue(), 0, realId);
+
 						provinceIdList.add(customProvince);
 						break;
 					}
@@ -124,8 +127,13 @@ public class RankingService
 		 * classificazione
 		 */
 		updateRankings();
+		System.out.println("Aggiornamento ranking terminato. Classificazione..");
+
+		sortLists();
 
 		System.out.println("Classificazione terminata.");
+
+		printSortedLists();
 
 	}
 
@@ -137,6 +145,39 @@ public class RankingService
 			rankMunicipalities();
 		if (!schoolsIdList.isEmpty())
 			rankSchools();
+
+	}
+
+	private void sortLists()
+	{
+		if (!provinceIdList.isEmpty())
+			Collections.sort(provinceIdList);
+		if (!municipalityIdList.isEmpty())
+			Collections.sort(municipalityIdList);
+		if (!schoolsIdList.isEmpty())
+			Collections.sort(schoolsIdList);
+
+	}
+
+	private void printSortedLists()
+	{
+		System.out.println("\n ----- PROVINCE -----");
+		for (CustomRecommendedItem item : provinceIdList)
+		{
+			System.out.println(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
+		}
+
+		System.out.println("\n ----- COMUNI -----");
+		for (CustomRecommendedItem item : municipalityIdList)
+		{
+			System.out.println(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
+		}
+
+		System.out.println("\n ----- SCUOLE -----");
+		for (CustomRecommendedItem item : schoolsIdList)
+		{
+			System.out.println(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
+		}
 
 	}
 
@@ -189,8 +230,8 @@ public class RankingService
 			String realID = school.getRealID();
 
 			/*
-			 * CLASSIFICAZIONE IN BASE ALLA POSIZIONE 
-			 * se la scuola trovata si trova all'interno della regione scelta dall'utente allora aumenta
+			 * CLASSIFICAZIONE IN BASE ALLA POSIZIONE se la scuola trovata si
+			 * trova all'interno della regione scelta dall'utente allora aumenta
 			 * il suo ranking
 			 */
 			if (queryManager.isSchoolInRegion(userPosition, realID) == 0)
@@ -200,15 +241,16 @@ public class RankingService
 			}
 
 			/*
-			 * CLASSIFICAZIONE IN BASE AL TEACHING ROLE 
-			 * Se la scuola prevede tra le materie di insegnamento quella dell'utente, allora aumenta il
+			 * CLASSIFICAZIONE IN BASE AL TEACHING ROLE Se la scuola prevede tra
+			 * le materie di insegnamento quella dell'utente, allora aumenta il
 			 * suo ranking
 			 */
 			try
 			{
-				if (queryManager.isSchoolQuotedForTeachingRole(realID, teachingRole));
+				if (queryManager.isSchoolQuotedForTeachingRole(realID, teachingRole))
+					;
 				school.setRanking(school.getRanking() + 1);
-				
+
 			} catch (SQLException e)
 			{
 				e.printStackTrace();

@@ -177,27 +177,32 @@ public class GraphManager
 	}
 
 	/**
-	 * Controlla se una scuola prevede il teachingRole passato per argomento come ruolo di insegnamento al suo interno.
-	 * Si presume che, se ci sono stati trasferimenti in uscita per quel ruolo, allora la scuola risponda al requisito.
+	 * Controlla se una scuola prevede il teachingRole passato per argomento
+	 * come ruolo di insegnamento al suo interno. Si presume che, se ci sono
+	 * stati trasferimenti in uscita per quel ruolo, allora la scuola risponda
+	 * al requisito.
 	 * 
 	 * @param schoolId id della scuola
 	 * @return true se la scuola ha posti liberi per l'area di insegnamento
 	 * specificata
 	 * @throws SQLException
 	 */
-	public boolean queryTeachingRoleInSchool(String schoolId, String teachingRole) throws SQLException
+	public int queryTeachingRoleInSchool(String schoolId, String teachingRole) throws SQLException
 	{
 
 		Statement stmt = connection.createStatement();
+		int numberOfResults = 0;
 
 		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'})-[r:TRANSFER_MAIN]->() WHERE r.teachingRoleArea = '"
 				+ teachingRole + "' RETURN count(r) as numberOfResults");
 
 		//se ci sono stati trasferimenti in uscita per quel teachingRole, allora restituisce true
-		if (rs.getInt("numberOfResults") != 0)
-			return true;
-		else
-			return false;
+		while (rs.next())
+		{
+			numberOfResults += rs.getInt("numberOfResults");
+		}
+		
+		return numberOfResults;
 
 	}
 

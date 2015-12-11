@@ -313,9 +313,7 @@ public class QueryManager
 	public boolean isProvinceQuotedForTeachingRole()
 	{
 		GraphManager graphManager = GraphManager.getIstance();
-		
-		
-		
+
 		return false;
 
 	}
@@ -336,14 +334,18 @@ public class QueryManager
 	 * Usato in fase di classificazione Controlla sul grafo se la scuola è
 	 * adatta per il teaching role dell'utente
 	 * 
-	 * @return true se la scuola prevede il teachingRole passato come materia di insegnamento
-	 * @throws SQLException 
+	 * @return true se la scuola prevede il teachingRole passato come materia di
+	 * insegnamento
+	 * @throws SQLException
 	 */
 	public boolean isSchoolQuotedForTeachingRole(String schoolId, String teachingRole) throws SQLException
 	{
 		GraphManager graphManager = GraphManager.getIstance();
-		return graphManager.queryTeachingRoleInSchool(schoolId, teachingRole);
-		
+		if (graphManager.queryTeachingRoleInSchool(schoolId, teachingRole) > 1)
+			return true;
+		else
+			return false;
+
 	}
 
 	/**
