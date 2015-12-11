@@ -199,6 +199,7 @@ public class GraphManager
 		//se ci sono stati trasferimenti in uscita per quel teachingRole, allora restituisce true
 		while (rs.next())
 		{
+			System.out.println(rs.getInt("numberOfResults"));
 			numberOfResults += rs.getInt("numberOfResults");
 		}
 		

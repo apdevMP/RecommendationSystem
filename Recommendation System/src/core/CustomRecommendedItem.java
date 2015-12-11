@@ -10,16 +10,15 @@ import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 public class CustomRecommendedItem implements RecommendedItem, Comparable<CustomRecommendedItem>
 {
 
-
 	private long	id;
-	private float	value;	//valore assegnato dall'algoritmo di raccomandazione
+	private float	value;			//valore assegnato dall'algoritmo di raccomandazione
 	private int		ranking	= 0;	//punteggio
 	private String	realID;		//stringa atta a contenere il vero id dell'item (non quello numerico assegnato per la raccomandazione)
 
-	public CustomRecommendedItem(){};
-	
-	
-	
+	public CustomRecommendedItem()
+	{
+	};
+
 	public CustomRecommendedItem(long id, float value, int ranking, String realID)
 	{
 		super();
@@ -28,7 +27,7 @@ public class CustomRecommendedItem implements RecommendedItem, Comparable<Custom
 		this.ranking = ranking;
 		this.realID = realID;
 	}
-	
+
 	/**
 	 * @param id the id to set
 	 */
@@ -89,7 +88,7 @@ public class CustomRecommendedItem implements RecommendedItem, Comparable<Custom
 	public int compareTo(CustomRecommendedItem customRecommendedItem2)
 	{
 		// TODO Auto-generated method stub
-		return this.getRanking() - customRecommendedItem2.getRanking();
+		return customRecommendedItem2.getRanking() - this.getRanking();
 
 	}
 

@@ -341,7 +341,7 @@ public class QueryManager
 	public boolean isSchoolQuotedForTeachingRole(String schoolId, String teachingRole) throws SQLException
 	{
 		GraphManager graphManager = GraphManager.getIstance();
-		if (graphManager.queryTeachingRoleInSchool(schoolId, teachingRole) > 1)
+		if (graphManager.queryTeachingRoleInSchool(schoolId, teachingRole) > 0)
 			return true;
 		else
 			return false;

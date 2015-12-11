@@ -236,6 +236,7 @@ public class RankingService
 			 */
 			if (queryManager.isSchoolInRegion(userPosition, realID) == 0)
 			{
+				
 				System.out.println("Scuola:" + realID + " in " + userPosition);
 				school.setRanking(school.getRanking() + 1);
 			}
@@ -247,9 +248,10 @@ public class RankingService
 			 */
 			try
 			{
-				if (queryManager.isSchoolQuotedForTeachingRole(realID, teachingRole))
-					;
+				if (queryManager.isSchoolQuotedForTeachingRole(realID, teachingRole)){
+				System.out.println("trovato teachingRole nella scuola");
 				school.setRanking(school.getRanking() + 1);
+				}
 
 			} catch (SQLException e)
 			{
