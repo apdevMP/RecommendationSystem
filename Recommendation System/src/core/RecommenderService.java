@@ -64,19 +64,19 @@ public class RecommenderService
 
 		try
 		{
-			DataModel model = new FileDataModel(new File("matrix_value.csv"));
+			DataModel model = new FileDataModel(new File("matrix_value2.csv"));
 			UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
 			UserSimilarity similarity2 = new EuclideanDistanceSimilarity(model);
 			UserSimilarity similarity3 = new LogLikelihoodSimilarity(model);
 			//ItemSimilarity similarity = new PearsonCorrelationSimilarity(model);
 		//	Optimizer optimizer =  new ConjugateGradientOptimizer();
-       //   Recommender recommender = new SlopeOneRecommender(model);
+          Recommender recommender = new SlopeOneRecommender(model);
 			UserNeighborhood neighborhood = new ThresholdUserNeighborhood(1, similarity2, model);
-			Recommender recommender = new GenericUserBasedRecommender(model, neighborhood, similarity2);
+			//Recommender recommender = new GenericUserBasedRecommender(model, neighborhood, similarity2);
 			//	Recommender cachingRecommender = new CachingRecommender(recommender);
 			
 			
-			List<RecommendedItem> recommendedItems = recommender.recommend(7428, 100);
+			List<RecommendedItem> recommendedItems = recommender.recommend(7428, 20);
 			
 			System.out.println("Creata lista items, grandezza: " + recommendedItems.size());
 
@@ -89,6 +89,11 @@ public class RecommenderService
 				}
 				System.out.println("Size recommendedItems: "+recommendedItems.size());
 				RankingService rankingService = new RankingService(recommendedItems, creator.getItemsMap(), creator.getCategoriesMap(), userProfile);
+				
+				/*
+				 * ottenimento della lista dei risultati da stampare sulla finestra utente
+				 */
+			//	rankingService.getRecommendedItemsList(5);
 				
 			} else
 			{

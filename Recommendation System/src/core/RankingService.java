@@ -135,6 +135,77 @@ public class RankingService
 
 		printSortedLists();
 
+		System.out.println("\n--- FINAL LIST ---");
+		List<CustomRecommendedItem> finalItemsList = getRecommendedItemsList(5);
+		for(CustomRecommendedItem item: finalItemsList){
+			System.out.println(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
+		}
+		
+		System.out.println("\nFINE");
+	}
+
+	/**
+	 * Restituisce per ognuna delle 3 liste create, i primi numberOfResults item
+	 * presenti, che saranno poi mostrati all'utente
+	 * 
+	 * @param numberOfResults il numero di item per lista da mostrare
+	 * sull'interfaccia
+	 */
+	private List<CustomRecommendedItem> getRecommendedItemsList(int numberOfResults)
+	{
+		List<CustomRecommendedItem> finalList = new ArrayList<CustomRecommendedItem>();
+
+		/*
+		 * PROVINCE: se la lista di province contiene più item di quelli
+		 * richiesti, ne aggiungo solo un numero pari a quelli voluti,
+		 * altrimenti se sono meno, li aggiungo tutti alla lista finale
+		 */
+		if (provinceIdList.size() > numberOfResults)
+		{
+			for (int index = 0; index < numberOfResults; index++)
+			{
+
+				finalList.add(provinceIdList.get(index));
+
+			}
+		} else
+		{
+			finalList.addAll(provinceIdList);
+		}
+		
+		/*
+		 * COMUNI
+		 */
+		if (municipalityIdList.size() > numberOfResults)
+		{
+			for (int index = 0; index < numberOfResults; index++)
+			{
+
+				finalList.add(municipalityIdList.get(index));
+
+			}
+		} else
+		{
+			finalList.addAll(municipalityIdList);
+		}
+		
+		/*
+		 * SCUOLE
+		 */
+		if (schoolsIdList.size() > numberOfResults)
+		{
+			for (int index = 0; index < numberOfResults; index++)
+			{
+
+				finalList.add(schoolsIdList.get(index));
+
+			}
+		} else
+		{
+			finalList.addAll(schoolsIdList);
+		}
+
+		return finalList;
 	}
 
 	public void updateRankings()
@@ -236,7 +307,7 @@ public class RankingService
 			 */
 			if (queryManager.isSchoolInRegion(userPosition, realID) == 0)
 			{
-				
+
 				System.out.println("Scuola:" + realID + " in " + userPosition);
 				school.setRanking(school.getRanking() + 1);
 			}
@@ -248,9 +319,10 @@ public class RankingService
 			 */
 			try
 			{
-				if (queryManager.isSchoolQuotedForTeachingRole(realID, teachingRole)){
-				System.out.println("trovato teachingRole nella scuola");
-				school.setRanking(school.getRanking() + 1);
+				if (queryManager.isSchoolQuotedForTeachingRole(realID, teachingRole))
+				{
+					System.out.println("trovato teachingRole nella scuola");
+					school.setRanking(school.getRanking() + 1);
 				}
 
 			} catch (SQLException e)

@@ -47,7 +47,6 @@ public class StartWindow
 	private JTextField			textFieldScore;
 	private JComboBox<String>	comboBoxRegion;
 	private JComboBox<String>	comboBoxClass;
-	private JComboBox<String>	comboBoxRange;
 	private JButton				btnGo;
 	private JTextArea			textArea;
 	private static GraphManager	gManager;
@@ -152,20 +151,12 @@ public class StartWindow
 		panelData.add(textFieldScore);
 		textFieldScore.setColumns(10);
 
-		JLabel lblRange = new JLabel("Fascia");
-		lblRange.setBounds(6, 158, 61, 16);
-		panelData.add(lblRange);
-
-		comboBoxRange = new JComboBox(rangeStrings);
-		comboBoxRange.setBounds(6, 182, 154, 27);
-		panelData.add(comboBoxRange);
-
 		JLabel lblRegion = new JLabel("Regione Provenienza");
-		lblRegion.setBounds(6, 221, 151, 16);
+		lblRegion.setBounds(6, 176, 151, 16);
 		panelData.add(lblRegion);
 
 		comboBoxRegion = new JComboBox(regionStrings);
-		comboBoxRegion.setBounds(6, 241, 154, 27);
+		comboBoxRegion.setBounds(6, 195, 154, 27);
 		panelData.add(comboBoxRegion);
 
 		btnGo = new JButton("Avvia");
@@ -217,11 +208,6 @@ public class StartWindow
 	public String getClassCode()
 	{
 		return comboBoxClass.getSelectedItem().toString();
-	}
-
-	public Integer getRange()
-	{
-		return (Integer) comboBoxRange.getSelectedItem();
 	}
 
 	private void retrieveValues(String path)

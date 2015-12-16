@@ -66,7 +66,6 @@ public class Controller
 				String region = window.getRegion();
 			//	Double score = window.getScore();
 				Double score = 2.0;
-				//Integer range = window.getRange();
 				long id = 0;
 
 			//	Profile userProfile = retrieveProfileFromDb(id, teachingRole, score);
