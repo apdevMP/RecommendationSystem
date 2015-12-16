@@ -54,9 +54,11 @@ public class RecommenderService
 	 * 
 	 * @param region
 	 */
-	public void recommendByRegion(String region)
+	public List<CustomRecommendedItem> recommendByRegion(String region)
 	{
 
+		List<CustomRecommendedItem> finalList = new ArrayList<CustomRecommendedItem>();
+		
 		UtilityMatrixService creator = new UtilityMatrixService(userProfile, region);
 
 		UtilityMatrix matrix = creator.createUtilityMatrix();
@@ -93,11 +95,12 @@ public class RecommenderService
 				/*
 				 * ottenimento della lista dei risultati da stampare sulla finestra utente
 				 */
-			//	rankingService.getRecommendedItemsList(5);
+				finalList = rankingService.getRecommendedItemsList(5);
 				
 			} else
 			{
 				System.out.println("la lista è vuota");
+				
 			}
 			
 		} catch (IOException | TasteException e)
@@ -105,7 +108,10 @@ public class RecommenderService
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.exit(0);
+		
+		return finalList;
+	//	System.exit(0);
+		
 
 	}
 

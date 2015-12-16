@@ -151,7 +151,7 @@ public class RankingService
 	 * @param numberOfResults il numero di item per lista da mostrare
 	 * sull'interfaccia
 	 */
-	private List<CustomRecommendedItem> getRecommendedItemsList(int numberOfResults)
+	public List<CustomRecommendedItem> getRecommendedItemsList(int numberOfResults)
 	{
 		List<CustomRecommendedItem> finalList = new ArrayList<CustomRecommendedItem>();
 

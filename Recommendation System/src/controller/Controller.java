@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.google.gson.Gson;
 
+import core.CustomRecommendedItem;
 import core.Profile;
 import core.QueryManager;
 import core.RecommenderService;
@@ -32,6 +33,7 @@ public class Controller
 	private StartWindow				window;
 	private ActionListener			listener;
 	private static Configuration	configuration;
+	private RecommenderService 		recommenderService;
 
 	/**
 	 * Costruttore
@@ -71,12 +73,12 @@ public class Controller
 			//	Profile userProfile = retrieveProfileFromDb(id, teachingRole, score);
 				Profile userProfile = new Profile(id, teachingRole, score, region);
 				System.out.println("Profile:"+userProfile.toString());
-				RecommenderService recommender = new RecommenderService(userProfile);
+				recommenderService = new RecommenderService(userProfile);
 				//System.out.println("Region:"+region);
-				recommender.recommendByRegion(region);
-				// quando viene cliccato il bottone di avvio, comincia la
-				// ricerca dei suggerimenti
-				//startSearch();
+				List<CustomRecommendedItem> recommendedItems = recommenderService.recommendByRegion(region);
+
+				
+				showResults(recommendedItems);
 
 			}
 
@@ -91,21 +93,16 @@ public class Controller
 		window.getButton().addActionListener(listener);
 	}
 
-	public void startSearch()
-	{
-		// TODO Auto-generated method stub
 
-		// alla fine dell'elaborazione, stampa in output i risultati
-		printResults();
-	}
 
 	/**
 	 * Riporta i risultati nella JTextArea dedicata sull'interfaccia
 	 */
-	public void printResults()
+	public void showResults(List<CustomRecommendedItem> list)
 	{
 
-		// al posto di null mi aspetto una lista.toString
-		window.getTextArea().setText(null);
+		
+		for(CustomRecommendedItem item : list)
+		window.getTextArea().append(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking()+"\n");
 	}
 }
