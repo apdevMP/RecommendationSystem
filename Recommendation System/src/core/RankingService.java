@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
+import org.omg.CORBA.PRIVATE_MEMBER;
 
 public class RankingService
 {
@@ -16,6 +17,7 @@ public class RankingService
 	private List<CustomRecommendedItem>	provinceIdList;
 	private List<CustomRecommendedItem>	municipalityIdList;
 	private List<CustomRecommendedItem>	schoolsIdList;
+	private List<CustomRecommendedItem>	finalList;
 	private String						userPosition;
 	private String						teachingRole;
 	private QueryManager				queryManager;
@@ -136,76 +138,69 @@ public class RankingService
 		printSortedLists();
 
 		System.out.println("\n--- FINAL LIST ---");
-		List<CustomRecommendedItem> finalItemsList = getRecommendedItemsList(5);
-		for(CustomRecommendedItem item: finalItemsList){
+		finalList = new ArrayList<CustomRecommendedItem>();
+		getRecommendedItemsList(5);
+		for (CustomRecommendedItem item : finalList)
+		{
 			System.out.println(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
 		}
-		
+
 		System.out.println("\nFINE");
 	}
 
 	/**
-	 * Restituisce per ognuna delle 3 liste create, i primi numberOfResults item
-	 * presenti, che saranno poi mostrati all'utente
+	 * @return the finalList
+	 */
+	public List<CustomRecommendedItem> getFinalList()
+	{
+		return finalList;
+	}
+
+	/**
+	 * @param finalList the finalList to set
+	 */
+	public void setFinalList(List<CustomRecommendedItem> finalList)
+	{
+		this.finalList = finalList;
+	}
+
+	/**
+	 * Aggiunge alla lista finale da mostrare all'utente un numero {@param
+	 * numberOfResults} di item per ognuna delle liste create
 	 * 
 	 * @param numberOfResults il numero di item per lista da mostrare
 	 * sull'interfaccia
 	 */
-	public List<CustomRecommendedItem> getRecommendedItemsList(int numberOfResults)
+	public void getRecommendedItemsList(int numberOfResults)
 	{
-		List<CustomRecommendedItem> finalList = new ArrayList<CustomRecommendedItem>();
 
 		/*
-		 * PROVINCE: se la lista di province contiene più item di quelli
-		 * richiesti, ne aggiungo solo un numero pari a quelli voluti,
-		 * altrimenti se sono meno, li aggiungo tutti alla lista finale
+		 * Per ogni lista, se essa contiene più item di quelli richiesti, ne
+		 * aggiungo solo un numero pari a quelli voluti, altrimenti se sono
+		 * meno, li aggiungo tutti alla lista finale
 		 */
-		if (provinceIdList.size() > numberOfResults)
+		addToFinalList(provinceIdList, numberOfResults);
+		addToFinalList(municipalityIdList, numberOfResults);
+		addToFinalList(schoolsIdList, numberOfResults);
+
+	}
+
+	private void addToFinalList(List<CustomRecommendedItem> list, int numberOfResults)
+	{
+		// TODO Auto-generated method stub
+		if (list.size() > numberOfResults)
 		{
 			for (int index = 0; index < numberOfResults; index++)
 			{
 
-				finalList.add(provinceIdList.get(index));
+				finalList.add(list.get(index));
 
 			}
 		} else
 		{
-			finalList.addAll(provinceIdList);
-		}
-		
-		/*
-		 * COMUNI
-		 */
-		if (municipalityIdList.size() > numberOfResults)
-		{
-			for (int index = 0; index < numberOfResults; index++)
-			{
-
-				finalList.add(municipalityIdList.get(index));
-
-			}
-		} else
-		{
-			finalList.addAll(municipalityIdList);
-		}
-		
-		/*
-		 * SCUOLE
-		 */
-		if (schoolsIdList.size() > numberOfResults)
-		{
-			for (int index = 0; index < numberOfResults; index++)
-			{
-
-				finalList.add(schoolsIdList.get(index));
-
-			}
-		} else
-		{
-			finalList.addAll(schoolsIdList);
+			getFinalList().addAll(list);
 		}
 
-		return finalList;
 	}
 
 	public void updateRankings()
@@ -233,23 +228,23 @@ public class RankingService
 	private void printSortedLists()
 	{
 		System.out.println("\n ----- PROVINCE -----");
-		for (CustomRecommendedItem item : provinceIdList)
-		{
-			System.out.println(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
-		}
+		printList(provinceIdList);
 
 		System.out.println("\n ----- COMUNI -----");
-		for (CustomRecommendedItem item : municipalityIdList)
-		{
-			System.out.println(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
-		}
+		printList(municipalityIdList);
 
 		System.out.println("\n ----- SCUOLE -----");
-		for (CustomRecommendedItem item : schoolsIdList)
+		printList(schoolsIdList);
+
+	}
+
+	private void printList(List<CustomRecommendedItem> list)
+	{
+
+		for (CustomRecommendedItem item : list)
 		{
 			System.out.println(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
 		}
-
 	}
 
 	public void rankProvinces()
@@ -329,6 +324,11 @@ public class RankingService
 			{
 				e.printStackTrace();
 			}
+
+			/*
+			 * TODO CLASSIFICAZIONE IN BASE AL NUMERO DI POSTI LIBERI PER QUEL
+			 * TEACHING ROLE
+			 */
 		}
 
 	}

@@ -95,7 +95,7 @@ public class RecommenderService
 				/*
 				 * ottenimento della lista dei risultati da stampare sulla finestra utente
 				 */
-				finalList = rankingService.getRecommendedItemsList(5);
+				finalList = rankingService.getFinalList();
 				
 			} else
 			{
@@ -115,18 +115,4 @@ public class RecommenderService
 
 	}
 
-	public void recommendByProvince(String province)
-	{
-
-	}
-
-	public void recommendByMunicipality(String municipality)
-	{
-
-	}
-
-	public void recommendBySchool(String school)
-	{
-
-	}
 }
