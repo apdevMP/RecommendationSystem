@@ -171,17 +171,19 @@ public class StartWindow
 				TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panelResult.setLayout(null);
 
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBorder(null);
-		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPane.setBounds(6, 6, 321, 303);
-		panelResult.add(scrollPane);
+		
 
 		textArea = new JTextArea();
 		textArea.setBounds(6, 6, 304, 303);
-		scrollPane.add(textArea);
+	//	scrollPane.add(textArea);
 
+		JScrollPane scrollPane = new JScrollPane(textArea);
+		scrollPane.setBorder(null);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setBounds(6, 6, 321, 303);
+		panelResult.add(scrollPane);
+		
 	}
 
 	public JButton getButton()

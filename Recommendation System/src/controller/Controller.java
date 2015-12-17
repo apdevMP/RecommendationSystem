@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,9 +101,9 @@ public class Controller
 	 */
 	public void showResults(List<CustomRecommendedItem> list)
 	{
-
+		DecimalFormat numberFormat = new DecimalFormat("#.00");
 		
 		for(CustomRecommendedItem item : list)
-		window.getTextArea().append(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking()+"\n");
+		window.getTextArea().append(item.getRealID() + "\t value:" + numberFormat.format(item.getValue()) + "\tranking:" + item.getRanking()+"\n");
 	}
 }
