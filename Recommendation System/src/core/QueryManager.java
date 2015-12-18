@@ -305,6 +305,27 @@ public class QueryManager
 	}
 
 	/**
+	 * Controlla se ci sono posizioni aperte nella scuola per il dato
+	 * teachingRole
+	 * 
+	 * @param schoolId
+	 * @param teachingRole
+	 * @return true se ci sono posizioni aperte, false altrimenti
+	 * @throws SQLException
+	 */
+	public boolean freePositionAvailableAtSchool(String schoolId, String teachingRole) throws SQLException
+	{
+
+		GraphManager gmanager = GraphManager.getIstance();
+		boolean available = false;
+
+		if (gmanager.queryFreePositionsInSchool(schoolId, teachingRole) > 0)
+			available = true;
+
+		return available;
+	}
+
+	/**
 	 * Usato in fase di classificazione Controlla sul grafo se la provincia è
 	 * adatta per il teaching role dell'utente
 	 * 

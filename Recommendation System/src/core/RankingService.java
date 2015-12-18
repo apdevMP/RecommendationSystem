@@ -329,6 +329,19 @@ public class RankingService
 			 * TODO CLASSIFICAZIONE IN BASE AL NUMERO DI POSTI LIBERI PER QUEL
 			 * TEACHING ROLE
 			 */
+			
+			try
+			{
+				if(queryManager.freePositionAvailableAtSchool(realID, teachingRole) == true){
+					System.out.println("Posti disponibili nella scuola");
+					school.setRanking(school.getRanking() + 1);
+				}
+			} catch (SQLException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 
 	}

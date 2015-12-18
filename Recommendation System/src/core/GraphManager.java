@@ -80,6 +80,7 @@ public class GraphManager
 	}
 
 	/**
+	 * TODO da eliminare, non utilizzato
 	 * Permette di recuperare le scuole con maggior numero di trasferimenti in
 	 * uscita all'interno di una regione
 	 * 
@@ -127,6 +128,7 @@ public class GraphManager
 	}
 
 	/**
+	 * TODO da eliminare, non utilizzato
 	 * Permette di recuperare le scuole con maggior numero di trasferimenti in
 	 * uscita all'interno di una provincia
 	 * 
@@ -152,6 +154,7 @@ public class GraphManager
 	}
 
 	/**
+	 * TODO da eliminare, non utilizzato
 	 * Permette di recuperare le scuole con maggior numero di trasferimenti in
 	 * uscita all'interno di una regione
 	 * 
@@ -206,8 +209,39 @@ public class GraphManager
 		return numberOfResults;
 
 	}
+	
+	/**
+	 * Controlla il numero di posti liberi per il dato teachingRole all'interno di una scuola,
+	 * come differenza tra il numero di trasferimenti in uscita e in entrata.
+	 * Se tale differenza è maggiore di 0 allora la scuola prevede posti liberi al suo interno
+	 * 
+	 * 
+	 * @param schoolId
+	 * @param teachingRole
+	 * @return
+	 * @throws SQLException
+	 */
+	public int queryFreePositionsInSchool(String schoolId, String teachingRole) throws SQLException{
+		
+		Statement stmt = connection.createStatement();
+		int numberOfResults = 0;
+
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'"+teachingRole+"'}]->()) as outgoing,"
+    +" size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'"+teachingRole+"'}]-()) as incoming,"
+    +" n RETURN (outgoing - incoming) as freePositions LIMIT 1 ");
+
+		//se ci sono stati trasferimenti in uscita per quel teachingRole, allora restituisce true
+		while (rs.next())
+		{
+			System.out.println(rs.getInt("freePositions"));
+			numberOfResults = rs.getInt("freePositions");
+		}
+		
+		return numberOfResults;
+	}
 
 	/**
+	 * TODO non utilizzato
 	 * Permette di recuperare le scuole con maggior numero di trasferimenti in
 	 * uscita all'interno di un comune
 	 * 
