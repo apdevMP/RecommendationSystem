@@ -5,26 +5,15 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JButton;
-import javax.swing.SpinnerListModel;
 
 import java.awt.Color;
 
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.JTextPane;
 
-import java.awt.ScrollPane;
-import java.awt.TextArea;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -34,8 +23,6 @@ import javax.swing.JTextArea;
 import javax.swing.JComboBox;
 
 import utils.Configuration;
-
-import com.google.gson.Gson;
 
 import controller.Controller;
 import core.GraphManager;
@@ -55,8 +42,6 @@ public class StartWindow
 	private String[]			regionStrings	= { "Abruzzo", "Basilicata", "Calabria", "Campania", "Emilia-Romagna", "Friuli-Venezia Giulia",
 			"Lazio", "Liguria", "Lombardia", "Molise", "Piemonte", "Puglia", "Sardegna", "Sicilia", "Toscana", "Trentino-Alto Adige", "Umbria",
 			"Valle d'Aosta", "Veneto"			};
-
-	private String[]			rangeStrings	= { "I", "II", "III", "IV", "I coda", "II coda", "III coda", "IV coda" };
 
 	/**
 	 * Di prova per vedere se l'interfaccia veniva creata bene
@@ -95,6 +80,7 @@ public class StartWindow
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initialize()
 	{
 		frame = new JFrame();
@@ -124,14 +110,12 @@ public class StartWindow
 		Configuration.getIstance();
 
 		gManager = GraphManager.getIstance();
-		//	gManager.connectToGraph("neo4j", "vanessa");
 		ArrayList<String> classCodesArrayList = new ArrayList<>();
 		try
 		{
 			classCodesArrayList = gManager.retrieveClassCodes();
 		} catch (SQLException e1)
 		{
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -171,11 +155,9 @@ public class StartWindow
 				TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panelResult.setLayout(null);
 
-		
-
 		textArea = new JTextArea();
 		textArea.setBounds(6, 6, 304, 303);
-	//	scrollPane.add(textArea);
+		//	scrollPane.add(textArea);
 
 		JScrollPane scrollPane = new JScrollPane(textArea);
 		scrollPane.setBorder(null);
@@ -183,7 +165,7 @@ public class StartWindow
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setBounds(6, 6, 321, 303);
 		panelResult.add(scrollPane);
-		
+
 	}
 
 	public JButton getButton()
@@ -210,25 +192,6 @@ public class StartWindow
 	public String getClassCode()
 	{
 		return comboBoxClass.getSelectedItem().toString();
-	}
-
-	private void retrieveValues(String path)
-	{
-		// TODO Auto-generated method stub
-		Gson gson = new Gson();
-		BufferedReader br = null;
-
-		try
-		{
-			br = new BufferedReader(new FileReader(path));
-		} catch (FileNotFoundException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		configuration = Configuration.getIstance();
-		configuration = gson.fromJson(br, Configuration.class);
-
 	}
 
 }

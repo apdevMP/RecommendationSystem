@@ -2,14 +2,12 @@ package core;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
-import org.omg.CORBA.PRIVATE_MEMBER;
 
 public class RankingService
 {
@@ -203,7 +201,7 @@ public class RankingService
 
 	}
 
-	public void updateRankings()
+	private void updateRankings()
 	{
 		if (!provinceIdList.isEmpty())
 			rankProvinces();

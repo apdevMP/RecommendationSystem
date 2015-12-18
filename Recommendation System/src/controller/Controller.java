@@ -64,7 +64,9 @@ public class Controller
 			public void actionPerformed(ActionEvent e)
 			{
 
+				
 				// recupero dei dati inseriti dall'utente
+				window.getTextArea().setText(null);
 				String teachingRole = window.getClassCode();
 				String region = window.getRegion();
 			//	Double score = window.getScore();

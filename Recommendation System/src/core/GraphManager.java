@@ -228,13 +228,13 @@ public class GraphManager
 
 		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'"+teachingRole+"'}]->()) as outgoing,"
     +" size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'"+teachingRole+"'}]-()) as incoming,"
-    +" n RETURN (outgoing - incoming) as freePositions LIMIT 1 ");
+    +" n RETURN (outgoing - incoming) as freePositions");
 
 		//se ci sono stati trasferimenti in uscita per quel teachingRole, allora restituisce true
 		while (rs.next())
 		{
 			System.out.println(rs.getInt("freePositions"));
-			numberOfResults = rs.getInt("freePositions");
+			numberOfResults += rs.getInt("freePositions");
 		}
 		
 		return numberOfResults;
@@ -318,14 +318,12 @@ public class GraphManager
 		//dato che in un comune il numero di scuole è limitato,per ora le visualizziamo tutte nella classifica
 		ResultSet rs = stmt
 				.executeQuery("MATCH (n) WHERE has(n.teachingRoleArea) RETURN DISTINCT \"node\" as element, n.teachingRoleArea AS teachingRoleArea LIMIT 25 UNION ALL MATCH ()-[r]-() WHERE has(r.teachingRoleArea) RETURN DISTINCT \"relationship\" AS element, r.teachingRoleArea AS teachingRoleArea");
-		int count = 0;
 
 		while (rs.next())
 		{
 
 			//System.out.println(rs.getString("teachingRoleArea"));
 			classCodeStrings.add(rs.getString("teachingRoleArea"));
-			count++;
 
 		}
 		//System.out.println("#classi:" + count);
