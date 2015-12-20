@@ -185,7 +185,7 @@ public class RankingService
 
 	private void addToFinalList(List<CustomRecommendedItem> list, int numberOfResults)
 	{
-		// TODO Auto-generated method stub
+
 		if (list.size() > numberOfResults)
 		{
 			for (int index = 0; index < numberOfResults; index++)
@@ -260,7 +260,18 @@ public class RankingService
 				province.setRanking(province.getRanking() + 1);
 			}
 
-			//TODO CLASSIFICAZIONE IN BASE AL TEACHING ROLE
+			//CLASSIFICAZIONE IN BASE AL TEACHING ROLE
+			try
+			{
+				if (queryManager.freePositionAvailableInMunicipality(province.getRealID(), teachingRole) == true)
+				{
+					System.out.println("Posti disponibili nella provincia");
+					province.setRanking(province.getRanking() + 1);
+				}
+			} catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 
 		}
 	}
@@ -280,7 +291,18 @@ public class RankingService
 				municipality.setRanking(municipality.getRanking() + 1);
 			}
 
-			//TODO CLASSIFICAZIONE IN BASE AL TEACHING ROLE
+			//CLASSIFICAZIONE IN BASE AL TEACHING ROLE
+			try
+			{
+				if (queryManager.freePositionAvailableInMunicipality(municipality.getRealID(), teachingRole) == true)
+				{
+					System.out.println("Posti disponibili nel comune");
+					municipality.setRanking(municipality.getRanking() + 1);
+				}
+			} catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 
 		}
 	}
@@ -324,22 +346,22 @@ public class RankingService
 			}
 
 			/*
-			 * TODO CLASSIFICAZIONE IN BASE AL NUMERO DI POSTI LIBERI PER QUEL
+			 * CLASSIFICAZIONE IN BASE AL NUMERO DI POSTI LIBERI PER QUEL
 			 * TEACHING ROLE
 			 */
-			
+
 			try
 			{
-				if(queryManager.freePositionAvailableAtSchool(realID, teachingRole) == true){
+				if (queryManager.freePositionAvailableAtSchool(realID, teachingRole) == true)
+				{
 					System.out.println("Posti disponibili nella scuola");
 					school.setRanking(school.getRanking() + 1);
 				}
 			} catch (SQLException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}
 
 	}

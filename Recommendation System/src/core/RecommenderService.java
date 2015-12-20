@@ -77,6 +77,7 @@ public class RecommenderService
 			//Recommender recommender = new GenericUserBasedRecommender(model, neighborhood, similarity2);
 			//	Recommender cachingRecommender = new CachingRecommender(recommender);
 			
+			System.out.println("Avvio recommender...");
 			
 			List<RecommendedItem> recommendedItems = recommender.recommend(7428, 20);
 			

@@ -324,32 +324,39 @@ public class QueryManager
 
 		return available;
 	}
-
+	
+	
 	/**
-	 * Usato in fase di classificazione Controlla sul grafo se la provincia è
-	 * adatta per il teaching role dell'utente
+	 * Controlla se ci sono scuole all'interno della provincia con posizioni aperte per una materia di insegnamento
 	 * 
-	 * @return
+	 * @param provinceCode
+	 * @param teachingRole
+	 * @return true se ci sono posizioni aperte, false altrimenti
+	 * @throws SQLException
 	 */
-	public boolean isProvinceQuotedForTeachingRole()
+	public boolean freePositionAvailableInProvince(String provinceCode, String teachingRole) throws SQLException
 	{
-		GraphManager graphManager = GraphManager.getIstance();
-
-		return false;
-
+		GraphManager gmanager = GraphManager.getIstance();
+		return gmanager.queryFreePositionInProvince(provinceCode, teachingRole);
+	}
+	
+	
+	/**
+	 * Controlla se ci sono scuole all'interno del comune con posizioni aperte per una materia di insegnamento
+	 * 
+	 * @param municipalityCode
+	 * @param teachingRole
+	 * @return
+	 * @throws SQLException
+	 */
+	public boolean freePositionAvailableInMunicipality(String municipalityCode, String teachingRole) throws SQLException
+	{
+		GraphManager gmanager = GraphManager.getIstance();
+		return gmanager.queryFreePositionInMunicipality(municipalityCode, teachingRole);
 	}
 
-	/**
-	 * Usato in fase di classificazione Controlla sul grafo se il comune è
-	 * adatto per il teaching role dell'utente
-	 * 
-	 * @return
-	 */
-	public boolean isMunicipalityQuotedForTeachingRole()
-	{
-		return false;
+	
 
-	}
 
 	/**
 	 * Usato in fase di classificazione Controlla sul grafo se la scuola è

@@ -80,102 +80,87 @@ public class GraphManager
 	}
 
 	/**
-	 * TODO da eliminare, non utilizzato
-	 * Permette di recuperare le scuole con maggior numero di trasferimenti in
-	 * uscita all'interno di una regione
 	 * 
-	 * @param regionName
+	 * Controlla il numero di posti liberi per il dato teachingRole all'interno
+	 * di una provincia, come differenza tra il numero di trasferimenti in
+	 * uscita e in entrata. Se tale differenza è maggiore di 0 allora la
+	 * provincia ha scuole con posti liberi per quella materia di insegnamento
+	 * 
+	 * @param 
 	 * @throws SQLException
 	 */
-	public void queryMostQuotedSchoolsInRegion(String regionName) throws SQLException
+	public boolean queryFreePositionInProvince(String provinceCode, String teachingRole) throws SQLException
 	{
-
-		/*
-		 * MATCH (n:School {provinceCode:"RG"})-[o:TRANSFER_MAIN]->c OPTIONAL
-		 * MATCH (n:School {provinceCode:"RG"})<-[i:TRANSFER_MAIN]-c RETURN
-		 * distinct n.municipalityCode, count(o) AS outgoing, count(i) AS input,
-		 * count(o)-count(i) AS difference ORDER BY outgoing - input DESC
-		 */
-
-		/*
-		 * SOLO USCENTI MATCH (n:School
-		 * {provinceCode:"RG"})-[o:TRANSFER_MAIN]->c RETURN distinct
-		 * n.municipalityCode, n.municipalityName, count(o) AS outgoing ORDER BY
-		 * outgoing DESC
-		 */
-
-		/*
-		 * SOLO ENTRANTI MATCH c-[i:TRANSFER_MAIN]->(n:School
-		 * {provinceCode:"RG"}) RETURN distinct n.municipalityCode,
-		 * n.municipalityName, count(i) AS incoming ORDER BY incoming DESC
-		 */
 
 		Statement stmt = connection.createStatement();
 
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {provinceCode:'" + provinceCode + "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'"
+				+ teachingRole + "'}]->()) as outgoing," + " size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]-()) as incoming,"
+				+ " n RETURN (outgoing - incoming) as freePositions");
+
 		/*
-		 * per ora viene data la classifica in ordine di trasferimenti; possiamo
-		 * limitare il numero di risultati aggiungendo LIMIT
+		 * in questo caso la query restituisce i posti liberi per ogni scuola
+		 * della provincia, per cui basta restituire true nel momento in cui si
+		 * trova una entry con il campo freePosition positivo
 		 */
-		ResultSet rs = stmt.executeQuery("MATCH (n:School {regionName:'" + regionName + "'}) " + "WITH size((n)-[:TRANSFERS]->()) as outgoing,  "
-				+ "size((n)<-[:TRANSFERS]-()) as incoming, n " + "WHERE (outgoing - incoming) > 0 "
-				+ "RETURN n.code,incoming, out, (out - in) as diff " + "ORDER BY diff DESC");
+
+		boolean freePositionAvailable = false;
 		while (rs.next())
 		{
-			System.out.println(rs.getString("n.code") + "  ,uscenti:" + rs.getInt("outgoing") + ",entranti:" + rs.getInt("incoming") + ",diff:"
-					+ rs.getInt("diff"));
+			
+			if (rs.getInt("freePositions") > 0)
+			{
+				System.out.println("posizioni libere:" + rs.getInt("freePositions"));
+				freePositionAvailable = true;
+				break;
+			}
+
 		}
+
+		return freePositionAvailable;
 
 	}
 
 	/**
-	 * TODO da eliminare, non utilizzato
-	 * Permette di recuperare le scuole con maggior numero di trasferimenti in
-	 * uscita all'interno di una provincia
 	 * 
-	 * @param region
+	 * Controlla il numero di posti liberi per il dato teachingRole all'interno
+	 * di un comune, come differenza tra il numero di trasferimenti in uscita e
+	 * in entrata. Se tale differenza è maggiore di 0 allora il comune ha scuole
+	 * con posti liberi per quella materia di insegnamento
+	 * 
+	 * @param 
 	 * @throws SQLException
 	 */
-	public void queryMostQuotedSchoolInProvince(String provinceCode) throws SQLException
+	public boolean queryFreePositionInMunicipality(String municipalityCode, String teachingRole) throws SQLException
 	{
 
 		Statement stmt = connection.createStatement();
 
-		/*
-		 * per ora viene data la classifica in ordine di trasferimenti; possiamo
-		 * limitare il numero di risultati aggiungendo LIMIT
-		 */
-		ResultSet rs = stmt.executeQuery("MATCH (n:School)-[r:TRANSFER_MAIN]->c WHERE n.provinceCode = '" + provinceCode
-				+ "' RETURN n.code, count(r) AS number_of_connections ORDER BY number_of_connections DESC");
-		while (rs.next())
-		{
-			System.out.println(rs.getString("n.code") + "  ,#traferimenti in uscita:" + rs.getString("number_of_connections"));
-		}
-
-	}
-
-	/**
-	 * TODO da eliminare, non utilizzato
-	 * Permette di recuperare le scuole con maggior numero di trasferimenti in
-	 * uscita all'interno di una regione
-	 * 
-	 * @param region
-	 * @throws SQLException
-	 */
-	public void queryMostQuotedSchoolInRegion(Integer regionId) throws SQLException
-	{
-
-		Statement stmt = connection.createStatement();
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {municipalityCode:'" + municipalityCode
+				+ "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]->()) as outgoing,"
+				+ " size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]-()) as incoming,"
+				+ " n RETURN (outgoing - incoming) as freePositions");
 
 		/*
-		 * per ora viene data la classifica in ordine di trasferimenti e
-		 * visualizzati i primi 10 risultati
+		 * in questo caso la query restituisce i posti liberi per ogni scuola
+		 * del comune, per cui basta restituire true nel momento in cui si trova
+		 * una entry con il campo freePosition positivo
 		 */
-		ResultSet rs = stmt.executeQuery("MATCH (n:School)-[r:TRANSFER_MAIN]->c WHERE n.regionId = " + regionId
-				+ " RETURN n.code, count(r) AS number_of_connections ORDER BY number_of_connections DESC LIMIT 10");
+
+		boolean freePositionAvailable = false;
 		while (rs.next())
 		{
-			System.out.println(rs.getString("n.code") + "  ,#traferimenti in uscita:" + rs.getString("number_of_connections"));
+			
+			if (rs.getInt("freePositions") > 0)
+			{
+				System.out.println("posizioni libere:" + rs.getInt("freePositions"));
+				freePositionAvailable = true;
+				break;
+			}
+
 		}
+
+		return freePositionAvailable;
 
 	}
 
@@ -205,15 +190,16 @@ public class GraphManager
 			System.out.println(rs.getInt("numberOfResults"));
 			numberOfResults += rs.getInt("numberOfResults");
 		}
-		
+
 		return numberOfResults;
 
 	}
-	
+
 	/**
-	 * Controlla il numero di posti liberi per il dato teachingRole all'interno di una scuola,
-	 * come differenza tra il numero di trasferimenti in uscita e in entrata.
-	 * Se tale differenza è maggiore di 0 allora la scuola prevede posti liberi al suo interno
+	 * Controlla il numero di posti liberi per il dato teachingRole all'interno
+	 * di una scuola, come differenza tra il numero di trasferimenti in uscita e
+	 * in entrata. Se tale differenza è maggiore di 0 allora la scuola prevede
+	 * posti liberi al suo interno
 	 * 
 	 * 
 	 * @param schoolId
@@ -221,14 +207,15 @@ public class GraphManager
 	 * @return
 	 * @throws SQLException
 	 */
-	public int queryFreePositionsInSchool(String schoolId, String teachingRole) throws SQLException{
-		
+	public int queryFreePositionsInSchool(String schoolId, String teachingRole) throws SQLException
+	{
+
 		Statement stmt = connection.createStatement();
 		int numberOfResults = 0;
 
-		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'"+teachingRole+"'}]->()) as outgoing,"
-    +" size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'"+teachingRole+"'}]-()) as incoming,"
-    +" n RETURN (outgoing - incoming) as freePositions");
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'"
+				+ teachingRole + "'}]->()) as outgoing," + " size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]-()) as incoming,"
+				+ " n RETURN (outgoing - incoming) as freePositions");
 
 		//se ci sono stati trasferimenti in uscita per quel teachingRole, allora restituisce true
 		while (rs.next())
@@ -236,14 +223,13 @@ public class GraphManager
 			System.out.println(rs.getInt("freePositions"));
 			numberOfResults += rs.getInt("freePositions");
 		}
-		
+
 		return numberOfResults;
 	}
 
 	/**
-	 * TODO non utilizzato
-	 * Permette di recuperare le scuole con maggior numero di trasferimenti in
-	 * uscita all'interno di un comune
+	 * TODO non utilizzato Permette di recuperare le scuole con maggior numero
+	 * di trasferimenti in uscita all'interno di un comune
 	 * 
 	 * @param region
 	 * @throws SQLException
