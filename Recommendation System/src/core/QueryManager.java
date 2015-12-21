@@ -136,7 +136,7 @@ public class QueryManager
 			e.printStackTrace();
 		}
 
-		// Se la stringa ï¿½ null,restituisco non presente
+		// Se la stringa è null,restituisco non presente
 		if (municipality == null)
 			return 1;
 
@@ -399,6 +399,11 @@ public class QueryManager
 		FindIterable<Document> iterable = manager.findLogs();
 
 		return iterable;
+	}
+
+	public String getProvinceFromSchool() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

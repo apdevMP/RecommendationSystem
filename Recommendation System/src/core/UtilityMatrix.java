@@ -3,6 +3,9 @@ package core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.mahout.cf.taste.impl.model.GenericPreference;
+import org.apache.mahout.cf.taste.impl.model.GenericUserPreferenceArray;
+import org.apache.mahout.cf.taste.model.PreferenceArray;
 import org.bson.Document;
 import org.neo4j.cypherdsl.grammar.ForEach;
 
@@ -10,37 +13,37 @@ import org.neo4j.cypherdsl.grammar.ForEach;
  * Questa classe rappresenta la matrice di utilitï¿½ ricavata dai dati
  * 
  */
-public class UtilityMatrix
-{
+public class UtilityMatrix {
 
-	private static final String			TARGET				= "target";
-	private static final String			TYPE_ID				= "typeId";
-	private static final String			KEY					= "key";
-	private static final String			LAST_EVENT_DATA		= "lastEventData";
-	private static final String			USER_ID				= "userId";
-	private static final String			CONTEXT				= "context";
-	private static final String			USER_SCORE			= "userScore";
-	private static final String			EVENT_TYPE			= "eventType";
-	private static final String			SCORE				= "score";
-	private static final String			CODE_MUNICIPALITY	= "codeMunicipality";
-	private static final String			CODE_PROVINCE		= "codeProvince";
-	private static final String			PROVINCE_CODE		= "provinceCode";
-	private static final String			ACTION				= "action";
-	private static final String			ATTRIBUTES			= "attributes";
+	private static final String TARGET = "target";
+	private static final String TYPE_ID = "typeId";
+	private static final String KEY = "key";
+	private static final String LAST_EVENT_DATA = "lastEventData";
+	private static final String USER_ID = "userId";
+	private static final String CONTEXT = "context";
+	private static final String USER_SCORE = "userScore";
+	private static final String EVENT_TYPE = "eventType";
+	private static final String SCORE = "score";
+	private static final String CODE_MUNICIPALITY = "codeMunicipality";
+	private static final String CODE_PROVINCE = "codeProvince";
+	private static final String PROVINCE_CODE = "provinceCode";
+	private static final String ACTION = "action";
+	private static final String ATTRIBUTES = "attributes";
 
-	private List<Long>					matrixUser;
-	private List<String>				matrixProvince;
-	private List<String>				matrixMunicipality;
-	private List<String>				matrixSchool;
-	private List<ArrayList<Integer>>	provinceValues;
-	private List<ArrayList<Integer>>	municipalityValues;
-	private List<ArrayList<Integer>>	schoolValues;
+	private List<Long> matrixUser;
+	private List<String> matrixProvince;
+	private List<String> matrixMunicipality;
+	private List<String> matrixSchool;
+	private List<ArrayList<Integer>> provinceValues;
+	private List<ArrayList<Integer>> municipalityValues;
+	private List<ArrayList<Integer>> schoolValues;
+	private List<UtilityMatrixPreference> preferences;
+	private QueryManager queryManager;
 
 	/**
 	 * Costruttore di default per la matrice di utilitï¿½
 	 */
-	public UtilityMatrix()
-	{
+	public UtilityMatrix() {
 		matrixUser = new ArrayList<Long>();
 		matrixProvince = new ArrayList<String>();
 		matrixMunicipality = new ArrayList<String>();
@@ -48,76 +51,68 @@ public class UtilityMatrix
 		provinceValues = new ArrayList<ArrayList<Integer>>();
 		municipalityValues = new ArrayList<ArrayList<Integer>>();
 		schoolValues = new ArrayList<ArrayList<Integer>>();
-
+		preferences = new ArrayList<UtilityMatrixPreference>();
+		queryManager = new QueryManager();
 	}
 
-	public long getUser(int index)
-	{
+	public List<UtilityMatrixPreference> getPreferences() {
+		return preferences;
+	}
+
+	public long getUser(int index) {
 		return matrixUser.get(index);
 	}
 
-	public String getProvince(int index)
-	{
+	public String getProvince(int index) {
 		return matrixProvince.get(index);
 	}
 
-	public String getSchool(int index)
-	{
+	public String getSchool(int index) {
 		return matrixSchool.get(index);
 	}
 
-	public String getMunicipality(int index)
-	{
+	public String getMunicipality(int index) {
 		return matrixMunicipality.get(index);
 	}
 
-	public List<Long> getUserMatrix()
-	{
+	public List<Long> getUserMatrix() {
 		return matrixUser;
 	}
 
-	public List<String> getProvinceMatrix()
-	{
+	public List<String> getProvinceMatrix() {
 		return matrixProvince;
 	}
 
-	public List<String> getMunicipalityMatrix()
-	{
+	public List<String> getMunicipalityMatrix() {
 		return matrixMunicipality;
 	}
 
-	public List<String> getSchoolMatrix()
-	{
+	public List<String> getSchoolMatrix() {
 		return matrixSchool;
 	}
 
-	public List<ArrayList<Integer>> getProvinceValues()
-	{
+	public List<ArrayList<Integer>> getProvinceValues() {
 		return provinceValues;
 	}
 
-	public void setProvinceValues(List<ArrayList<Integer>> provinceValues)
-	{
+	public void setProvinceValues(List<ArrayList<Integer>> provinceValues) {
 		this.provinceValues = provinceValues;
 	}
 
-	public List<ArrayList<Integer>> getMunicipalityValues()
-	{
+	public List<ArrayList<Integer>> getMunicipalityValues() {
 		return municipalityValues;
 	}
 
-	public void setMunicipalityValues(List<ArrayList<Integer>> municipalityValues)
-	{
+	public void setMunicipalityValues(
+			List<ArrayList<Integer>> municipalityValues) {
 		this.municipalityValues = municipalityValues;
 	}
 
-	public List<ArrayList<Integer>> getSchoolValues()
-	{
+	public List<ArrayList<Integer>> getSchoolValues() {
 		return schoolValues;
 	}
 
-	public void setSchoolValues(List<ArrayList<Integer>> schoolValues)
-	{
+	public void setSchoolValues(List<ArrayList<Integer>> schoolValues) {
 		this.schoolValues = schoolValues;
 	}
 
@@ -127,11 +122,9 @@ public class UtilityMatrix
 	 * @param doc
 	 * 
 	 */
-	public void addUser(long userId)
-	{
-		
-		if (!matrixUser.contains(userId))
-		{
+	public void addUser(long userId) {
+
+		if (!matrixUser.contains(userId)) {
 			matrixUser.add(userId);
 		}
 	}
@@ -141,18 +134,15 @@ public class UtilityMatrix
 	 * 
 	 * @param doc
 	 */
-	public void addProvinceFromLog(Document doc)
-	{
+	public void addProvinceFromLog(Document doc) {
 
-		//	System.out.println(doc.toJson());
+		// System.out.println(doc.toJson());
 		String province = doc.getString(CODE_PROVINCE);
-		if (province == null)
-		{
+		if (province == null) {
 			province = doc.getString(PROVINCE_CODE);
 		}
-		//	System.out.println("prov:"+province);
-		if (!matrixProvince.contains(province))
-		{
+		// System.out.println("prov:"+province);
+		if (!matrixProvince.contains(province)) {
 			matrixProvince.add(province);
 		}
 	}
@@ -162,11 +152,9 @@ public class UtilityMatrix
 	 * 
 	 * @param doc
 	 */
-	public void addProvinceFromWatch(Document doc)
-	{
+	public void addProvinceFromWatch(Document doc) {
 		String province = doc.getString(KEY);
-		if (!matrixProvince.contains(province))
-		{
+		if (!matrixProvince.contains(province)) {
 			matrixProvince.add(province);
 		}
 	}
@@ -176,11 +164,9 @@ public class UtilityMatrix
 	 * 
 	 * @param doc
 	 */
-	public void addMunicipalityFromLog(Document doc)
-	{
+	public void addMunicipalityFromLog(Document doc) {
 		String municipality = doc.getString(CODE_MUNICIPALITY);
-		if (!matrixMunicipality.contains(municipality))
-		{
+		if (!matrixMunicipality.contains(municipality)) {
 			matrixMunicipality.add(municipality);
 		}
 	}
@@ -190,11 +176,9 @@ public class UtilityMatrix
 	 * 
 	 * @param doc
 	 */
-	public void addMunicipalityFromWatch(Document doc)
-	{
+	public void addMunicipalityFromWatch(Document doc) {
 		String municipality = doc.getString(KEY);
-		if (!matrixMunicipality.contains(municipality))
-		{
+		if (!matrixMunicipality.contains(municipality)) {
 			matrixMunicipality.add(municipality);
 		}
 	}
@@ -204,11 +188,9 @@ public class UtilityMatrix
 	 * 
 	 * @param doc
 	 */
-	public void addSchool(Document doc)
-	{
+	public void addSchool(Document doc) {
 		String school = doc.getString(KEY);
-		if (!matrixSchool.contains(school))
-		{
+		if (!matrixSchool.contains(school)) {
 			matrixSchool.add(school);
 		}
 	}
@@ -216,30 +198,23 @@ public class UtilityMatrix
 	/**
 	 * Inizializza la matrice dei valori a 0
 	 */
-	private void initializeValues()
-	{
+	private void initializeValues() {
 		int i = 0;
 
-		for (ArrayList<Integer> it : provinceValues)
-		{
-			for (i = 0; i < matrixProvince.size(); i++)
-			{
+		for (ArrayList<Integer> it : provinceValues) {
+			for (i = 0; i < matrixProvince.size(); i++) {
 				it.add(0);
 			}
 		}
 
-		for (ArrayList<Integer> it : municipalityValues)
-		{
-			for (i = 0; i < matrixMunicipality.size(); i++)
-			{
+		for (ArrayList<Integer> it : municipalityValues) {
+			for (i = 0; i < matrixMunicipality.size(); i++) {
 				it.add(0);
 			}
 		}
 
-		for (ArrayList<Integer> it : schoolValues)
-		{
-			for (i = 0; i < matrixSchool.size(); i++)
-			{
+		for (ArrayList<Integer> it : schoolValues) {
+			for (i = 0; i < matrixSchool.size(); i++) {
 				it.add(0);
 			}
 		}
@@ -253,16 +228,13 @@ public class UtilityMatrix
 	 * @param eventType
 	 * @return valore calcolato
 	 */
-	private int computeValue(long eventType)
-	{
+	private int computeValue(long eventType) {
 		int value = 0;
 
-		//FIXME riportare a 1 e 2
-		if (eventType == 2)
-		{
+		// FIXME riportare a 1 e 2
+		if (eventType == 2) {
 			value = 2;
-		} else
-		{
+		} else {
 			value = 1;
 		}
 
@@ -270,26 +242,25 @@ public class UtilityMatrix
 	}
 
 	/**
-	 * Riempie la matrice di utilitï¿½ con i dati recuperati dai Watches
+	 * Riempie la matrice di utility con i dati recuperati dai Watches
 	 * 
-	 * @param list lista dei documenti filtrati per regione e per tipologia di
-	 * materia insegnata
-	 * @param score punteggio dell'utente al quale suggerire luoghi
+	 * @param list
+	 *            lista dei documenti filtrati per regione e per tipologia di
+	 *            materia insegnata
+	 * @param score
+	 *            punteggio dell'utente al quale suggerire luoghi
 	 */
-	public void fillMatrixWithWatches(List<Document> list)
-	{
+	public void fillMatrixWithWatches(List<Document> list) {
 		// se la lista dei documenti ï¿½ vuota, non viene riempita la matrice di
-		// utilitï¿½
-		if (list.size() < 1)
-		{
+		// utility
+		if (list.size() < 1) {
 			System.out.println("You must fill matrix with not empty list");
 		}
 
-		for (Document doc : list)
-		{
+		for (Document doc : list) {
 			// Vengono aggiunti gli utenti, se non presenti, e gli array di
 			// interi relativi ai valori da assegnare
-		//	System.out.println(doc.getLong(USER_ID));
+			// System.out.println(doc.getLong(USER_ID));
 			long userId = doc.getLong(USER_ID);
 			this.addUser(userId);
 			provinceValues.add(new ArrayList<Integer>());
@@ -303,20 +274,19 @@ public class UtilityMatrix
 			// Viene poi aggiunto il luogo del watch alla relativa matrice
 			Document target = (Document) doc.get(TARGET);
 			long typeId = target.getLong(TYPE_ID);
-			//	System.out.println(typeId);
-			switch ((int) typeId)
-			{
-				case 1:
-					this.addProvinceFromWatch(target);
-					break;
+			// System.out.println(typeId);
+			switch ((int) typeId) {
+			case 1:
+				this.addProvinceFromWatch(target);
+				break;
 
-				case 2:
-					this.addMunicipalityFromWatch(target);
-					break;
+			case 2:
+				this.addMunicipalityFromWatch(target);
+				break;
 
-				case 3:
-					this.addSchool(target);
-					break;
+			case 3:
+				this.addSchool(target);
+				break;
 			}
 
 		}
@@ -324,8 +294,7 @@ public class UtilityMatrix
 		// vengono inizializzati i valori della matrice
 		this.initializeValues();
 
-		for (Document doc : list)
-		{
+		for (Document doc : list) {
 			// Si recupera l'indice dell'array relativo all'utente fornito dal
 			// documento e la tipologia del watch
 			long userId = doc.getLong(USER_ID);
@@ -335,61 +304,58 @@ public class UtilityMatrix
 
 			int value = 0;
 			long eventType = 1;
-			switch ((int) typeId)
-			{
-				case 1:
-					// La preferenza ï¿½ sulla provincia, quindi si recupera
-					// l'indice
-					// dalla matrice delle province assieme al valore del punteggio
-					// dell'utente ed infine si calcola il valore da assegnare
-					String province = target.getString(KEY);
-					int indexProvince = matrixProvince.indexOf(province);
-					Document ledProvince = (Document) doc.get(LAST_EVENT_DATA);
+			switch ((int) typeId) {
+			case 1:
+				// La preferenza ï¿½ sulla provincia, quindi si recupera
+				// l'indice
+				// dalla matrice delle province assieme al valore del punteggio
+				// dell'utente ed infine si calcola il valore da assegnare
+				String province = target.getString(KEY);
+				int indexProvince = matrixProvince.indexOf(province);
+				Document ledProvince = (Document) doc.get(LAST_EVENT_DATA);
 
-					
-					if(ledProvince != null){
-						eventType = ledProvince.getLong(EVENT_TYPE);
-					}
-					value = computeValue(eventType);
+				if (ledProvince != null) {
+					eventType = ledProvince.getLong(EVENT_TYPE);
+				}
+				value = computeValue(eventType);
 
-					provinceValues.get(indexUser).set(indexProvince, value);
-					break;
+				provinceValues.get(indexUser).set(indexProvince, value);
+				break;
 
-				case 2:
-					// La preferenza ï¿½ sul comune, quindi si recupera l'indice
-					// dalla matrice del comune assieme al valore del punteggio
-					// dell'utente ed infine si calcola il valore da assegnare
-					String municipality = target.getString(KEY);
-					int indexMunicipality = matrixMunicipality.indexOf(municipality);
-					Document ledMunicipality = (Document) doc.get(LAST_EVENT_DATA);
+			case 2:
+				// La preferenza ï¿½ sul comune, quindi si recupera l'indice
+				// dalla matrice del comune assieme al valore del punteggio
+				// dell'utente ed infine si calcola il valore da assegnare
+				String municipality = target.getString(KEY);
+				int indexMunicipality = matrixMunicipality
+						.indexOf(municipality);
+				Document ledMunicipality = (Document) doc.get(LAST_EVENT_DATA);
 
-				
-					if(ledMunicipality != null){
-						eventType = ledMunicipality.getLong(EVENT_TYPE);
-					}
-					value = computeValue(eventType);
+				if (ledMunicipality != null) {
+					eventType = ledMunicipality.getLong(EVENT_TYPE);
+				}
+				value = computeValue(eventType);
 
-					municipalityValues.get(indexUser).set(indexMunicipality, value);
-					break;
+				municipalityValues.get(indexUser).set(indexMunicipality, value);
+				break;
 
-				case 3:
-					// La preferenza ï¿½ sulla scuola, quindi si recupera l'indice
-					// dalla matrice delle scuole assieme al valore del punteggio
-					// dell'utente ed infine si calcola il valore da assegnare
-					String school = target.getString(KEY);
-					int indexSchool = matrixSchool.indexOf(school);
-				//	System.out.println("xxxxxxxxxxxxxxxxxxxx");
-					//System.out.println(doc.toJson());
-					Document ledSchool = (Document) doc.get(LAST_EVENT_DATA);
-					
-			
-					if(ledSchool != null){
-						eventType = ledSchool.getLong(EVENT_TYPE);
-					}
-					value = computeValue(eventType);
+			case 3:
+				// La preferenza ï¿½ sulla scuola, quindi si recupera l'indice
+				// dalla matrice delle scuole assieme al valore del punteggio
+				// dell'utente ed infine si calcola il valore da assegnare
+				String school = target.getString(KEY);
+				int indexSchool = matrixSchool.indexOf(school);
+				// System.out.println("xxxxxxxxxxxxxxxxxxxx");
+				// System.out.println(doc.toJson());
+				Document ledSchool = (Document) doc.get(LAST_EVENT_DATA);
 
-					schoolValues.get(indexUser).set(indexSchool, value);
-					break;
+				if (ledSchool != null) {
+					eventType = ledSchool.getLong(EVENT_TYPE);
+				}
+				value = computeValue(eventType);
+
+				schoolValues.get(indexUser).set(indexSchool, value);
+				break;
 			}
 		}
 	}
@@ -397,27 +363,26 @@ public class UtilityMatrix
 	/**
 	 * Riempie la matrice di utilitï¿½ con i dati recuperati dal log
 	 * 
-	 * @param list lista dei documenti filtrati per regione e per tipologia di
-	 * materia insegnata
-	 * @param score punteggio dell'utente al quale suggerire luoghi
+	 * @param list
+	 *            lista dei documenti filtrati per regione e per tipologia di
+	 *            materia insegnata
+	 * @param score
+	 *            punteggio dell'utente al quale suggerire luoghi
 	 */
-	public void fillMatrixWithLogs(List<Document> list)
-	{
+	public void fillMatrixWithLogs(List<Document> list) {
 		// se la lista dei documenti ï¿½ vuota, non viene riempita la matrice di
 		// utilitï¿½
-		if (list.size() < 1)
-		{
+		if (list.size() < 1) {
 			System.out.println("You must fill matrix with not empty list");
 		}
 
-		for (Document doc : list)
-		{
+		for (Document doc : list) {
 			// Vengono aggiunti gli utenti, se non presenti, e gli array di
 			// interi relativi ai valori da assegnare
-		//	System.out.println("+++++++++++");
-		//	System.out.println(doc.toJson());
+			// System.out.println("+++++++++++");
+			// System.out.println(doc.toJson());
 			Long userId = doc.getLong(USER_ID);
-			if(userId == null)
+			if (userId == null)
 				continue;
 			this.addUser(userId);
 			provinceValues.add(new ArrayList<Integer>());
@@ -429,19 +394,18 @@ public class UtilityMatrix
 			// Viene poi aggiunto il luogo del log alla relativa matrice
 			Document attributes = (Document) doc.get(ATTRIBUTES);
 			String action = doc.getString(ACTION);
-			switch (action)
-			{
-				case "webapi_municipality_aggregates":
-					this.addProvinceFromLog(attributes);
-					break;
+			switch (action) {
+			case "webapi_municipality_aggregates":
+				this.addProvinceFromLog(attributes);
+				break;
 
-				case "webapi_school_aggregates":
-					this.addMunicipalityFromLog(attributes);
-					break;
+			case "webapi_school_aggregates":
+				this.addMunicipalityFromLog(attributes);
+				break;
 
-				case "webapi_get_best_schools":
-					this.addProvinceFromLog(attributes);
-					break;
+			case "webapi_get_best_schools":
+				this.addProvinceFromLog(attributes);
+				break;
 			}
 
 		}
@@ -449,43 +413,43 @@ public class UtilityMatrix
 		// vengono inizializzati i valori della matrice
 		this.initializeValues();
 
-		for (Document doc : list)
-		{
+		for (Document doc : list) {
 			// Si recupera l'indice dell'array relativo all'utente fornito dal
 			// documento e la tipologia di azione del log
 			Long userId = doc.getLong(USER_ID);
-			if(userId == null)
+			if (userId == null)
 				continue;
 			int indexUser = matrixUser.indexOf(userId);
 			Document attributes = (Document) doc.get(ATTRIBUTES);
 			String action = doc.getString(ACTION);
 
 			int value = 0;
-			switch (action)
-			{
-				case "webapi_municipality_aggregates":
-					// La preferenza ï¿½ sulla provincia, quindi si recupera l'indice
-					// dalla matrice delle province assieme al valore del punteggio
-					// dell'utente ed infine si calcola il valore da assegnare
-					String province = attributes.getString(CODE_PROVINCE);
-					int indexProvince = matrixProvince.indexOf(province);
+			switch (action) {
+			case "webapi_municipality_aggregates":
+				// La preferenza ï¿½ sulla provincia, quindi si recupera
+				// l'indice
+				// dalla matrice delle province assieme al valore del punteggio
+				// dell'utente ed infine si calcola il valore da assegnare
+				String province = attributes.getString(CODE_PROVINCE);
+				int indexProvince = matrixProvince.indexOf(province);
 
-					value = computeValue(1);
+				value = computeValue(1);
 
-					provinceValues.get(indexUser).set(indexProvince, value);
-					break;
+				provinceValues.get(indexUser).set(indexProvince, value);
+				break;
 
-				case "webapi_school_aggregates":
-					// La preferenza ï¿½ sul comune, quindi si recupera l'indice
-					// dalla matrice del comune assieme al valore del punteggio
-					// dell'utente ed infine si calcola il valore da assegnare
-					String municipality = attributes.getString(CODE_MUNICIPALITY);
-					int indexMunicipality = matrixMunicipality.indexOf(municipality);
+			case "webapi_school_aggregates":
+				// La preferenza ï¿½ sul comune, quindi si recupera l'indice
+				// dalla matrice del comune assieme al valore del punteggio
+				// dell'utente ed infine si calcola il valore da assegnare
+				String municipality = attributes.getString(CODE_MUNICIPALITY);
+				int indexMunicipality = matrixMunicipality
+						.indexOf(municipality);
 
-					value = computeValue(1);
+				value = computeValue(1);
 
-					municipalityValues.get(indexUser).set(indexMunicipality, value);
-					break;
+				municipalityValues.get(indexUser).set(indexMunicipality, value);
+				break;
 			}
 		}
 
@@ -494,37 +458,34 @@ public class UtilityMatrix
 	/**
 	 * Stampa la matrice di utilitï¿½
 	 */
-	public void printUtilityMatrix()
-	{
+	public void printUtilityMatrix() {
 		int i = 0;
-		for (Long userId : matrixUser)
-		{
+		for (Long userId : matrixUser) {
 			System.out.println("[User:" + userId + "]");
 			int j = 0;
-			for (String province : matrixProvince)
-			{
-				System.out.println("Province:" + province + " Value: [" + provinceValues.get(i).get(j) + "]");
+			for (String province : matrixProvince) {
+				System.out.println("Province:" + province + " Value: ["
+						+ provinceValues.get(i).get(j) + "]");
 				j++;
 			}
 			j = 0;
-			for (String municipality : matrixMunicipality)
-			{
-				System.out.println("Municipality:" + municipality + " Value: [" + municipalityValues.get(i).get(j) + "]");
+			for (String municipality : matrixMunicipality) {
+				System.out.println("Municipality:" + municipality + " Value: ["
+						+ municipalityValues.get(i).get(j) + "]");
 				j++;
 			}
 			j = 0;
-			for (String school : matrixSchool)
-			{
+			for (String school : matrixSchool) {
 
-				System.out.println("School:" + school + " Value: [" + schoolValues.get(i).get(j) + "]");
+				System.out.println("School:" + school + " Value: ["
+						+ schoolValues.get(i).get(j) + "]");
 				j++;
 			}
 			i++;
 		}
 	}
 
-	public void setValueByUserAndProvince(long user, String province, int value)
-	{
+	public void setValueByUserAndProvince(long user, String province, int value) {
 
 		int indexUser = matrixUser.indexOf(user);
 		int indexProvince = matrixProvince.indexOf(province);
@@ -533,8 +494,7 @@ public class UtilityMatrix
 
 	}
 
-	public int getValueByUserAndProvince(long user, String province)
-	{
+	public int getValueByUserAndProvince(long user, String province) {
 		int value = 0;
 		int indexUser = matrixUser.indexOf(user);
 		int indexProvince = matrixProvince.indexOf(province);
@@ -543,16 +503,15 @@ public class UtilityMatrix
 
 	}
 
-	public void setValueByUserAndMunicipality(long userId, String municipality, int value)
-	{
+	public void setValueByUserAndMunicipality(long userId, String municipality,
+			int value) {
 		int indexUser = matrixUser.indexOf(userId);
 		int indexMunicipality = matrixMunicipality.indexOf(municipality);
 
 		municipalityValues.get(indexUser).set(indexMunicipality, value);
 	}
 
-	public int getValueByUserAndMunicipality(long user, String municipality)
-	{
+	public int getValueByUserAndMunicipality(long user, String municipality) {
 		int value = 0;
 		int indexUser = matrixUser.indexOf(user);
 		int indexMunicipality = matrixMunicipality.indexOf(municipality);
@@ -561,8 +520,7 @@ public class UtilityMatrix
 
 	}
 
-	public void setValueByUserAndSchool(long user, String school, int value)
-	{
+	public void setValueByUserAndSchool(long user, String school, int value) {
 		int indexUser = matrixUser.indexOf(user);
 		int indexSchool = matrixSchool.indexOf(school);
 
@@ -570,13 +528,88 @@ public class UtilityMatrix
 
 	}
 
-	public int getValueByUserAndSchool(long user, String school)
-	{
+	public int getValueByUserAndSchool(long user, String school) {
 		int value = 0;
 		int indexUser = matrixUser.indexOf(user);
 		int indexSchool = matrixSchool.indexOf(school);
 		value = schoolValues.get(indexUser).get(indexSchool);
 		return value;
+	}
+
+	public void fillPreferencesWithWatches(List<Document> list) {
+		// se la lista dei documenti ï¿½ vuota, non viene riempita la matrice di
+		// utility
+		if (list.size() < 1) {
+			System.out.println("You must fill matrix with not empty list");
+		}
+
+		for (Document doc : list) {
+
+			// Si recupera l'indice dell'array relativo all'utente fornito dal
+			// documento e la tipologia del watch
+			long userId = doc.getLong(USER_ID);
+			int indexUser = matrixUser.indexOf(userId);
+			Document target = (Document) doc.get(TARGET);
+			long typeId = target.getLong(TYPE_ID);
+
+			int value = 0;
+			long eventType = 1;
+			switch ((int) typeId) {
+			case 1:
+				// La preferenza è sulla provincia, quindi si recupera
+				// l'indice
+				// dalla matrice delle province assieme al valore del punteggio
+				// dell'utente ed infine si calcola il valore da assegnare
+				String province = target.getString(KEY);
+				Document ledProvince = (Document) doc.get(LAST_EVENT_DATA);
+
+				if (ledProvince != null) {
+					eventType = ledProvince.getLong(EVENT_TYPE);
+				}
+				value = computeValue(eventType);
+
+				preferences.add(new UtilityMatrixPreference(userId, province,
+						1, value));
+				break;
+
+			case 2:
+				// La preferenza è sul comune, quindi si recupera l'indice
+				// dalla matrice del comune assieme al valore del punteggio
+				// dell'utente ed infine si calcola il valore da assegnare
+				String municipality = target.getString(KEY);
+				
+				Document ledMunicipality = (Document) doc.get(LAST_EVENT_DATA);
+
+				if (ledMunicipality != null) {
+					eventType = ledMunicipality.getLong(EVENT_TYPE);
+				}
+				value = computeValue(eventType);
+
+				preferences.add(new UtilityMatrixPreference(userId, municipality, 2, value));
+				break;
+
+			case 3:
+				// La preferenza è sulla scuola, quindi si recupera l'indice
+				// dalla matrice delle scuole assieme al valore del punteggio
+				// dell'utente ed infine si calcola il valore da assegnare
+				String school = target.getString(KEY);
+				Document ledSchool = (Document) doc.get(LAST_EVENT_DATA);
+
+				if (ledSchool != null) {
+					eventType = ledSchool.getLong(EVENT_TYPE);
+				}
+				value = computeValue(eventType);
+
+				preferences.add(new UtilityMatrixPreference(userId, school, 3, value));
+				
+				String provinceFromSchool = queryManager.getProvinceFromSchool();
+				/*String municipalityFromSchool = queryManager.getMunicipalityFromSchool();
+				preferences.add(new UtilityMatrixPreference(userId, provinceFromSchool, 1, value));
+				preferences.add(new UtilityMatrixPreference(userId, municipalityFromSchool, 2, value));
+				*/
+				break;
+			}
+		}
 	}
 
 }
