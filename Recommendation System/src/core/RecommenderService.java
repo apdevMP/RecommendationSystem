@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.management.relation.Role;
 
@@ -42,6 +44,8 @@ public class RecommenderService
 {
 
 	private Profile	userProfile;
+	private static final Logger LOGGER = Logger.getLogger(RecommenderService.class.getName());
+
 
 	public RecommenderService(Profile profile)
 	{
@@ -77,20 +81,21 @@ public class RecommenderService
 			//Recommender recommender = new GenericUserBasedRecommender(model, neighborhood, similarity2);
 			//	Recommender cachingRecommender = new CachingRecommender(recommender);
 			
-			System.out.println("Avvio recommender...");
+			LOGGER.info("\n\n["+RecommenderService.class.getName()+"] Starting recommender service..");
+			
 			
 			List<RecommendedItem> recommendedItems = recommender.recommend(7428, 20);
 			
-			System.out.println("Creata lista items, grandezza: " + recommendedItems.size());
+			LOGGER.info("["+RecommenderService.class.getName()+"] List of recommended items created");
 
 			if (!recommendedItems.isEmpty())
 			{
 				for (RecommendedItem item : recommendedItems)
 				{
-					System.out.println("id:" + item.getItemID() + ",value:" + item.getValue());
+					LOGGER.info("id:" + item.getItemID() + ", value:" + item.getValue());
 					
 				}
-				System.out.println("Size recommendedItems: "+recommendedItems.size());
+				
 				RankingService rankingService = new RankingService(recommendedItems, creator.getItemsMap(), creator.getCategoriesMap(), userProfile);
 				
 				/*
@@ -100,14 +105,13 @@ public class RecommenderService
 				
 			} else
 			{
-				System.out.println("la lista è vuota");
+				LOGGER.warning("["+RecommenderService.class.getName()+"] Empty recommendation list");
 				
 			}
 			
 		} catch (IOException | TasteException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "["+RecommenderService.class.getName()+"] Exception: ", e);
 		}
 		
 		return finalList;

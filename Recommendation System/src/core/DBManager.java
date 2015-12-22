@@ -3,6 +3,7 @@ package core;
 import java.awt.List;
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 import javax.print.Doc;
 
@@ -40,6 +41,9 @@ public class DBManager
 
 	private MongoDatabase			database;
 	private static DBManager		manager						= null;
+	
+	private static final Logger LOGGER = Logger.getLogger(DBManager.class.getName());
+
 
 	private DBManager()
 	{
@@ -79,7 +83,7 @@ public class DBManager
 
 		} else
 		{
-			System.out.println("Connection alrady started");
+			LOGGER.warning("["+ DBManager.class.getName()+ "]Connection already started");
 		}
 	}
 

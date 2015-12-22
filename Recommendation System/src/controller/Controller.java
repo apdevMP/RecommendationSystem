@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.google.gson.Gson;
 
@@ -35,6 +36,8 @@ public class Controller
 	private ActionListener			listener;
 	private static Configuration	configuration;
 	private RecommenderService 		recommenderService;
+	private static final Logger LOGGER = Logger.getLogger(Controller.class.getName());
+
 
 	/**
 	 * Costruttore
@@ -75,7 +78,7 @@ public class Controller
 
 			//	Profile userProfile = retrieveProfileFromDb(id, teachingRole, score);
 				Profile userProfile = new Profile(id, teachingRole, score, region);
-				System.out.println("Profile:"+userProfile.toString());
+				LOGGER.info("["+Controller.class.getName()+"] Starting recommendation system for: "+ userProfile.toString());
 				recommenderService = new RecommenderService(userProfile);
 				//System.out.println("Region:"+region);
 				List<CustomRecommendedItem> recommendedItems = recommenderService.recommendByRegion(region);

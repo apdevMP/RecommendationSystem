@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bson.Document;
 
@@ -21,6 +23,8 @@ public class UtilityMatrixService
 	private QueryManager	queryManager;
 	private Map<String, Long> itemsMap;
 	private Map<String, Long> categoriesMap;
+	
+	private static final Logger LOGGER = Logger.getLogger(UtilityMatrixService.class.getName());
 
 	public UtilityMatrixService()
 	{
@@ -51,10 +55,12 @@ public class UtilityMatrixService
 		// si recupera la lista di watch e di log in base alla materia di
 		// insegnamento
 	//	FindIterable<Document> itWatches = queryManager.findWatchesByTeachingRole(teachingRole);
-		System.out.println("Finding watches..");
+		LOGGER.info("["+UtilityMatrixService.class.getName()+"] Finding watches...");
+	//	System.out.println("Finding watches..");
 		FindIterable<Document> itWatches = queryManager.findWatches();
 	//	FindIterable<Document> itLogs = queryManager.findLogsByTeachingRole(teachingRole);
-		System.out.println("Findind logs..");;
+		LOGGER.info("["+UtilityMatrixService.class.getName()+"] Finding logs...");
+	//	System.out.println("Findind logs..");;
 		FindIterable<Document> itLogs = queryManager.getLogsByAction(actions);
 
 		// le liste di watch e log vengono filtrate per regione
@@ -74,7 +80,8 @@ public class UtilityMatrixService
 			//System.out.println(document.toJson());
 		}
 
-		System.out.println("Creating utility matrix..");
+		LOGGER.info("["+UtilityMatrixService.class.getName()+"] Creating utility matrix..");
+		//System.out.println("Creating utility matrix..");
 		// dalle liste viene creata la matrice di utilit�
 		UtilityMatrixCreator ums = new UtilityMatrixCreator();
 		UtilityMatrix uMatrix = ums.createUtilityMatrix(listWatches, listLogs);
@@ -84,10 +91,10 @@ public class UtilityMatrixService
 
 	public void saveMatrix(UtilityMatrix matrix)
 	{
-		System.out.println("Saving data...");
+		LOGGER.info("["+UtilityMatrixService.class.getName()+"] Saving data model for recommender..");
 		try
 		{
-			FileWriter writer = new FileWriter("matrix_value.csv");
+			FileWriter writer = new FileWriter("matrix_value2.csv");
 			List<Long> userList = matrix.getUserMatrix();
 			List<String> provinceList = matrix.getProvinceMatrix();
 			List<String> municipalityList = matrix.getMunicipalityMatrix();
@@ -96,7 +103,7 @@ public class UtilityMatrixService
 
 			long counter = 0;
 			this.itemsMap = new HashMap<String, Long>();
-			System.out.println("counter="+counter+"...inizio province");
+		//	System.out.println("counter="+counter+"...inizio province");
 			for(String provinceCodeString : provinceList){
 			//	System.out.println(provinceCodeString);
 				
@@ -112,8 +119,8 @@ public class UtilityMatrixService
 			}
 			
 			this.categoriesMap.put("province", counter);
-			System.out.println("categoriesMap, province:"+categoriesMap.get("province"));
-			System.out.println("counter="+counter+"...inizio comuni");
+		//	System.out.println("categoriesMap, province:"+categoriesMap.get("province"));
+		//	System.out.println("counter="+counter+"...inizio comuni");
 			for(String municipalityCodeString : municipalityList){
 				//System.out.println(municipalityCodeString);
 				Long i = itemsMap.get(municipalityCodeString);
@@ -127,8 +134,8 @@ public class UtilityMatrixService
 			}
 			
 			this.categoriesMap.put("comuni", counter);
-			System.out.println("categoriesMap, comuni:"+categoriesMap.get("comuni"));
-			System.out.println("counter="+counter+"...inizio scuole");
+		//	System.out.println("categoriesMap, comuni:"+categoriesMap.get("comuni"));
+		//	System.out.println("counter="+counter+"...inizio scuole");
 			for (String schoolCodeString : schoolList)
 			{
 				//System.out.println(schoolCodeString);
@@ -144,8 +151,8 @@ public class UtilityMatrixService
 			
 			
 			this.categoriesMap.put("scuole", counter);
-			System.out.println("categoriesMap, scuole:"+categoriesMap.get("scuole"));
-			System.out.println("counter totale:"+counter);
+		//	System.out.println("categoriesMap, scuole:"+categoriesMap.get("scuole"));
+			LOGGER.info("["+UtilityMatrixService.class.getName()+"] Items to be processed: "+counter);
 
 			for (long user : userList)
 			{
@@ -195,10 +202,12 @@ public class UtilityMatrixService
 			writer.flush();
 			writer.close();
 			
-			System.out.println("Data saved!");
+			LOGGER.info("["+UtilityMatrixService.class.getName()+"] Data successfully saved");
+			//System.out.println("Data saved!");
 		} catch (IOException e)
 		{
-			System.out.println("File not Found!!!");
+			LOGGER.severe("["+UtilityMatrixService.class.getName()+"] Exception: "+ e.getMessage());
+	//		System.out.println("File not Found!!!");
 			e.printStackTrace();
 		}
 		

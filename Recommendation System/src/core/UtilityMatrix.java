@@ -2,6 +2,8 @@ package core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bson.Document;
 import org.neo4j.cypherdsl.grammar.ForEach;
@@ -35,6 +37,8 @@ public class UtilityMatrix
 	private List<ArrayList<Integer>>	provinceValues;
 	private List<ArrayList<Integer>>	municipalityValues;
 	private List<ArrayList<Integer>>	schoolValues;
+	
+	private static final Logger LOGGER = Logger.getLogger(UtilityMatrix.class.getName());
 
 	/**
 	 * Costruttore di default per la matrice di utilit�
@@ -282,7 +286,7 @@ public class UtilityMatrix
 		// utilit�
 		if (list.size() < 1)
 		{
-			System.out.println("You must fill matrix with not empty list");
+			LOGGER.severe("["+UtilityMatrix.class.getName()+"] WATCHES: You must fill matrix with not empty list");
 		}
 
 		for (Document doc : list)
@@ -407,7 +411,7 @@ public class UtilityMatrix
 		// utilit�
 		if (list.size() < 1)
 		{
-			System.out.println("You must fill matrix with not empty list");
+			LOGGER.severe("["+UtilityMatrix.class.getName()+"] LOGS: You must fill matrix with not empty list");
 		}
 
 		for (Document doc : list)

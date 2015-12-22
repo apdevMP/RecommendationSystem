@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import utils.Configuration;
 
@@ -24,6 +25,8 @@ public class GraphManager
 	private Connection				connection;
 	private static GraphManager		manager			= null;
 	private static Configuration	configuration	= null;
+	
+	private static Logger LOGGER = Logger.getLogger(GraphManager.class.getName());
 
 	private GraphManager()
 	{
@@ -34,8 +37,6 @@ public class GraphManager
 		}
 		String neo_usernameString = configuration.getNeo_username();
 		String neo_passwordString = configuration.getNeo_password();
-		System.out.println(configuration.getMongo_port());
-		System.out.println("GraphManager, username=" + neo_usernameString + ", password=" + neo_passwordString);
 		connectToGraph(neo_usernameString, neo_passwordString);
 	}
 
@@ -68,7 +69,7 @@ public class GraphManager
 			properties.put("user", user);
 			properties.put("password", password);
 
-			// Connect
+			// TODO Connect
 			connection = DriverManager.getConnection("jdbc:neo4j://localhost:7474/", properties);
 
 		} catch (SQLException | ClassNotFoundException e)
@@ -110,7 +111,7 @@ public class GraphManager
 			
 			if (rs.getInt("freePositions") > 0)
 			{
-				System.out.println("posizioni libere:" + rs.getInt("freePositions"));
+				//System.out.println("posizioni libere:" + rs.getInt("freePositions"));
 				freePositionAvailable = true;
 				break;
 			}
@@ -153,7 +154,7 @@ public class GraphManager
 			
 			if (rs.getInt("freePositions") > 0)
 			{
-				System.out.println("posizioni libere:" + rs.getInt("freePositions"));
+			//	System.out.println("posizioni libere:" + rs.getInt("freePositions"));
 				freePositionAvailable = true;
 				break;
 			}
@@ -187,7 +188,7 @@ public class GraphManager
 		//se ci sono stati trasferimenti in uscita per quel teachingRole, allora restituisce true
 		while (rs.next())
 		{
-			System.out.println(rs.getInt("numberOfResults"));
+			//System.out.println(rs.getInt("numberOfResults"));
 			numberOfResults += rs.getInt("numberOfResults");
 		}
 
@@ -220,7 +221,7 @@ public class GraphManager
 		//se ci sono stati trasferimenti in uscita per quel teachingRole, allora restituisce true
 		while (rs.next())
 		{
-			System.out.println(rs.getInt("freePositions"));
+		//	System.out.println(rs.getInt("freePositions"));
 			numberOfResults += rs.getInt("freePositions");
 		}
 
@@ -244,7 +245,7 @@ public class GraphManager
 				+ "' RETURN n.code, count(r) AS number_of_connections ORDER BY number_of_connections DESC");
 		while (rs.next())
 		{
-			System.out.println(rs.getString("n.code") + "  ,#traferimenti in uscita:" + rs.getString("number_of_connections"));
+			//System.out.println(rs.getString("n.code") + "  ,#traferimenti in uscita:" + rs.getString("number_of_connections"));
 		}
 
 	}

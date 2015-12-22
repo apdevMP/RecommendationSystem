@@ -2,6 +2,8 @@ package core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bson.Document;
 
@@ -16,6 +18,9 @@ public class UtilityMatrixCreator {
 	private UtilityMatrix umFromWatch;
 	private UtilityMatrix umFromLog;
 	private UtilityMatrix umMerge;
+	
+	private static final Logger LOGGER = Logger.getLogger(UtilityMatrixCreator.class.getName());
+
 
 	/**
 	 * Costruttore di default
@@ -110,6 +115,7 @@ public class UtilityMatrixCreator {
 	 */
 	public void mergeProvinceList(long userId, boolean isPresent) {
 
+		
 		// recupera la lista degli utenti
 		List<Long> matrixUser = umMerge.getUserMatrix();
 
@@ -194,6 +200,7 @@ public class UtilityMatrixCreator {
 	 */
 	public void mergeMunicipalityList(long userId, boolean isPresent) {
 
+		
 		// recupera la lista degli utenti
 		List<Long> matrixUser = umMerge.getUserMatrix();
 
@@ -277,6 +284,8 @@ public class UtilityMatrixCreator {
 	 */
 	public void mergeSchoolList(long userId, boolean isPresent) {
 
+		
+		
 		// recupera la lista degli utenti
 		List<Long> matrixUser = umMerge.getUserMatrix();
 
@@ -355,7 +364,7 @@ public class UtilityMatrixCreator {
 		// viene assegnata la matrice dei watches a quella di merge
 		umMerge = umFromWatch;
 
-		// si recuperano le liste degli utenti dellee due matrici
+		// si recuperano le liste degli utenti delle due matrici
 		List<Long> userToMerge = umFromLog.getUserMatrix();
 		List<Long> matrixUser = umMerge.getUserMatrix();
 
@@ -372,6 +381,8 @@ public class UtilityMatrixCreator {
 			mergeMunicipalityList(userId, containsUser);
 			mergeSchoolList(userId, containsUser);
 		}
+		
+		LOGGER.info("["+UtilityMatrixCreator.class.getName()+"] Utility matrix created");
 	}
 
 	/**
@@ -386,11 +397,13 @@ public class UtilityMatrixCreator {
 			List<Document> listFromLog) {
 		// riempie le due matrici di utilit� provenienti da watches e log di
 		// navigazione
-		System.out.println("Filling matrix from logs and watches..");
+		LOGGER.info("["+UtilityMatrixCreator.class.getName()+"] Filling matrix from logs and watches..");
+	//	System.out.println("Filling matrix from logs and watches..");
 		fillMatrix(listFromWatch, listFromLog);
 
 		// unisce le due matrici di utilit� in una sola che viene restituita
-		System.out.println("Merging matrixes..");
+		LOGGER.info("["+UtilityMatrixCreator.class.getName()+"] Merging matrixes..");
+	//	System.out.println("Merging matrixes..");
 		mergeMatrix();
 		return umMerge;
 	}
