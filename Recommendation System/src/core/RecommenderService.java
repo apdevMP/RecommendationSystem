@@ -61,9 +61,11 @@ public class RecommenderService
 		
 		UtilityMatrixService creator = new UtilityMatrixService(userProfile, region);
 
-		UtilityMatrix matrix = creator.createUtilityMatrix();
-		creator.saveMatrix(matrix);
-
+		//UtilityMatrix matrix = creator.createUtilityMatrix();
+		//creator.saveMatrix(matrix);
+		UtilityMatrix matrix = creator.createPreferences();
+		creator.savePreferences(matrix);
+		
 		try
 		{
 			DataModel model = new FileDataModel(new File("matrix_value.csv"));

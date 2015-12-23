@@ -394,5 +394,30 @@ public class UtilityMatrixCreator {
 		mergeMatrix();
 		return umMerge;
 	}
+	
+	public UtilityMatrix createUtilityMatrixPreferences(List<Document> listFromWatch,
+			List<Document> listFromLog) {
+		// riempie le due matrici di utilit� provenienti da watches e log di
+		// navigazione
+		System.out.println("Filling matrix from logs and watches..");
+
+		fillMatrixPreferences(listFromWatch, listFromLog);
+
+		return umMerge;
+	}
+	
+	public void fillMatrixPreferences(List<Document> listFromWatch,
+			List<Document> listFromLog) {
+
+		// riempie e stampa la matrice di utilit� relativa ai watches
+		umMerge.fillPreferencesWithWatches(listFromWatch);
+	//	umFromWatch.printUtilityMatrix();
+
+		// riempie e stampa la matrice di utilit� relativa al log
+		umMerge.fillPreferencesWithLogs(listFromLog);
+	//	umFromLog.printUtilityMatrix();
+		umMerge.sortForPlacePreferences();
+	}
+
 
 }

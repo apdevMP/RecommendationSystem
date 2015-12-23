@@ -38,7 +38,11 @@ public class UtilityMatrix {
 	private List<ArrayList<Integer>> municipalityValues;
 	private List<ArrayList<Integer>> schoolValues;
 	private List<UtilityMatrixPreference> preferences;
-	private QueryManager queryManager;
+	// private QueryManager queryManager;
+	private int contProvince;
+
+	private int contMunicipality;
+	private int contSchool;
 
 	/**
 	 * Costruttore di default per la matrice di utilitï¿½
@@ -52,7 +56,11 @@ public class UtilityMatrix {
 		municipalityValues = new ArrayList<ArrayList<Integer>>();
 		schoolValues = new ArrayList<ArrayList<Integer>>();
 		preferences = new ArrayList<UtilityMatrixPreference>();
-		queryManager = new QueryManager();
+		// queryManager = new QueryManager();
+		// Azzero i conatatori
+		contProvince = 0;
+		contMunicipality = 0;
+		contSchool = 0;
 	}
 
 	public List<UtilityMatrixPreference> getPreferences() {
@@ -379,8 +387,6 @@ public class UtilityMatrix {
 		for (Document doc : list) {
 			// Vengono aggiunti gli utenti, se non presenti, e gli array di
 			// interi relativi ai valori da assegnare
-			// System.out.println("+++++++++++");
-			// System.out.println(doc.toJson());
 			Long userId = doc.getLong(USER_ID);
 			if (userId == null)
 				continue;
@@ -548,7 +554,6 @@ public class UtilityMatrix {
 			// Si recupera l'indice dell'array relativo all'utente fornito dal
 			// documento e la tipologia del watch
 			long userId = doc.getLong(USER_ID);
-			int indexUser = matrixUser.indexOf(userId);
 			Document target = (Document) doc.get(TARGET);
 			long typeId = target.getLong(TYPE_ID);
 
@@ -561,6 +566,9 @@ public class UtilityMatrix {
 				// dalla matrice delle province assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String province = target.getString(KEY);
+				if(province == null)
+					break;
+				
 				Document ledProvince = (Document) doc.get(LAST_EVENT_DATA);
 
 				if (ledProvince != null) {
@@ -577,7 +585,8 @@ public class UtilityMatrix {
 				// dalla matrice del comune assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String municipality = target.getString(KEY);
-				
+				if(municipality==null)
+					break;
 				Document ledMunicipality = (Document) doc.get(LAST_EVENT_DATA);
 
 				if (ledMunicipality != null) {
@@ -585,7 +594,8 @@ public class UtilityMatrix {
 				}
 				value = computeValue(eventType);
 
-				preferences.add(new UtilityMatrixPreference(userId, municipality, 2, value));
+				preferences.add(new UtilityMatrixPreference(userId,
+						municipality, 2, value));
 				break;
 
 			case 3:
@@ -593,6 +603,8 @@ public class UtilityMatrix {
 				// dalla matrice delle scuole assieme al valore del punteggio
 				// dell'utente ed infine si calcola il valore da assegnare
 				String school = target.getString(KEY);
+				if(school == null)
+					break;
 				Document ledSchool = (Document) doc.get(LAST_EVENT_DATA);
 
 				if (ledSchool != null) {
@@ -600,16 +612,155 @@ public class UtilityMatrix {
 				}
 				value = computeValue(eventType);
 
-				preferences.add(new UtilityMatrixPreference(userId, school, 3, value));
-				
-				String provinceFromSchool = queryManager.getProvinceFromSchool();
-				/*String municipalityFromSchool = queryManager.getMunicipalityFromSchool();
-				preferences.add(new UtilityMatrixPreference(userId, provinceFromSchool, 1, value));
-				preferences.add(new UtilityMatrixPreference(userId, municipalityFromSchool, 2, value));
-				*/
+				preferences.add(new UtilityMatrixPreference(userId, school, 3,
+						value));
+
+				/*
+				 * String provinceFromSchool =
+				 * queryManager.getProvinceFromSchool(); String
+				 * municipalityFromSchool =
+				 * queryManager.getMunicipalityFromSchool(); preferences.add(new
+				 * UtilityMatrixPreference(userId, provinceFromSchool, 1,
+				 * value)); preferences.add(new UtilityMatrixPreference(userId,
+				 * municipalityFromSchool, 2, value));
+				 */
 				break;
 			}
 		}
 	}
 
+	public void fillPreferencesWithLogs(List<Document> list) {
+		// se la lista dei documenti è vuota, non viene riempita la matrice di
+		// utility
+		if (list.size() < 1) {
+			System.out.println("You must fill matrix with not empty list");
+		}
+
+		for (Document doc : list) {
+			// Vengono aggiunti gli utenti, se non presenti, e gli array di
+			// interi relativi ai valori da assegnare
+			Long userId = doc.getLong(USER_ID);
+			if (userId == null)
+				continue;
+
+			Document attributes = (Document) doc.get(ATTRIBUTES);
+			String action = doc.getString(ACTION);
+
+			int value = 0;
+			switch (action) {
+			case "webapi_municipality_aggregates":
+				// La preferenza è sulla provincia, quindi si recupera
+				// l'indice
+				// dalla matrice delle province assieme al valore del punteggio
+				// dell'utente ed infine si calcola il valore da assegnare
+				String province = attributes.getString(CODE_PROVINCE);
+				if(province == null)
+					break;
+				
+				value = computeValue(1);
+
+				preferences.add(new UtilityMatrixPreference(userId, province,
+						1, value));
+				break;
+
+			case "webapi_school_aggregates":
+				// La preferenza ï¿½ sul comune, quindi si recupera l'indice
+				// dalla matrice del comune assieme al valore del punteggio
+				// dell'utente ed infine si calcola il valore da assegnare
+				String municipality = attributes.getString(CODE_MUNICIPALITY);
+				if(municipality == null)
+					break;
+				
+				value = computeValue(1);
+
+				preferences.add(new UtilityMatrixPreference(userId,
+						municipality, 2, value));
+				break;
+			case "webapi_get_best_schools":
+				String provinceFromBestSchool = attributes
+						.getString(CODE_PROVINCE);
+				if(provinceFromBestSchool == null)
+					break;
+				value = computeValue(1);
+
+				preferences.add(new UtilityMatrixPreference(userId,
+						provinceFromBestSchool, 1, value));
+				break;
+			}
+		}
+		System.out.println("SIZE: " + preferences.size());
+
+	}
+
+	public int getContProvince() {
+		return contProvince;
+	}
+
+	public void setContProvince(int contProvince) {
+		this.contProvince = contProvince;
+	}
+
+	public int getContMunicipality() {
+		return contMunicipality;
+	}
+
+	public void setContMunicipality(int contMunicipality) {
+		this.contMunicipality = contMunicipality;
+	}
+
+	public int getContSchool() {
+		return contSchool;
+	}
+
+	public void setContSchool(int contSchool) {
+		this.contSchool = contSchool;
+	}
+
+	private int isInList(List<UtilityMatrixPreference> list,
+			UtilityMatrixPreference p) {
+		int present = -1;
+		for (int i = 0; i < list.size(); i++) {
+			String place = list.get(i).getPlaceId();
+			long id = list.get(i).getUserId();
+			int tag = list.get(i).getTag();
+			if (place.equals(p.getPlaceId()) && id == p.getUserId() && tag == p.getTag() ) {
+				present = i;
+				return present;
+			}
+		}
+		return present;
+	}
+
+	public void sortForPlacePreferences() {
+		List<UtilityMatrixPreference> sortedPreferences = new ArrayList<UtilityMatrixPreference>();
+		for (int i = 1; i < 4; ++i) {
+			for (int j = 0; j < preferences.size(); j++) {
+				UtilityMatrixPreference preference = preferences.get(j);
+				if (preference.getTag() == i) {
+					int present = isInList(sortedPreferences, preference);
+					if (present == -1){
+						sortedPreferences.add(preference);
+					}
+					else {
+						
+						int score = sortedPreferences.get(present).getScore()
+								+ preference.getScore();
+						sortedPreferences.get(present).setScore(score);
+					}
+				}
+
+			}
+			if (i == 1) {
+				contProvince = sortedPreferences.size();
+			}
+			if (i == 2) {
+				contMunicipality = sortedPreferences.size();
+			}
+			if (i == 3) {
+				contSchool = sortedPreferences.size();
+			}
+		}
+
+		preferences = sortedPreferences;
+	}
 }
