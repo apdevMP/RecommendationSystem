@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-simple-1.7.12.jar"/>
 	<classpathentry kind="lib" path="lib/mahout-math-0.7.jar"/>
 	<classpathentry kind="lib" path="lib/guava-14.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/uncommons-maths-1.2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -553,7 +553,7 @@ public class UtilityMatrix {
 		// se la lista dei documenti � vuota, non viene riempita la matrice di
 		// utility
 		if (list.size() < 1) {
-			System.out.println("You must fill matrix with not empty list");
+			LOGGER.severe("["+UtilityMatrix.class.getName()+"] You must fill matrix with not empty list");
 		}
 
 		for (Document doc : list) {
@@ -695,6 +695,7 @@ public class UtilityMatrix {
 				break;
 			}
 		}
+	
 		System.out.println("SIZE: " + preferences.size());
 
 	}

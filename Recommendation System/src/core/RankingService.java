@@ -120,25 +120,19 @@ public class RankingService
 			}
 		}
 
-//		System.out.println("Liste separate create");
-//		System.out.println("Size lista province:" + provinceIdList.size());
-//		System.out.println("Size lista comuni:" + municipalityIdList.size());
-//		System.out.println("Size lista scuole:" + schoolsIdList.size());
 
-
-
-		System.out.println("PROVINCE:");
-		for(CustomRecommendedItem i : provinceIdList){
-			System.out.println(i.getRealID());
-		}
-		System.out.println("COMUNI:");
-		for(CustomRecommendedItem i : municipalityIdList){
-			System.out.println(i.getRealID());
-		}
-		System.out.println("SCUOLE:");
-		for(CustomRecommendedItem i : schoolsIdList){
-			System.out.println(i.getRealID());
-		}
+//		System.out.println("PROVINCE:");
+//		for(CustomRecommendedItem i : provinceIdList){
+//			System.out.println(i.getRealID());
+//		}
+//		System.out.println("COMUNI:");
+//		for(CustomRecommendedItem i : municipalityIdList){
+//			System.out.println(i.getRealID());
+//		}
+//		System.out.println("SCUOLE:");
+//		for(CustomRecommendedItem i : schoolsIdList){
+//			System.out.println(i.getRealID());
+//		}
 
 		/*
 		 * a questo punto le tre liste sono state riempite, quindi si passa alla

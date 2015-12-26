@@ -412,7 +412,7 @@ public class UtilityMatrixCreator {
 			List<Document> listFromLog) {
 		// riempie le due matrici di utilit� provenienti da watches e log di
 		// navigazione
-		System.out.println("Filling matrix from logs and watches..");
+		LOGGER.info("["+UtilityMatrixCreator.class.getName()+"] Filling matrix from logs and watches..");
 
 		fillMatrixPreferences(listFromWatch, listFromLog);
 

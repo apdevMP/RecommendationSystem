@@ -83,7 +83,7 @@ public class EvaluationController
 
 		RandomUtils.useTestSeed();
 
-		DataModel model = new FileDataModel(new File("matrix_value2.csv"));
+		DataModel model = new FileDataModel(new File("matrix_value.csv"));
 
 		RecommenderEvaluator evaluator = new AverageAbsoluteDifferenceRecommenderEvaluator();
 
