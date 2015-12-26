@@ -225,7 +225,7 @@ public class DBManager
 	{
 		MongoCollection<Document> collection = getCollectionByName(configuration.getSchool_collection());
 		Document doc = collection.find(new Document("code", school)).first();
-		System.out.println(doc.get("code"));
+		//System.out.println(doc.get("code"));
 		return doc;
 
 	}

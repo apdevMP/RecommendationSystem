@@ -65,12 +65,14 @@ public class RecommenderService
 		
 		UtilityMatrixService creator = new UtilityMatrixService(userProfile, region);
 
-		UtilityMatrix matrix = creator.createUtilityMatrix();
-		creator.saveMatrix(matrix);
-
+		//UtilityMatrix matrix = creator.createUtilityMatrix();
+		//creator.saveMatrix(matrix);
+		UtilityMatrix matrix = creator.createPreferences();
+		creator.savePreferences(matrix);
+		
 		try
 		{
-			DataModel model = new FileDataModel(new File("matrix_value2.csv"));
+			DataModel model = new FileDataModel(new File("matrix_value.csv"));
 			UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
 			UserSimilarity similarity2 = new EuclideanDistanceSimilarity(model);
 			UserSimilarity similarity3 = new LogLikelihoodSimilarity(model);
