@@ -2,15 +2,12 @@ package core;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bson.Document;
 
-import utils.Utils;
-
 /**
- * Classe di servizio per creare,modificare e lavorare sulle matrici di utilitï¿½
+ * Classe di servizio per creare,modificare e lavorare sulle matrici di utilità
  * 
  */
 public class UtilityMatrixCreator {
@@ -18,9 +15,9 @@ public class UtilityMatrixCreator {
 	private UtilityMatrix umFromWatch;
 	private UtilityMatrix umFromLog;
 	private UtilityMatrix umMerge;
-	
-	private static final Logger LOGGER = Logger.getLogger(UtilityMatrixCreator.class.getName());
 
+	private static final Logger LOGGER = Logger
+			.getLogger(UtilityMatrixCreator.class.getName());
 
 	/**
 	 * Costruttore di default
@@ -86,7 +83,8 @@ public class UtilityMatrixCreator {
 	}
 
 	/**
-	 * Riempie le matrici di utilitï¿½ relative ai Watches e al log di navigazione
+	 * Riempie le matrici di utilitï¿½ relative ai Watches e al log di
+	 * navigazione
 	 * 
 	 * @param listFromWatch
 	 *            lista di watch filtrata
@@ -98,11 +96,11 @@ public class UtilityMatrixCreator {
 
 		// riempie e stampa la matrice di utilitï¿½ relativa ai watches
 		umFromWatch.fillMatrixWithWatches(listFromWatch);
-	//	umFromWatch.printUtilityMatrix();
+		// umFromWatch.printUtilityMatrix();
 
 		// riempie e stampa la matrice di utilitï¿½ relativa al log
 		umFromLog.fillMatrixWithLogs(listFromLog);
-	//	umFromLog.printUtilityMatrix();
+		// umFromLog.printUtilityMatrix();
 	}
 
 	/**
@@ -115,7 +113,6 @@ public class UtilityMatrixCreator {
 	 */
 	public void mergeProvinceList(long userId, boolean isPresent) {
 
-		
 		// recupera la lista degli utenti
 		List<Long> matrixUser = umMerge.getUserMatrix();
 
@@ -135,7 +132,8 @@ public class UtilityMatrixCreator {
 			}
 		}
 
-		// si recupera la lista delle province dalla matrice di utilitï¿½ relativa
+		// si recupera la lista delle province dalla matrice di utilitï¿½
+		// relativa
 		// al log di navigazione
 		List<String> provinceToMergeList = umFromLog.getProvinceMatrix();
 
@@ -160,9 +158,9 @@ public class UtilityMatrixCreator {
 						.getValueByUserAndProvince(userId, province);
 				// si prende il massimo valore tra quelli recuperati e lo si
 				// assegna alla matrice di utilitï¿½
-				//TODO
-				//maxValue = Utils.getMax(valueLog, valueWatch);
-				maxValue = valueLog+valueWatch;
+				// TODO
+				// maxValue = Utils.getMax(valueLog, valueWatch);
+				maxValue = valueLog + valueWatch;
 				umMerge.setValueByUserAndProvince(userId, province, maxValue);
 			}
 			// la provincia non ï¿½ presente
@@ -200,7 +198,6 @@ public class UtilityMatrixCreator {
 	 */
 	public void mergeMunicipalityList(long userId, boolean isPresent) {
 
-		
 		// recupera la lista degli utenti
 		List<Long> matrixUser = umMerge.getUserMatrix();
 
@@ -243,9 +240,9 @@ public class UtilityMatrixCreator {
 						municipality);
 				// si prende il massimo valore tra quelli recuperati e lo si
 				// assegna alla matrice di utilitï¿½
-				//TODO
-				maxValue = valueLog+valueWatch;
-				//maxValue = Utils.getMax(valueLog, valueWatch);
+				// TODO
+				maxValue = valueLog + valueWatch;
+				// maxValue = Utils.getMax(valueLog, valueWatch);
 				umMerge.setValueByUserAndMunicipality(userId, municipality,
 						maxValue);
 			}
@@ -284,8 +281,6 @@ public class UtilityMatrixCreator {
 	 */
 	public void mergeSchoolList(long userId, boolean isPresent) {
 
-		
-		
 		// recupera la lista degli utenti
 		List<Long> matrixUser = umMerge.getUserMatrix();
 
@@ -324,10 +319,10 @@ public class UtilityMatrixCreator {
 
 				// si prende il massimo valore tra quelli recuperati e lo si
 				// assegna alla matrice di utilitï¿½
-				
-				//TODO
-				maxValue = valueLog+valueWatch;
-			//	maxValue = Utils.getMax(valueLog, valueWatch);
+
+				// TODO
+				maxValue = valueLog + valueWatch;
+				// maxValue = Utils.getMax(valueLog, valueWatch);
 				umMerge.setValueByUserAndSchool(userId, school, maxValue);
 			}
 			// la scuola non ï¿½ presente
@@ -381,8 +376,9 @@ public class UtilityMatrixCreator {
 			mergeMunicipalityList(userId, containsUser);
 			mergeSchoolList(userId, containsUser);
 		}
-		
-		LOGGER.info("["+UtilityMatrixCreator.class.getName()+"] Utility matrix created");
+
+		LOGGER.info("[" + UtilityMatrixCreator.class.getName()
+				+ "] Utility matrix created");
 	}
 
 	/**
@@ -397,40 +393,48 @@ public class UtilityMatrixCreator {
 			List<Document> listFromLog) {
 		// riempie le due matrici di utilitï¿½ provenienti da watches e log di
 		// navigazione
-		LOGGER.info("["+UtilityMatrixCreator.class.getName()+"] Filling matrix from logs and watches..");
-	//	System.out.println("Filling matrix from logs and watches..");
+		LOGGER.info("[" + UtilityMatrixCreator.class.getName()
+				+ "] Filling matrix from logs and watches..");
+		// System.out.println("Filling matrix from logs and watches..");
 		fillMatrix(listFromWatch, listFromLog);
 
 		// unisce le due matrici di utilitï¿½ in una sola che viene restituita
-		LOGGER.info("["+UtilityMatrixCreator.class.getName()+"] Merging matrixes..");
-	//	System.out.println("Merging matrixes..");
+		LOGGER.info("[" + UtilityMatrixCreator.class.getName()
+				+ "] Merging matrixes..");
+		// System.out.println("Merging matrixes..");
 		mergeMatrix();
 		return umMerge;
 	}
-	
-	public UtilityMatrix createUtilityMatrixPreferences(List<Document> listFromWatch,
+
+	/**
+	 * Riempie la lista di preferenze contenuta all'interno della matrice di
+	 * utilità e restituisce quest'ultima
+	 * 
+	 * @param listFromWatch
+	 * @param listFromLog
+	 * @return
+	 */
+	public UtilityMatrix fillMatrixPreferences(List<Document> listFromWatch,
 			List<Document> listFromLog) {
-		// riempie le due matrici di utilitï¿½ provenienti da watches e log di
-		// navigazione
-		LOGGER.info("["+UtilityMatrixCreator.class.getName()+"] Filling matrix from logs and watches..");
 
-		fillMatrixPreferences(listFromWatch, listFromLog);
+		LOGGER.info("[" + UtilityMatrixCreator.class.getName()
+				+ "] Filling matrix from logs and watches..");
 
+		/*
+		 * Riempie la lista di preferenze utilizzando i dati provenienti da log
+		 * e watches
+		 */
+		umMerge.fillPreferencesWithWatches(listFromWatch);
+		umMerge.fillPreferencesWithLogs(listFromLog);
+
+		/*
+		 * Ordina la lista di preferenze in base alla tipologie del luogo,ovvero
+		 * nell'ordine province,comuni,scuole
+		 */
+		umMerge.sortForPlacePreferences();
+
+		/* Restituisce la matrice di utilità */
 		return umMerge;
 	}
-	
-	public void fillMatrixPreferences(List<Document> listFromWatch,
-			List<Document> listFromLog) {
-
-		// riempie e stampa la matrice di utilitï¿½ relativa ai watches
-		umMerge.fillPreferencesWithWatches(listFromWatch);
-	//	umFromWatch.printUtilityMatrix();
-
-		// riempie e stampa la matrice di utilitï¿½ relativa al log
-		umMerge.fillPreferencesWithLogs(listFromLog);
-	//	umFromLog.printUtilityMatrix();
-		umMerge.sortForPlacePreferences();
-	}
-
 
 }

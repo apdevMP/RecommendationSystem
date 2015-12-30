@@ -1,20 +1,29 @@
 package core;
 
 /**
- * Classe di supporto per l'utilizzo di Mahout in maniera semplificata
+ * Classe di supporto per l'utilizzo di Mahout in maniera semplificata.
+ * Rappresenta le preferenze degli utenti rispetto a province, comuni, scuole
  * 
- * @author Andrea
  * 
  */
 public class UtilityMatrixPreference {
 
-	private long userId;
-	private String placeId;
-	private int tag;    // 1: province
+	private long userId; // Id dell'utente
+	private String placeId; // Id del luogo
+	private int tag; // Può essere di tre tipi:
+						// 1: province
 						// 2: municipality
 						// 3: school
-	private int score;
+	private int score; // punteggio relativo al luogo
 
+	/**
+	 * Costruttore
+	 * 
+	 * @param userId
+	 * @param placeId
+	 * @param tag
+	 * @param score
+	 */
 	public UtilityMatrixPreference(long userId, String placeId, int tag,
 			int score) {
 		this.userId = userId;
@@ -54,6 +63,5 @@ public class UtilityMatrixPreference {
 	public void setScore(int score) {
 		this.score = score;
 	}
-	
-	
+
 }
