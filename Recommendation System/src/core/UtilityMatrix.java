@@ -531,6 +531,7 @@ public class UtilityMatrix {
 		if (list.size() < 1) {
 			LOGGER.severe("[" + UtilityMatrix.class.getName()
 					+ "] You must fill matrix with not empty list");
+			return;
 		}
 
 		/*
@@ -654,6 +655,7 @@ public class UtilityMatrix {
 		// utility
 		if (list.size() < 1) {
 			System.out.println("You must fill matrix with not empty list");
+			return;
 		}
 
 		/* Vengono iterati tutti i documenti */

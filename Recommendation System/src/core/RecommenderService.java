@@ -67,7 +67,8 @@ public class RecommenderService
 
 		//UtilityMatrix matrix = creator.createUtilityMatrix();
 		//creator.saveMatrix(matrix);
-		UtilityMatrix matrix = creator.createPreferences();
+		//UtilityMatrix matrix = creator.createPreferences();
+		UtilityMatrix matrix = creator.createPreferencesWithPagination(); 
 		creator.savePreferences(matrix);
 		
 		try

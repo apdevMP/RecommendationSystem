@@ -437,4 +437,24 @@ public class UtilityMatrixCreator {
 		return umMerge;
 	}
 
+	public void fillMatrixPreferencesWithPagination(
+			List<Document> listFromWatch, List<Document> listFromLog) {
+
+		LOGGER.info("[" + UtilityMatrixCreator.class.getName()
+				+ "] Filling matrix from logs and watches..");
+
+		/*
+		 * Riempie la lista di preferenze utilizzando i dati provenienti da log
+		 * e watches
+		 */
+		umMerge.fillPreferencesWithWatches(listFromWatch);
+		umMerge.fillPreferencesWithLogs(listFromLog);
+
+		/*
+		 * Ordina la lista di preferenze in base alla tipologie del luogo,ovvero
+		 * nell'ordine province,comuni,scuole
+		 */
+		umMerge.sortForPlacePreferences();
+	}
+
 }

@@ -25,6 +25,9 @@ public class UtilityMatrixService {
 	private static final Logger LOGGER = Logger
 			.getLogger(UtilityMatrixService.class.getName());
 
+	private static final String[] actions = { "webapi_school_aggregates",
+			"webapi_municipality_aggregates", "webapi_get_best_schools" };
+
 	public UtilityMatrixService() {
 
 	}
@@ -45,8 +48,6 @@ public class UtilityMatrixService {
 		// si recupera la materia di insegnamento dell'utente
 		@SuppressWarnings("unused")
 		String teachingRole = userProfile.getTeachingRole();
-		String[] actions = { "webapi_school_aggregates",
-				"webapi_municipality_aggregates", "webapi_get_best_schools" };
 
 		// si recupera la lista di watch e di log in base alla materia di
 		// insegnamento
@@ -109,8 +110,6 @@ public class UtilityMatrixService {
 		// si recupera la materia di insegnamento dell'utente
 		@SuppressWarnings("unused")
 		String teachingRole = userProfile.getTeachingRole();
-		String[] actions = { "webapi_school_aggregates",
-				"webapi_municipality_aggregates", "webapi_get_best_schools" };
 
 		// si recupera la lista di watch e di log in base alla materia di
 		// insegnamento
@@ -118,6 +117,7 @@ public class UtilityMatrixService {
 		// queryManager.findWatchesByTeachingRole(teachingRole);
 		LOGGER.info("[" + UtilityMatrixService.class.getName()
 				+ "] Finding watches...");
+
 		FindIterable<Document> itWatches = queryManager.findWatches();
 		// FindIterable<Document> itLogs =
 		// queryManager.findLogsByTeachingRole(teachingRole);
@@ -144,6 +144,63 @@ public class UtilityMatrixService {
 				.fillMatrixPreferences(listWatches, listLogs);
 
 		return uMatrix;
+	}
+
+	public UtilityMatrix createPreferencesWithPagination() {
+		// istanzio un queryManager per recuperare dati dalle collezioni
+		queryManager = new QueryManager();
+		UtilityMatrixCreator ums = new UtilityMatrixCreator();
+		FindIterable<Document> itWatches = null;
+		FindIterable<Document> itLogs = null;
+		boolean finishLog = false;
+		boolean finishWatch = false;
+		int cont = 0;
+		LOGGER.info("[" + UtilityMatrixService.class.getName()
+				+ "] Finding watches...");
+		LOGGER.info("[" + UtilityMatrixService.class.getName()
+				+ "] Finding logs...");
+		UtilityMatrix utilityMatrixPreference = new UtilityMatrix();
+		for (;;) {
+			
+			// si recupera la lista di watch e di log
+			if (!finishWatch) {
+				itWatches = queryManager.findWatches(cont);
+			}
+			
+			if (!finishLog) {
+				itLogs = queryManager.getLogsByAction(actions, cont);
+			}
+			// Utilizzo le liste per semplicità
+			List<Document> listWatches = Lists.newArrayList(itWatches);
+			List<Document> listLogs = Lists.newArrayList(itLogs);
+
+			if (listLogs.isEmpty()) {
+				finishLog = true;
+			}
+			if (listWatches.isEmpty()) {
+				finishWatch = true;
+			}
+
+			if (finishLog && finishWatch) {
+				break;
+			}
+			//LOGGER.info("[" + UtilityMatrixService.class.getName()
+			//	+ "] Creating utility matrix..");
+			// dalle liste viene creata la matrice di utilità che viene
+			// restituita
+			//ums.fillMatrixPreferencesWithPagination(listWatches, listLogs);
+			if(!finishLog){
+				utilityMatrixPreference.fillPreferencesWithLogs(listLogs);
+			}
+			if(!finishWatch){
+				utilityMatrixPreference.fillPreferencesWithWatches(listWatches);
+			}
+			cont++;
+		}
+		utilityMatrixPreference.sortForPlacePreferences();
+		//UtilityMatrix utilityMatrixPreference = ums.getUmMerge();
+		return utilityMatrixPreference;
+
 	}
 
 	// FIXME NON PIU' UTILIZZATO
