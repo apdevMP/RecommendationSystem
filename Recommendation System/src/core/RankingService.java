@@ -9,7 +9,15 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
-import org.neo4j.cypherdsl.grammar.ForEach;
+
+/**
+ * Servizio per la classificazione finale degli item raccomandati in base a: -
+ * distanza dalla regione dell'utente - posizioni libere - area di insegnamento
+ * - punteggio dell'utente
+ * 
+ * @author Vanessa
+ *
+ */
 
 public class RankingService
 {
@@ -21,19 +29,26 @@ public class RankingService
 	private String						userPosition;
 	private String						teachingRole;
 	private QueryManager				queryManager;
-	
-	private static final Logger LOGGER = Logger.getLogger(RankingService.class.getName());
+	private static int					ELEMENTS_PER_LIST	= 5;
+
+	private static final Logger			LOGGER				= Logger.getLogger(RankingService.class.getName());
 
 	public RankingService(List<RecommendedItem> recommendedItems, Map<String, Long> itemsMap, Map<String, Long> categoriesMap, Profile userProfile)
 	{
 
-		LOGGER.info("["+RankingService.class.getName()+"] Starting ranking service..");
-		//istanzia le liste che dovranno essere popolate con gli item creati dal recommender
+		LOGGER.info("[" + RankingService.class.getName() + "] Starting ranking service..");
+
+		/*
+		 * istanzia le liste che dovranno essere popolate con gli item creati
+		 * dal recommender
+		 */
 		provinceIdList = new ArrayList<CustomRecommendedItem>();
 		municipalityIdList = new ArrayList<CustomRecommendedItem>();
 		schoolsIdList = new ArrayList<CustomRecommendedItem>();
 
-		//crea un'istanza di QueryManager per effettuare le query sui db
+		/*
+		 * crea un'istanza di QueryManager per effettuare le query sui db
+		 */
 		queryManager = new QueryManager();
 
 		/*
@@ -55,12 +70,10 @@ public class RankingService
 			 * inserisce l'item all'interno della lista corretta
 			 */
 			long itemId = item.getItemID();
-			//System.out.println("Item id: " + itemId);
-			//	System.out.println("itemId= " + itemId);
+
 			if (itemId <= categoriesMap.get("province"))
 			{
 				//trovato l'id di una provincia
-				//System.out.println("Item = provincia");
 				for (Entry<String, Long> entry : itemsMap.entrySet())
 				{
 					/*
@@ -85,13 +98,11 @@ public class RankingService
 			else if (categoriesMap.get("province") < itemId && itemId <= categoriesMap.get("comuni"))
 			{
 				//trovato l'id di un comune
-				//System.out.println("Item = comune");
 				for (Entry<String, Long> entry : itemsMap.entrySet())
 				{
 					if (entry.getValue().compareTo(itemId) == 0)
 					{
 						String realId = entry.getKey();
-						//	System.out.println("Real ID = " + realId);
 						CustomRecommendedItem customMunicipality = new CustomRecommendedItem(itemId, item.getValue(), 0, realId);
 						municipalityIdList.add(customMunicipality);
 						break;
@@ -103,13 +114,11 @@ public class RankingService
 			else if (categoriesMap.get("comuni") < itemId && itemId <= categoriesMap.get("scuole"))
 			{
 				//trovato l'id di una scuola
-				//System.out.println("Item = scuola");
 				for (Entry<String, Long> entry : itemsMap.entrySet())
 				{
 					if (entry.getValue().compareTo(itemId) == 0)
 					{
 						String realId = entry.getKey();
-						//	System.out.println("Real ID = " + realId);
 						CustomRecommendedItem customSchool = new CustomRecommendedItem(itemId, item.getValue(), 0, realId);
 						schoolsIdList.add(customSchool);
 						break;
@@ -120,55 +129,38 @@ public class RankingService
 			}
 		}
 
-
-//		System.out.println("PROVINCE:");
-//		for(CustomRecommendedItem i : provinceIdList){
-//			System.out.println(i.getRealID());
-//		}
-//		System.out.println("COMUNI:");
-//		for(CustomRecommendedItem i : municipalityIdList){
-//			System.out.println(i.getRealID());
-//		}
-//		System.out.println("SCUOLE:");
-//		for(CustomRecommendedItem i : schoolsIdList){
-//			System.out.println(i.getRealID());
-//		}
-
 		/*
 		 * a questo punto le tre liste sono state riempite, quindi si passa alla
 		 * classificazione
 		 */
 		updateRankings();
-		LOGGER.info("["+RankingService.class.getName()+"] Updating process for rankings terminated. Classification in progress.. ");
+		LOGGER.info("[" + RankingService.class.getName() + "] Updating process for rankings terminated. Classification in progress.. ");
 
 		sortLists();
 
-		LOGGER.info("["+RankingService.class.getName()+"] Classification terminated");
+		LOGGER.info("[" + RankingService.class.getName() + "] Classification terminated");
 
 		printSortedLists();
 
 		LOGGER.info("\n\n----- FINAL LIST ---");
 		finalList = new ArrayList<CustomRecommendedItem>();
-		getRecommendedItemsList(5);
+		getRecommendedItemsList(ELEMENTS_PER_LIST);
 		for (CustomRecommendedItem item : finalList)
 		{
 			LOGGER.info(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
 		}
 
-		LOGGER.info("\n["+RankingService.class.getName()+"] Done.");
+		LOGGER.info("\n[" + RankingService.class.getName() + "] Done.");
 	}
 
 	/**
-	 * @return the finalList
+	 * @return la lista finale da mostrare all'utente
 	 */
 	public List<CustomRecommendedItem> getFinalList()
 	{
 		return finalList;
 	}
 
-	/**
-	 * @param finalList the finalList to set
-	 */
 	public void setFinalList(List<CustomRecommendedItem> finalList)
 	{
 		this.finalList = finalList;
@@ -195,6 +187,13 @@ public class RankingService
 
 	}
 
+	/**
+	 * Preleva dalla lista list passata come parametro i primi numberOfResults
+	 * item da inserire nella lista finale
+	 * 
+	 * @param list
+	 * @param numberOfResults
+	 */
 	private void addToFinalList(List<CustomRecommendedItem> list, int numberOfResults)
 	{
 
@@ -208,11 +207,18 @@ public class RankingService
 			}
 		} else
 		{
+			/*
+			 * se il numero di elementi nella lista è minore di quelli da
+			 * inserire, allora si aggiungono tutti senza iterare
+			 */
 			getFinalList().addAll(list);
 		}
 
 	}
 
+	/**
+	 * Aggiorna il punteggio degli item delle liste parziali
+	 */
 	private void updateRankings()
 	{
 		if (!provinceIdList.isEmpty())
@@ -224,6 +230,9 @@ public class RankingService
 
 	}
 
+	/**
+	 * Ordina le liste parziali
+	 */
 	private void sortLists()
 	{
 		if (!provinceIdList.isEmpty())
@@ -257,6 +266,9 @@ public class RankingService
 		}
 	}
 
+	/**
+	 * Assegna punteggi alle province
+	 */
 	public void rankProvinces()
 	{
 		for (CustomRecommendedItem province : provinceIdList)
@@ -268,7 +280,6 @@ public class RankingService
 			 */
 			if (queryManager.isProvinceInRegion(userPosition, province.getRealID()) == 0)
 			{
-				//System.out.println("Provincia:" + province.getRealID() + " in " + userPosition);
 				province.setRanking(province.getRanking() + 1);
 			}
 
@@ -277,7 +288,6 @@ public class RankingService
 			{
 				if (queryManager.freePositionAvailableInMunicipality(province.getRealID(), teachingRole) == true)
 				{
-					//System.out.println("Posti disponibili nella provincia");
 					province.setRanking(province.getRanking() + 1);
 				}
 			} catch (SQLException e)
@@ -288,6 +298,9 @@ public class RankingService
 		}
 	}
 
+	/**
+	 * Assegna punteggi ai comuni
+	 */
 	public void rankMunicipalities()
 	{
 		for (CustomRecommendedItem municipality : municipalityIdList)
@@ -299,7 +312,6 @@ public class RankingService
 			 */
 			if (queryManager.isMunicipalityInRegion(userPosition, municipality.getRealID()) == 0)
 			{
-				//System.out.println("Comune:" + municipality.getRealID() + " in " + userPosition);
 				municipality.setRanking(municipality.getRanking() + 1);
 			}
 
@@ -308,7 +320,6 @@ public class RankingService
 			{
 				if (queryManager.freePositionAvailableInMunicipality(municipality.getRealID(), teachingRole) == true)
 				{
-					//System.out.println("Posti disponibili nel comune");
 					municipality.setRanking(municipality.getRanking() + 1);
 				}
 			} catch (SQLException e)
@@ -319,6 +330,9 @@ public class RankingService
 		}
 	}
 
+	/**
+	 * Assegna punteggi alle scuole
+	 */
 	public void rankSchools()
 	{
 
@@ -335,7 +349,6 @@ public class RankingService
 			if (queryManager.isSchoolInRegion(userPosition, realID) == 0)
 			{
 
-			//	System.out.println("Scuola:" + realID + " in " + userPosition);
 				school.setRanking(school.getRanking() + 1);
 			}
 
@@ -348,7 +361,6 @@ public class RankingService
 			{
 				if (queryManager.isSchoolQuotedForTeachingRole(realID, teachingRole))
 				{
-			//		System.out.println("trovato teachingRole nella scuola");
 					school.setRanking(school.getRanking() + 1);
 				}
 
@@ -366,7 +378,7 @@ public class RankingService
 			{
 				if (queryManager.freePositionAvailableAtSchool(realID, teachingRole) == true)
 				{
-			//		System.out.println("Posti disponibili nella scuola");
+					//		System.out.println("Posti disponibili nella scuola");
 					school.setRanking(school.getRanking() + 1);
 				}
 			} catch (SQLException e)

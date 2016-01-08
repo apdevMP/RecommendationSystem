@@ -21,9 +21,8 @@ public class EvaluationWindow
 
 	private JFrame					frame;
 	private JComboBox<String>		similarityComboBox;
-	private JComboBox				neighborhoodComboBox;
-	public static final String[]	similarityArray		= { "Pearson Correlation Similarity", "Euclidean Distance Similarity",
-			"Log Likelihood Similarity", "Item Pearson Correlation Similarity" };
+	private JComboBox<String>		neighborhoodComboBox;
+	public static final String[]	similarityArray		= { "Pearson Correlation Similarity", "Euclidean Distance Similarity", "Item Pearson Correlation Similarity" };
 	public static final String[]	neighborhoodArray	= { "ThresholdUserNeighborhood" };
 	private JTextField				trainingTextField;
 	private JTextField				testTextField;
@@ -62,7 +61,6 @@ public class EvaluationWindow
 			controller.evaluate();
 		} catch (Exception e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -70,7 +68,7 @@ public class EvaluationWindow
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void initialize()
 	{
 		frame = new JFrame();
@@ -153,12 +151,6 @@ public class EvaluationWindow
 				break;
 			case "Euclidean Distance Similarity":
 				choice = 1;
-				break;
-			case "Log Likelihood Similarity":
-				choice = 2;
-				break;
-			case "Item Pearson Correlation Similarity":
-				choice = 3;
 				break;
 			default:
 				choice = 1;

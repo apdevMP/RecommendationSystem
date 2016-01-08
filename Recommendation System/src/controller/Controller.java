@@ -5,19 +5,12 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.google.gson.Gson;
-
 import core.CustomRecommendedItem;
 import core.Profile;
-import core.QueryManager;
 import core.RecommenderService;
 import utils.Configuration;
 import view.StartWindow;
@@ -74,19 +67,16 @@ public class Controller
 				Double score = 2.0;
 				long id = 0;
 
-				//	Profile userProfile = retrieveProfileFromDb(id, teachingRole, score);
 				Profile userProfile = new Profile(id, teachingRole, score, region);
 				LOGGER.info("[" + Controller.class.getName() + "] Starting recommendation system for: " + userProfile.toString());
 				recommenderService = new RecommenderService(userProfile);
-				//System.out.println("Region:"+region);
 
 				long startTime = System.nanoTime();
 
 				List<CustomRecommendedItem> recommendedItems = recommenderService.recommendByRegion(region);
 				long endTime = System.nanoTime();
 
-				LOGGER.info("" + (endTime - startTime));
-				LOGGER.info("Execution time: " + (((endTime - startTime) / (1000000000)) / 60));
+				LOGGER.info("Execution time: " + (endTime - startTime));
 
 				showResults(recommendedItems);
 
