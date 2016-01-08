@@ -30,6 +30,7 @@ public class Configuration
 	private String					neo_password;
 	private String					neo_server_address;
 	private int						neo_port;
+	private int 					doc_per_page;
 	private static Configuration	configuration	= null;
 
 	private Configuration()
@@ -244,6 +245,16 @@ public class Configuration
 		this.neo_port = neo_port;
 	}
 	
+	public int getDoc_per_page()
+	{
+		return doc_per_page;
+	}
+
+	public void setDoc_per_page(int doc_per_page)
+	{
+		this.doc_per_page = doc_per_page;
+	}
+
 	private static void retrieveValues(String path)
 	{
 		// TODO Auto-generated method stub

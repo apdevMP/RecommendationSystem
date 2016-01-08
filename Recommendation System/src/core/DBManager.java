@@ -35,7 +35,7 @@ public class DBManager {
 	private static final String WATCHES_COLLECTION = "watch";
 	private static final String PROFILE_COLLECTION = "profile";
 
-	private static final int DOCUMENT_FOR_PAGE = 100;
+	private static final int DOCUMENT_FOR_PAGE = 200;
 	private static MongoClient client = null;
 	private static Configuration configuration = null;
 
@@ -71,8 +71,8 @@ public class DBManager {
 	 * Avvia la connessione
 	 */
 	private void startConnection() {
-		// Se client è null allora occorre inizializzare la connessione,
-		// altrimenti già esiste
+		// Se client ï¿½ null allora occorre inizializzare la connessione,
+		// altrimenti giï¿½ esiste
 		if (client == null) {
 			client = new MongoClient(configuration.getMongo_server_address(),
 					configuration.getMongo_port());
@@ -308,7 +308,7 @@ public class DBManager {
 	public FindIterable<Document> findWatches(int index) {
 		MongoCollection<Document> collection = getCollectionByName(configuration
 				.getWatches_collection());
-		FindIterable<Document> iterable = collection.find().limit(DOCUMENT_FOR_PAGE).skip(index * DOCUMENT_FOR_PAGE);
+		FindIterable<Document> iterable = collection.find().limit(configuration.getDoc_per_page()).skip(index * configuration.getDoc_per_page());
 
 		return iterable;
 	}
@@ -319,7 +319,7 @@ public class DBManager {
 		FindIterable<Document> iterable = collection
 				.find(new Document("$or", Arrays.asList(new Document("action",
 						action[0]), new Document("action", action[1]),
-						new Document("action", action[2])))).limit(DOCUMENT_FOR_PAGE).skip(index * DOCUMENT_FOR_PAGE);
+						new Document("action", action[2])))).limit(configuration.getDoc_per_page()).skip(index * configuration.getDoc_per_page());
 		return iterable;
 	}
 

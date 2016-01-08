@@ -40,7 +40,7 @@ public class UtilityMatrixService {
 
 	}
 
-	// FIXME Metodo non più utilizzato
+	// FIXME Metodo non piï¿½ utilizzato
 	public UtilityMatrix createUtilityMatrix() {
 		// istanzio un queryManager per recuperare dati dalle collezioni
 		queryManager = new QueryManager();
@@ -98,7 +98,7 @@ public class UtilityMatrixService {
 	}
 
 	/**
-	 * Recupera le liste di log e watch per creare la matrice di utilità
+	 * Recupera le liste di log e watch per creare la matrice di utilitï¿½
 	 * composta da UtilityMatrixPreference
 	 * 
 	 * @return
@@ -132,13 +132,13 @@ public class UtilityMatrixService {
 		// ArrayList<Document> listLogs = Filter.filterLogsByRegion(itLogs,
 		// region);
 
-		// Utilizzo le liste per semplicità
+		// Utilizzo le liste per semplicitï¿½
 		List<Document> listWatches = Lists.newArrayList(itWatches);
 		List<Document> listLogs = Lists.newArrayList(itLogs);
 
 		LOGGER.info("[" + UtilityMatrixService.class.getName()
 				+ "] Creating utility matrix..");
-		// dalle liste viene creata la matrice di utilità che viene restituita
+		// dalle liste viene creata la matrice di utilitï¿½ che viene restituita
 		UtilityMatrixCreator ums = new UtilityMatrixCreator();
 		UtilityMatrix uMatrix = ums
 				.fillMatrixPreferences(listWatches, listLogs);
@@ -170,7 +170,7 @@ public class UtilityMatrixService {
 			if (!finishLog) {
 				itLogs = queryManager.getLogsByAction(actions, cont);
 			}
-			// Utilizzo le liste per semplicità
+			// Utilizzo le liste per semplicitï¿½
 			List<Document> listWatches = Lists.newArrayList(itWatches);
 			List<Document> listLogs = Lists.newArrayList(itLogs);
 
@@ -186,7 +186,7 @@ public class UtilityMatrixService {
 			}
 			//LOGGER.info("[" + UtilityMatrixService.class.getName()
 			//	+ "] Creating utility matrix..");
-			// dalle liste viene creata la matrice di utilità che viene
+			// dalle liste viene creata la matrice di utilitï¿½ che viene
 			// restituita
 			//ums.fillMatrixPreferencesWithPagination(listWatches, listLogs);
 			if(!finishLog){
@@ -197,6 +197,9 @@ public class UtilityMatrixService {
 			}
 			cont++;
 		}
+		
+		LOGGER.info("[" + UtilityMatrixService.class.getName()
+				+ "] Watches and Logs examined.");
 		utilityMatrixPreference.sortForPlacePreferences();
 		//UtilityMatrix utilityMatrixPreference = ums.getUmMerge();
 		return utilityMatrixPreference;

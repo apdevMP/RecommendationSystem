@@ -35,9 +35,8 @@ public class Controller
 	private StartWindow				window;
 	private ActionListener			listener;
 	private static Configuration	configuration;
-	private RecommenderService 		recommenderService;
-	private static final Logger LOGGER = Logger.getLogger(Controller.class.getName());
-
+	private RecommenderService		recommenderService;
+	private static final Logger		LOGGER	= Logger.getLogger(Controller.class.getName());
 
 	/**
 	 * Costruttore
@@ -67,24 +66,29 @@ public class Controller
 			public void actionPerformed(ActionEvent e)
 			{
 
-				
 				// recupero dei dati inseriti dall'utente
 				window.getTextArea().setText(null);
 				String teachingRole = window.getClassCode();
 				String region = window.getRegion();
-			//	Double score = window.getScore();
+				//	Double score = window.getScore();
 				Double score = 2.0;
 				long id = 0;
 
-			//	Profile userProfile = retrieveProfileFromDb(id, teachingRole, score);
+				//	Profile userProfile = retrieveProfileFromDb(id, teachingRole, score);
 				Profile userProfile = new Profile(id, teachingRole, score, region);
-				LOGGER.info("["+Controller.class.getName()+"] Starting recommendation system for: "+ userProfile.toString());
+				LOGGER.info("[" + Controller.class.getName() + "] Starting recommendation system for: " + userProfile.toString());
 				recommenderService = new RecommenderService(userProfile);
 				//System.out.println("Region:"+region);
-				List<CustomRecommendedItem> recommendedItems = recommenderService.recommendByRegion(region);
 
-				
-				showResults(recommendedItems);
+				long startTime = System.nanoTime();
+
+				List<CustomRecommendedItem> recommendedItems = recommenderService.recommendByRegion(region);
+				long endTime = System.nanoTime();
+
+				LOGGER.info(""+(endTime - startTime));
+				LOGGER.info("Execution time: " + (((endTime - startTime)/(1000000000))/60));
+
+				//	showResults(recommendedItems);
 
 			}
 
@@ -99,16 +103,15 @@ public class Controller
 		window.getButton().addActionListener(listener);
 	}
 
-
-
 	/**
 	 * Riporta i risultati nella JTextArea dedicata sull'interfaccia
 	 */
 	public void showResults(List<CustomRecommendedItem> list)
 	{
 		DecimalFormat numberFormat = new DecimalFormat("#.00");
-		
-		for(CustomRecommendedItem item : list)
-		window.getTextArea().append(item.getRealID() + "\t value:" + numberFormat.format(item.getValue()) + "\tranking:" + item.getRanking()+"\n");
+
+		for (CustomRecommendedItem item : list)
+			window.getTextArea().append(item.getRealID() + "\t value:" + numberFormat.format(item.getValue()) + "\tranking:" + item.getRanking()
+					+ "\n");
 	}
 }
