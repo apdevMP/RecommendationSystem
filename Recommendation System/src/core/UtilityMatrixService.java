@@ -2,7 +2,6 @@ package core;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,63 +37,6 @@ public class UtilityMatrixService {
 
 		this.categoriesMap = new HashMap<String, Long>();
 
-	}
-
-	// FIXME Metodo non pi� utilizzato
-	public UtilityMatrix createUtilityMatrix() {
-		// istanzio un queryManager per recuperare dati dalle collezioni
-		queryManager = new QueryManager();
-		// queryManager.getLogAction();
-		// si recupera la materia di insegnamento dell'utente
-		@SuppressWarnings("unused")
-		String teachingRole = userProfile.getTeachingRole();
-
-		// si recupera la lista di watch e di log in base alla materia di
-		// insegnamento
-		// FindIterable<Document> itWatches =
-		// queryManager.findWatchesByTeachingRole(teachingRole);
-		LOGGER.info("[" + UtilityMatrixService.class.getName()
-				+ "] Finding watches...");
-		// System.out.println("Finding watches..");
-
-		// FindIterable<Document> itWatches =
-		// queryManager.findWatchesByTeachingRole(teachingRole);
-
-		FindIterable<Document> itWatches = queryManager.findWatches();
-
-		// FindIterable<Document> itLogs =
-		// queryManager.findLogsByTeachingRole(teachingRole);
-		LOGGER.info("[" + UtilityMatrixService.class.getName()
-				+ "] Finding logs...");
-		// System.out.println("Findind logs..");;
-
-		FindIterable<Document> itLogs = queryManager.getLogsByAction(actions);
-
-		// le liste di watch e log vengono filtrate per regione
-		// ArrayList<Document> listWatches =
-		// Filter.filterWatchesByRegion(itWatches, region);
-		// ArrayList<Document> listLogs = Filter.filterLogsByRegion(itLogs,
-		// region);
-		ArrayList<Document> listWatches = new ArrayList<Document>();
-		ArrayList<Document> listLogs = new ArrayList<Document>();
-
-		for (Document document : itWatches) {
-			listWatches.add(document);
-			// System.out.println(document.toJson());
-		}
-		for (Document document : itLogs) {
-			listLogs.add(document);
-			// System.out.println(document.toJson());
-		}
-
-		LOGGER.info("[" + UtilityMatrixService.class.getName()
-				+ "] Creating utility matrix..");
-		// System.out.println("Creating utility matrix..");
-		// dalle liste viene creata la matrice di utilit�
-		UtilityMatrixCreator ums = new UtilityMatrixCreator();
-		UtilityMatrix uMatrix = ums.createUtilityMatrix(listWatches, listLogs);
-		// uMatrix.printUtilityMatrix();
-		return uMatrix;
 	}
 
 	/**
@@ -149,7 +91,7 @@ public class UtilityMatrixService {
 	public UtilityMatrix createPreferencesWithPagination() {
 		// istanzio un queryManager per recuperare dati dalle collezioni
 		queryManager = new QueryManager();
-		UtilityMatrixCreator ums = new UtilityMatrixCreator();
+
 		FindIterable<Document> itWatches = null;
 		FindIterable<Document> itLogs = null;
 		boolean finishLog = false;
@@ -161,12 +103,12 @@ public class UtilityMatrixService {
 				+ "] Finding logs...");
 		UtilityMatrix utilityMatrixPreference = new UtilityMatrix();
 		for (;;) {
-			
+
 			// si recupera la lista di watch e di log
 			if (!finishWatch) {
 				itWatches = queryManager.findWatches(cont);
 			}
-			
+
 			if (!finishLog) {
 				itLogs = queryManager.getLogsByAction(actions, cont);
 			}
@@ -184,207 +126,21 @@ public class UtilityMatrixService {
 			if (finishLog && finishWatch) {
 				break;
 			}
-			//LOGGER.info("[" + UtilityMatrixService.class.getName()
-			//	+ "] Creating utility matrix..");
-			// dalle liste viene creata la matrice di utilit� che viene
-			// restituita
-			//ums.fillMatrixPreferencesWithPagination(listWatches, listLogs);
-			if(!finishLog){
+
+			if (!finishLog) {
 				utilityMatrixPreference.fillPreferencesWithLogs(listLogs);
 			}
-			if(!finishWatch){
+			if (!finishWatch) {
 				utilityMatrixPreference.fillPreferencesWithWatches(listWatches);
 			}
 			cont++;
 		}
-		
+
 		LOGGER.info("[" + UtilityMatrixService.class.getName()
 				+ "] Watches and Logs examined.");
 		utilityMatrixPreference.sortForPlacePreferences();
-		//UtilityMatrix utilityMatrixPreference = ums.getUmMerge();
+
 		return utilityMatrixPreference;
-
-	}
-
-	// FIXME NON PIU' UTILIZZATO
-	public void saveMatrix(UtilityMatrix matrix) {
-
-		System.out.println("Saving data...");
-		try {
-			FileWriter writer = new FileWriter("matrix_value.csv");
-
-			List<Long> userList = matrix.getUserMatrix();
-			List<String> provinceList = matrix.getProvinceMatrix();
-			List<String> municipalityList = matrix.getMunicipalityMatrix();
-			List<String> schoolList = matrix.getSchoolMatrix();
-
-			long counter = 0;
-			this.itemsMap = new HashMap<String, Long>();
-
-			// System.out.println("counter="+counter+"...inizio province");
-			for (String provinceCodeString : provinceList) {
-				// System.out.println(provinceCodeString);
-
-				Long i = itemsMap.get(provinceCodeString);
-
-				if (i == null) {
-					itemsMap.put(provinceCodeString, counter);
-					// System.out.println("MAP: "+schoolCodeString+","+counter);
-					i = (long) counter;
-					++counter;
-				}
-			}
-
-			this.categoriesMap.put("province", counter);
-			// System.out.println("categoriesMap, province:"+categoriesMap.get("province"));
-			// System.out.println("counter="+counter+"...inizio comuni");
-			for (String municipalityCodeString : municipalityList) {
-				// System.out.println(municipalityCodeString);
-				Long i = itemsMap.get(municipalityCodeString);
-				if (i == null) {
-					itemsMap.put(municipalityCodeString, counter);
-					// System.out.println("MAP: "+schoolCodeString+","+counter);
-					i = (long) counter;
-					++counter;
-				}
-			}
-
-			this.categoriesMap.put("comuni", counter);
-			// System.out.println("categoriesMap, comuni:"+categoriesMap.get("comuni"));
-			// System.out.println("counter="+counter+"...inizio scuole");
-			for (String schoolCodeString : schoolList) {
-				// System.out.println(schoolCodeString);
-				Long i = itemsMap.get(schoolCodeString);
-				if (i == null) {
-					itemsMap.put(schoolCodeString, counter);
-					// System.out.println("MAP: "+schoolCodeString+","+counter);
-					i = (long) counter;
-					++counter;
-				}
-			}
-
-			this.categoriesMap.put("scuole", counter);
-			// System.out.println("categoriesMap, scuole:"+categoriesMap.get("scuole"));
-			LOGGER.info("[" + UtilityMatrixService.class.getName()
-					+ "] Items to be processed: " + counter);
-
-			System.out.println("counter=" + counter + "...inizio province");
-			for (String provinceCodeString : provinceList) {
-				// System.out.println(provinceCodeString);
-
-				Long i = itemsMap.get(provinceCodeString);
-
-				if (i == null) {
-					itemsMap.put(provinceCodeString, counter);
-					// System.out.println("MAP: "+schoolCodeString+","+counter);
-					i = (long) counter;
-					++counter;
-				}
-			}
-
-			this.categoriesMap.put("province", counter);
-			System.out.println("categoriesMap, province:"
-					+ categoriesMap.get("province"));
-			System.out.println("counter=" + counter + "...inizio comuni");
-			for (String municipalityCodeString : municipalityList) {
-				// System.out.println(municipalityCodeString);
-				Long i = itemsMap.get(municipalityCodeString);
-				if (i == null) {
-					itemsMap.put(municipalityCodeString, counter);
-					// System.out.println("MAP: "+schoolCodeString+","+counter);
-					i = (long) counter;
-					++counter;
-				}
-			}
-
-			this.categoriesMap.put("comuni", counter);
-			System.out.println("categoriesMap, comuni:"
-					+ categoriesMap.get("comuni"));
-			System.out.println("counter=" + counter + "...inizio scuole");
-			for (String schoolCodeString : schoolList) {
-				// System.out.println(schoolCodeString);
-				Long i = itemsMap.get(schoolCodeString);
-				if (i == null) {
-					itemsMap.put(schoolCodeString, counter);
-					// System.out.println("MAP: "+schoolCodeString+","+counter);
-					i = (long) counter;
-					++counter;
-				}
-			}
-
-			this.categoriesMap.put("scuole", counter);
-			System.out.println("categoriesMap, scuole:"
-					+ categoriesMap.get("scuole"));
-			System.out.println("counter totale:" + counter);
-
-			for (long user : userList) {
-				// List<String> provinceList = matrix.getProvinceMatrix();
-				for (String province : provinceList) {
-					double value = (double) matrix.getValueByUserAndProvince(
-							user, province);
-					/*
-					 * Dato che il Recommender di Mahout richiede che i dati
-					 * presenti nel csv siano di tipo Long, al posto della sigla
-					 * della procincia si recupera e scrive il codice
-					 * identificativo, utilizzando il file municipality.csv
-					 */
-
-					// long provinceId =
-					// queryManager.retrieveProvinceId(province);
-
-					// System.out.println("provincia:" + province + ",id:" +
-					// provinceId);
-
-					if (value > 0)
-						writer.append(String.valueOf(user) + ","
-								+ itemsMap.get(province) + ","
-								+ String.valueOf(value) + "\n");
-				}
-				// List<String> municipalityList =
-				// matrix.getMunicipalityMatrix();
-				for (String municipality : municipalityList) {
-					double value = (double) matrix
-							.getValueByUserAndMunicipality(user, municipality);
-
-					// long municipalityId =
-					// queryManager.retrieveMunicipalityId(municipality);
-					// System.out.println("comune:" + municipality + ",id:" +
-					// municipalityId);
-					if (value != 0)
-						writer.append(String.valueOf(user) + ","
-								+ itemsMap.get(municipality) + ","
-								+ String.valueOf(value) + "\n");
-				}
-
-				// System.out.println(schoolList);
-				for (String school : schoolList) {
-
-					double value = (double) matrix.getValueByUserAndSchool(
-							user, school);
-
-					if (value > 0)
-						writer.append(String.valueOf(user) + ","
-								+ itemsMap.get(school) + ","
-								+ String.valueOf(value) + "\n");
-					// System.out.println("trovata scuola:" +
-					// String.valueOf(user) + "," + map.get(school) + "," +
-					// school + ","
-					// + String.valueOf(value));
-
-				}
-			}
-			writer.flush();
-			writer.close();
-
-			LOGGER.info("[" + UtilityMatrixService.class.getName()
-					+ "] Data successfully saved");
-			// System.out.println("Data saved!");
-		} catch (IOException e) {
-			LOGGER.severe("[" + UtilityMatrixService.class.getName()
-					+ "] Exception: " + e.getMessage());
-			// System.out.println("File not Found!!!");
-
-		}
 
 	}
 
@@ -426,7 +182,6 @@ public class UtilityMatrixService {
 			}
 
 			this.categoriesMap.put("province", counter);
-
 			for (int j = matrix.getContProvince(); j < matrix
 					.getContMunicipality(); j++) {
 

@@ -1,20 +1,12 @@
 package core;
 
-import java.awt.List;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.logging.Logger;
-
-import javax.print.Doc;
 
 import org.bson.Document;
 
 import utils.Configuration;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
