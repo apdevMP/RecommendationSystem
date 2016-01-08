@@ -246,11 +246,15 @@ public class UtilityMatrix {
 
 		// FIXME riportare a 1 e 2
 		if (eventType == 2) {
+			value = 0;
+		}
+		if (eventType == 1) {
 			value = 2;
-		} else {
+		}
+		// vale per i log
+		if (eventType == 3) {
 			value = 1;
 		}
-
 		return value;
 	}
 
@@ -683,7 +687,7 @@ public class UtilityMatrix {
 					break;
 
 				/* Calcola il valore da attribuire alla preferenza */
-				value = computeValue(1);
+				value = computeValue(3);
 
 				/*
 				 * Si aggiunge la preferenza sulla provincia, le si assegna il
@@ -704,7 +708,7 @@ public class UtilityMatrix {
 					break;
 
 				/* Calcola il valore da attribuire alla preferenza */
-				value = computeValue(1);
+				value = computeValue(3);
 
 				/*
 				 * Si aggiunge la preferenza sul comune, le si assegna il tag
@@ -724,7 +728,7 @@ public class UtilityMatrix {
 					break;
 
 				/* Calcola il valore da attribuire alla preferenza */
-				value = computeValue(1);
+				value = computeValue(3);
 
 				/*
 				 * Si aggiunge la preferenza sulla provincia, le si assegna il
