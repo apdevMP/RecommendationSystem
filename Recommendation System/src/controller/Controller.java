@@ -85,20 +85,13 @@ public class Controller
 				List<CustomRecommendedItem> recommendedItems = recommenderService.recommendByRegion(region);
 				long endTime = System.nanoTime();
 
-				LOGGER.info(""+(endTime - startTime));
-				LOGGER.info("Execution time: " + (((endTime - startTime)/(1000000000))/60));
+				LOGGER.info("" + (endTime - startTime));
+				LOGGER.info("Execution time: " + (((endTime - startTime) / (1000000000)) / 60));
 
-				//	showResults(recommendedItems);
+				showResults(recommendedItems);
 
 			}
 
-			private Profile retrieveProfileFromDb(long id, String teachingRole, double score, String position)
-			{
-				Profile profile = null;
-				QueryManager qm = new QueryManager();
-				profile = qm.retrieveProfile(id, teachingRole, score, position);
-				return profile;
-			}
 		};
 		window.getButton().addActionListener(listener);
 	}

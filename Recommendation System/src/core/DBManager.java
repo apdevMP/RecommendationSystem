@@ -26,16 +26,6 @@ import com.mongodb.client.MongoDatabase;
  */
 public class DBManager {
 
-	private static final String SERVER_ADDRESS = "localhost";
-	private static final int PORT = 27017;
-	private static final String DATABASE_NAME = "user_data";
-	private static final String LOG_COLLECTION = "log";
-	private static final String MUNICIPALITIES_COLLECTION = "municipalities";
-	private static final String SCHOOL_COLLECTION = "school";
-	private static final String WATCHES_COLLECTION = "watch";
-	private static final String PROFILE_COLLECTION = "profile";
-
-	private static final int DOCUMENT_FOR_PAGE = 200;
 	private static MongoClient client = null;
 	private static Configuration configuration = null;
 
