@@ -28,6 +28,7 @@ public class RankingService
 	private List<CustomRecommendedItem>	finalList;
 	private String						userPosition;
 	private String						teachingRole;
+	private Double						score;
 	private QueryManager				queryManager;
 	private static int					ELEMENTS_PER_LIST	= 5;
 
@@ -57,7 +58,9 @@ public class RankingService
 		 */
 		userPosition = userProfile.getPosition();
 		teachingRole = userProfile.getTeachingRole();
+		score = userProfile.getScore();
 
+		LOGGER.info("[" + RankingService.class.getName() + "] ++++++++++++++++++++++++++++score = "+score);
 		/*
 		 * crea tre liste separate per distinguere gli item in - province -
 		 * comuni -scuole
@@ -354,13 +357,32 @@ public class RankingService
 
 			/*
 			 * CLASSIFICAZIONE IN BASE AL TEACHING ROLE Se la scuola prevede tra
-			 * le materie di insegnamento quella dell'utente, allora aumenta il
+			 * le materie di insegnamento quella dell'utente allora aumenta il
 			 * suo ranking
 			 */
 			try
 			{
 				if (queryManager.isSchoolQuotedForTeachingRole(realID, teachingRole))
 				{
+					school.setRanking(school.getRanking() + 1);
+				}
+
+			} catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+
+			/*
+			 * CLASSIFICAZIONE IN BASE ALLO SCORE Se la scuola prevede tra i
+			 * trasferimenti in uscita utenti con score relazionabile a quello
+			 * dell'utente allora aumenta il suo ranking
+			 */
+			try
+			{
+				
+				if (queryManager.isScoreMatchingTransfers(realID, teachingRole, score))
+				{
+					LOGGER.info("[" + RankingService.class.getName() + "] +++++++++ Scuola "+realID+" trovato score compatibile");
 					school.setRanking(school.getRanking() + 1);
 				}
 

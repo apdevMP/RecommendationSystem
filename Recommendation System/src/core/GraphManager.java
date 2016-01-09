@@ -25,8 +25,8 @@ public class GraphManager
 	private Connection				connection;
 	private static GraphManager		manager			= null;
 	private static Configuration	configuration	= null;
-	
-	private static Logger LOGGER = Logger.getLogger(GraphManager.class.getName());
+
+	private static Logger			LOGGER			= Logger.getLogger(GraphManager.class.getName());
 
 	private GraphManager()
 	{
@@ -69,7 +69,7 @@ public class GraphManager
 			properties.put("user", user);
 			properties.put("password", password);
 
-			// TODO Connect
+			// FIXME prendere da filed di config
 			connection = DriverManager.getConnection("jdbc:neo4j://localhost:7474/", properties);
 
 		} catch (SQLException | ClassNotFoundException e)
@@ -87,7 +87,7 @@ public class GraphManager
 	 * uscita e in entrata. Se tale differenza è maggiore di 0 allora la
 	 * provincia ha scuole con posti liberi per quella materia di insegnamento
 	 * 
-	 * @param 
+	 * @param
 	 * @throws SQLException
 	 */
 	public boolean queryFreePositionInProvince(String provinceCode, String teachingRole) throws SQLException
@@ -108,7 +108,7 @@ public class GraphManager
 		boolean freePositionAvailable = false;
 		while (rs.next())
 		{
-			
+
 			if (rs.getInt("freePositions") > 0)
 			{
 				//System.out.println("posizioni libere:" + rs.getInt("freePositions"));
@@ -129,7 +129,7 @@ public class GraphManager
 	 * in entrata. Se tale differenza è maggiore di 0 allora il comune ha scuole
 	 * con posti liberi per quella materia di insegnamento
 	 * 
-	 * @param 
+	 * @param
 	 * @throws SQLException
 	 */
 	public boolean queryFreePositionInMunicipality(String municipalityCode, String teachingRole) throws SQLException
@@ -151,10 +151,10 @@ public class GraphManager
 		boolean freePositionAvailable = false;
 		while (rs.next())
 		{
-			
+
 			if (rs.getInt("freePositions") > 0)
 			{
-			//	System.out.println("posizioni libere:" + rs.getInt("freePositions"));
+				//	System.out.println("posizioni libere:" + rs.getInt("freePositions"));
 				freePositionAvailable = true;
 				break;
 			}
@@ -185,13 +185,46 @@ public class GraphManager
 		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'})-[r:TRANSFER_MAIN]->() WHERE r.teachingRoleArea = '"
 				+ teachingRole + "' RETURN count(r) as numberOfResults");
 
-		//se ci sono stati trasferimenti in uscita per quel teachingRole, allora restituisce true
 		while (rs.next())
 		{
-			//System.out.println(rs.getInt("numberOfResults"));
+
 			numberOfResults += rs.getInt("numberOfResults");
+
 		}
 
+		return numberOfResults;
+
+	}
+
+	/**
+	 * Controlla sul grafo se tra gli utenti trasferiti da quella scuola ce ne
+	 * sono alcuni con score relazionabile a quello dell'utente (minore o uguale)
+	 * 
+	 * @param schoolId
+	 * @param teachingRole
+	 * @param score
+	 * @return
+	 * @throws SQLException
+	 */
+	public int queryScoreMatching(String schoolId, String teachingRole, Double score) throws SQLException
+	{
+
+		Statement stmt = connection.createStatement();
+		int numberOfResults = 0;
+
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'})-[r:TRANSFER_MAIN]->() WHERE r.teachingRoleArea = '"
+				+ teachingRole + "' RETURN r.score as resultScore");
+
+		while (rs.next())
+		{
+
+			Double resultScore = rs.getDouble("resultScore");
+			if (resultScore <= score)
+				numberOfResults++;
+
+		}
+
+		//ritorna il numero di matching per la condizione specificata
 		return numberOfResults;
 
 	}
@@ -221,7 +254,7 @@ public class GraphManager
 		//se ci sono stati trasferimenti in uscita per quel teachingRole, allora restituisce true
 		while (rs.next())
 		{
-		//	System.out.println(rs.getInt("freePositions"));
+			//	System.out.println(rs.getInt("freePositions"));
 			numberOfResults += rs.getInt("freePositions");
 		}
 

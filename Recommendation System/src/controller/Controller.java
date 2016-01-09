@@ -63,8 +63,8 @@ public class Controller
 				window.getTextArea().setText(null);
 				String teachingRole = window.getClassCode();
 				String region = window.getRegion();
-				//	Double score = window.getScore();
-				Double score = 2.0;
+				Double score = window.getScore();
+			//	Double score = 2.0;
 				long id = 0;
 
 				Profile userProfile = new Profile(id, teachingRole, score, region);

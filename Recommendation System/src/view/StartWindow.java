@@ -4,7 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
@@ -23,7 +23,6 @@ import javax.swing.JTextArea;
 import javax.swing.JComboBox;
 
 import utils.Configuration;
-
 import controller.Controller;
 import core.GraphManager;
 
@@ -134,6 +133,7 @@ public class StartWindow
 		textFieldScore.setBounds(6, 119, 139, 34);
 		panelData.add(textFieldScore);
 		textFieldScore.setColumns(10);
+		textFieldScore.setText("0.0");
 
 		JLabel lblRegion = new JLabel("Regione Provenienza");
 		lblRegion.setBounds(6, 176, 151, 16);
@@ -186,7 +186,10 @@ public class StartWindow
 
 	public Double getScore()
 	{
-		return Double.parseDouble(textFieldScore.getText());
+		if (!textFieldScore.getText().isEmpty())
+			return Double.parseDouble(textFieldScore.getText());
+		else
+			return 0.0;
 	}
 
 	public String getClassCode()

@@ -15,16 +15,18 @@ import com.mongodb.client.FindIterable;
  * Classe di servizio che si frappone tra il sistema e il DBManager
  * 
  */
-public class QueryManager {
+public class QueryManager
+{
 
-	private DBManager manager;
+	private DBManager	manager;
 
 	// private static Configuration configuration = null;
 
 	/**
 	 * Costruttore di default
 	 */
-	public QueryManager() {
+	public QueryManager()
+	{
 		manager = DBManager.getIstance();
 		// configuration = Configuration.getIstance();
 	}
@@ -32,7 +34,8 @@ public class QueryManager {
 	/**
 	 * Chiude la connessione col DBManager e con il database di MongoDB
 	 */
-	public void closeConnection() {
+	public void closeConnection()
+	{
 		manager.closeConnection();
 	}
 
@@ -41,9 +44,11 @@ public class QueryManager {
 	 * 
 	 * @param score
 	 */
-	public void findWatchesByScore(int score) {
+	public void findWatchesByScore(int score)
+	{
 		FindIterable<Document> iterable = manager.findWatchesByScore(score);
-		for (Document doc : iterable) {
+		for (Document doc : iterable)
+		{
 			System.out.println(doc.toJson());
 		}
 	}
@@ -51,13 +56,12 @@ public class QueryManager {
 	/**
 	 * Recupera i documenti dai watches filtrati per materia insegnata
 	 * 
-	 * @param teachingRole
-	 *            materia insegnata
+	 * @param teachingRole materia insegnata
 	 * @return lista di documenti filtrati
 	 */
-	public FindIterable<Document> findWatchesByTeachingRole(String teachingRole) {
-		FindIterable<Document> iterable = manager
-				.findWatchesByTeachingRole(teachingRole);
+	public FindIterable<Document> findWatchesByTeachingRole(String teachingRole)
+	{
+		FindIterable<Document> iterable = manager.findWatchesByTeachingRole(teachingRole);
 		return iterable;
 	}
 
@@ -65,28 +69,26 @@ public class QueryManager {
 	 * Recupera la lista di azioni eseguite dagli utenti(log),filtrate per la
 	 * materia insegnata
 	 * 
-	 * @param teachingRole
-	 *            materia insegnata
+	 * @param teachingRole materia insegnata
 	 * @return lista di documenti filtrati
 	 */
-	public FindIterable<Document> findLogsByTeachingRole(String teachingRole) {
-		FindIterable<Document> iterable = manager
-				.findLogsByTeachingRole(teachingRole);
+	public FindIterable<Document> findLogsByTeachingRole(String teachingRole)
+	{
+		FindIterable<Document> iterable = manager.findLogsByTeachingRole(teachingRole);
 
 		return iterable;
 	}
 
 	/**
-	 * Verifica se la provincia "province" ï¿½ presente all'interno della
-	 * regione "region"
+	 * Verifica se la provincia "province" ï¿½ presente all'interno della regione
+	 * "region"
 	 * 
-	 * @param region
-	 *            regione
-	 * @param province
-	 *            provincia
+	 * @param region regione
+	 * @param province provincia
 	 * @return 0 se presente,1 altrimenti
 	 */
-	public int isProvinceInRegion(String region, String province) {
+	public int isProvinceInRegion(String region, String province)
+	{
 
 		Document doc = manager.findDocWithProvince(province);
 		// se non viene recuperato alcun documento restituisce 1
@@ -106,13 +108,12 @@ public class QueryManager {
 	 * Verifica se il comune rapppresentato dal suo codice ï¿½ presente
 	 * all'interno della regione "region"
 	 * 
-	 * @param region
-	 *            regione
-	 * @param municipality_code
-	 *            codice del comune
+	 * @param region regione
+	 * @param municipality_code codice del comune
 	 * @return 0 se presente,1 altrimenti
 	 */
-	public int isMunicipalityInRegion(String region, String municipality_code) {
+	public int isMunicipalityInRegion(String region, String municipality_code)
+	{
 		// Si effettua la connessione al grafo presente in neo4j
 
 		GraphManager gManager = GraphManager.getIstance();
@@ -120,15 +121,17 @@ public class QueryManager {
 
 		// Si recupera il nome del comune dal codice
 		String municipality = null;
-		try {
+		try
+		{
 			municipality = gManager.queryMunicipalityName(municipality_code);
 
-		} catch (SQLException e) {
+		} catch (SQLException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		// Se la stringa è null,restituisco non presente
+		// Se la stringa ï¿½ null,restituisco non presente
 		if (municipality == null)
 			return 1;
 
@@ -150,13 +153,12 @@ public class QueryManager {
 	 * Verifica se la scuola rapppresentata dal suo codice ï¿½ presente
 	 * all'interno della regione "region"
 	 * 
-	 * @param region
-	 *            regione
-	 * @param school
-	 *            codice della scuola
+	 * @param region regione
+	 * @param school codice della scuola
 	 * @return 0 se presente,1 altrimenti
 	 */
-	public int isSchoolInRegion(String region, String school) {
+	public int isSchoolInRegion(String region, String school)
+	{
 		// recupero il documento che contiene il codice della scuola e verifico
 		// se esiste
 		Document doc = manager.findDocWithSchool(school);
@@ -178,7 +180,8 @@ public class QueryManager {
 	 * 
 	 * @return lista di azioni
 	 */
-	public ArrayList<String> getLogAction() {
+	public ArrayList<String> getLogAction()
+	{
 
 		// Viene inizializzata la lista delle azioni e vengono recuperati tutti
 		// documentii del log
@@ -187,9 +190,11 @@ public class QueryManager {
 
 		// Si inizializzano le classi per la scrittura su file
 		FileOutputStream fos = null;
-		try {
+		try
+		{
 			fos = new FileOutputStream("azioni.txt");
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -197,10 +202,12 @@ public class QueryManager {
 		PrintStream write = new PrintStream(fos);
 
 		// vengono salavate tutte le azioni una volta sola
-		for (Document doc : iterable) {
+		for (Document doc : iterable)
+		{
 			String action = doc.getString("action");
 
-			if (!actionList.contains(action)) {
+			if (!actionList.contains(action))
+			{
 				actionList.add(action);
 				write.println(doc.toJson());
 			}
@@ -212,10 +219,10 @@ public class QueryManager {
 	/**
 	 * Scrive su file i log filtrati per un'azione specifica
 	 * 
-	 * @param action
-	 *            azione
+	 * @param action azione
 	 */
-	public FindIterable<Document> getLogsByAction(String[] action) {
+	public FindIterable<Document> getLogsByAction(String[] action)
+	{
 
 		FindIterable<Document> iterable = manager.findLogsByAction(action);
 		return iterable;
@@ -228,15 +235,17 @@ public class QueryManager {
 	 * @param id
 	 * @return
 	 */
-	public Profile retrieveProfile(long id, String teachingRole, double score,
-			String position) {
+	public Profile retrieveProfile(long id, String teachingRole, double score, String position)
+	{
 		Profile profile = null;
 
 		Document doc = manager.retrieveProfile(id);
-		if (doc == null) {
+		if (doc == null)
+		{
 			profile = Profile.createProfile(id, teachingRole, score, position);
 			this.saveProfile(profile);
-		} else {
+		} else
+		{
 			String profileString = doc.toJson();
 			Gson gson = new Gson();
 			profile = gson.fromJson(profileString, Profile.class);
@@ -245,7 +254,8 @@ public class QueryManager {
 		return profile;
 	}
 
-	public void saveProfile(Profile profile) {
+	public void saveProfile(Profile profile)
+	{
 		Gson gson = new Gson();
 		String jsonProfile = gson.toJson(profile);
 		Document document = Document.parse(jsonProfile);
@@ -257,11 +267,11 @@ public class QueryManager {
 	 * Recupera il codice identificativo della provincia passata per argomento,
 	 * effettuando una query sul file municipality.csv
 	 * 
-	 * @param provinceCode
-	 *            sigla della provincia
+	 * @param provinceCode sigla della provincia
 	 * @return codice identificativo della provincia
 	 */
-	public int retrieveProvinceId(String provinceCode) {
+	public int retrieveProvinceId(String provinceCode)
+	{
 		Document document = manager.findDocWithProvince(provinceCode);
 		return document.getInteger("province_id");
 	}
@@ -270,16 +280,18 @@ public class QueryManager {
 	 * Recupera il codice identificativo del comune il cui codice istat Ã¨
 	 * passato per argomento, effettuando una query sul file municipality.csv
 	 * 
-	 * @param municipalityCode
-	 *            codice istat del comune
+	 * @param municipalityCode codice istat del comune
 	 * @return codice identificativo del comune
 	 */
-	public long retrieveMunicipalityId(String municipalityCode) {
+	public long retrieveMunicipalityId(String municipalityCode)
+	{
 		GraphManager gmanager = GraphManager.getIstance();
 		long id = 0;
-		try {
+		try
+		{
 			id = gmanager.queryMunicipalityId(municipalityCode);
-		} catch (SQLException e) {
+		} catch (SQLException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -297,8 +309,8 @@ public class QueryManager {
 	 * @return true se ci sono posizioni aperte, false altrimenti
 	 * @throws SQLException
 	 */
-	public boolean freePositionAvailableAtSchool(String schoolId,
-			String teachingRole) throws SQLException {
+	public boolean freePositionAvailableAtSchool(String schoolId, String teachingRole) throws SQLException
+	{
 
 		GraphManager gmanager = GraphManager.getIstance();
 		boolean available = false;
@@ -318,8 +330,8 @@ public class QueryManager {
 	 * @return true se ci sono posizioni aperte, false altrimenti
 	 * @throws SQLException
 	 */
-	public boolean freePositionAvailableInProvince(String provinceCode,
-			String teachingRole) throws SQLException {
+	public boolean freePositionAvailableInProvince(String provinceCode, String teachingRole) throws SQLException
+	{
 		GraphManager gmanager = GraphManager.getIstance();
 		return gmanager.queryFreePositionInProvince(provinceCode, teachingRole);
 	}
@@ -333,11 +345,10 @@ public class QueryManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	public boolean freePositionAvailableInMunicipality(String municipalityCode,
-			String teachingRole) throws SQLException {
+	public boolean freePositionAvailableInMunicipality(String municipalityCode, String teachingRole) throws SQLException
+	{
 		GraphManager gmanager = GraphManager.getIstance();
-		return gmanager.queryFreePositionInMunicipality(municipalityCode,
-				teachingRole);
+		return gmanager.queryFreePositionInMunicipality(municipalityCode, teachingRole);
 	}
 
 	/**
@@ -345,11 +356,11 @@ public class QueryManager {
 	 * adatta per il teaching role dell'utente
 	 * 
 	 * @return true se la scuola prevede il teachingRole passato come materia di
-	 *         insegnamento
+	 * insegnamento
 	 * @throws SQLException
 	 */
-	public boolean isSchoolQuotedForTeachingRole(String schoolId,
-			String teachingRole) throws SQLException {
+	public boolean isSchoolQuotedForTeachingRole(String schoolId, String teachingRole) throws SQLException
+	{
 		GraphManager graphManager = GraphManager.getIstance();
 		if (graphManager.queryTeachingRoleInSchool(schoolId, teachingRole) > 0)
 			return true;
@@ -359,13 +370,31 @@ public class QueryManager {
 	}
 
 	/**
+	 * Usato in fase di classificazione Controlla sul grafo se tra gli utenti
+	 * trasferiti da quella scuola ce ne sono alcuni con score relazionabile a quello dell'utente
+	 * 
+	 * @return true se la scuola prevede trasferimenti in uscita con score minore o uguale a quello dell'utente
+	 * @throws SQLException
+	 */
+	public boolean isScoreMatchingTransfers(String schoolId, String teachingRole, Double score) throws SQLException
+	{
+
+		GraphManager graphManager = GraphManager.getIstance();
+		if (graphManager.queryScoreMatching(schoolId, teachingRole, score) > 0)
+			return true;
+		else
+			return false;
+
+	}
+
+	/**
 	 * Recupera i documenti dai watches
 	 * 
-	 * @param teachingRole
-	 *            materia insegnata
+	 * @param teachingRole materia insegnata
 	 * @return lista di documenti filtrati
 	 */
-	public FindIterable<Document> findWatches() {
+	public FindIterable<Document> findWatches()
+	{
 		FindIterable<Document> iterable = manager.findWatches();
 		return iterable;
 	}
@@ -373,29 +402,31 @@ public class QueryManager {
 	/**
 	 * Recupera la lista di azioni eseguite dagli utenti(log)
 	 * 
-	 * @param teachingRole
-	 *            materia insegnata
+	 * @param teachingRole materia insegnata
 	 * @return lista di documenti filtrati
 	 */
-	public FindIterable<Document> findLogs() {
+	public FindIterable<Document> findLogs()
+	{
 		FindIterable<Document> iterable = manager.findLogs();
 
 		return iterable;
 	}
 
-	public String getProvinceFromSchool() {
+	public String getProvinceFromSchool()
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public FindIterable<Document> findWatches(int index) {
+	public FindIterable<Document> findWatches(int index)
+	{
 		FindIterable<Document> iterable = manager.findWatches(index);
 		return iterable;
 	}
 
-	public FindIterable<Document> getLogsByAction(String[] actions, int index) {
-		FindIterable<Document> iterable = manager.findLogsByAction(actions,
-				index);
+	public FindIterable<Document> getLogsByAction(String[] actions, int index)
+	{
+		FindIterable<Document> iterable = manager.findLogsByAction(actions, index);
 		return iterable;
 	}
 

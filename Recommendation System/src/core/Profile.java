@@ -53,6 +53,11 @@ public class Profile {
 		this.position = position;
 	}
 	
+	public Double getScore()
+	{
+		return score;
+	}
+	
 	
 	public static Profile createProfile(long id,String teachingRole,double score, String position) {
 		Profile profile = new Profile(id,teachingRole,score, position);
@@ -67,6 +72,8 @@ public class Profile {
 	{
 		return "Profile [id=" + id + ", name=" + name + ", teachingRole=" + teachingRole + ", score=" + score + "]";
 	}
+
+
 
 	
 	
