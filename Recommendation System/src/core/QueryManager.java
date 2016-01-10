@@ -430,4 +430,14 @@ public class QueryManager
 		return iterable;
 	}
 
+	public FindIterable<Document> getLogsByActionAndId(long id, String[] actions) {
+		FindIterable<Document> iterable = manager.findLogsByIdAndAction(id, actions);
+		return iterable;
+	}
+
+	public FindIterable<Document> getWatchById(long id) {
+		FindIterable<Document> iterable = manager.findWatchById(id);
+		return iterable;
+	}
+
 }

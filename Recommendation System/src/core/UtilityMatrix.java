@@ -28,6 +28,7 @@ public class UtilityMatrix {
 	private static final String SCORE = "score";
 	private static final String CODE_MUNICIPALITY = "codeMunicipality";
 	private static final String CODE_PROVINCE = "codeProvince";
+	@SuppressWarnings("unused")
 	private static final String PROVINCE_CODE = "provinceCode";
 	private static final String ACTION = "action";
 	private static final String ATTRIBUTES = "attributes";
@@ -35,9 +36,7 @@ public class UtilityMatrix {
 	private static final Logger LOGGER = Logger.getLogger(UtilityMatrix.class
 			.getName());
 
-	
 	private List<UtilityMatrixPreference> preferences;
-	// private QueryManager queryManager;
 	private int contProvince;
 	private int contMunicipality;
 	private int contSchool;
@@ -46,10 +45,9 @@ public class UtilityMatrix {
 	 * Costruttore di default per la matrice di utilitï¿½
 	 */
 	public UtilityMatrix() {
-		
+
 		preferences = new ArrayList<UtilityMatrixPreference>();
-		// queryManager = new QueryManager();
-		// Azzero i conatatori
+		// Azzero i contatori
 		contProvince = 0;
 		contMunicipality = 0;
 		contSchool = 0;
@@ -59,37 +57,17 @@ public class UtilityMatrix {
 		return preferences;
 	}
 	
-
-	/**
-	 * Calcola il valore da assegnare all'interno della matrice
-	 * 
-	 * @param score
-	 * @param userScore
-	 * @param eventType
-	 * @return valore calcolato
-	 */
-	private int computeValue(long eventType) {
-		int value = 0;
-
-		if (eventType == 2) {
-			value = 0;
-		}
-		if (eventType == 1) {
-			value = 2;
-		}
-		// vale per i log
-		if (eventType == 3) {
-			value = 1;
-		}
-		return value;
+	public void addListToPreferences(List<UtilityMatrixPreference> userPreferences){
+		preferences.addAll(userPreferences);
 	}
 
 	/**
 	 * Riempie la lista di preferenze utilizzando i watches
 	 * 
 	 * @param list
+	 * @param profileId
 	 */
-	public void fillPreferencesWithWatches(List<Document> list) {
+	public void fillPreferencesWithWatches(List<Document> list, long profileId) {
 		/*
 		 * se la lista dei documenti è vuota, non viene riempita la lista di
 		 * preferenze
@@ -110,6 +88,9 @@ public class UtilityMatrix {
 			 * Si recupera l'id dell'utente e il target del watch
 			 */
 			long userId = doc.getLong(USER_ID);
+			if (userId == profileId)
+				continue;
+
 			Document target = (Document) doc.get(TARGET);
 			long typeId = target.getLong(TYPE_ID);
 
@@ -133,7 +114,7 @@ public class UtilityMatrix {
 				if (ledProvince != null) {
 					eventType = ledProvince.getLong(EVENT_TYPE);
 				}
-				value = computeValue(eventType);
+				value = Utils.computeValue(eventType);
 
 				/*
 				 * Si aggiunge la preferenza sulla provincia, le si assegna il
@@ -161,7 +142,7 @@ public class UtilityMatrix {
 				if (ledMunicipality != null) {
 					eventType = ledMunicipality.getLong(EVENT_TYPE);
 				}
-				value = computeValue(eventType);
+				value = Utils.computeValue(eventType);
 
 				/*
 				 * Si aggiunge la preferenza sul comune, le si assegna il tag
@@ -188,7 +169,7 @@ public class UtilityMatrix {
 				if (ledSchool != null) {
 					eventType = ledSchool.getLong(EVENT_TYPE);
 				}
-				value = computeValue(eventType);
+				value = Utils.computeValue(eventType);
 
 				/*
 				 * Si aggiunge la preferenza sulla scuola, le si assegna il tag
@@ -198,13 +179,13 @@ public class UtilityMatrix {
 						value));
 
 				/*
-				 * TODO String provinceFromSchool =
-				 * queryManager.getProvinceFromSchool(); String
-				 * municipalityFromSchool =
-				 * queryManager.getMunicipalityFromSchool(); preferences.add(new
-				 * UtilityMatrixPreference(userId, provinceFromSchool, 1,
-				 * value)); preferences.add(new UtilityMatrixPreference(userId,
-				 * municipalityFromSchool, 2, value));
+				 * String provinceFromSchool = queryManager
+				 * .getProvinceFromSchool(school); String municipalityFromSchool
+				 * = queryManager .getMunicipalityFromSchool(school);
+				 * preferences.add(new UtilityMatrixPreference(userId,
+				 * provinceFromSchool, 1, value)); preferences.add(new
+				 * UtilityMatrixPreference(userId, municipalityFromSchool, 2,
+				 * value));
 				 */
 				break;
 			}
@@ -215,8 +196,9 @@ public class UtilityMatrix {
 	 * Riempie la lista delle preferenze utilizzando i log recuperati
 	 * 
 	 * @param list
+	 * @param profileId
 	 */
-	public void fillPreferencesWithLogs(List<Document> list) {
+	public void fillPreferencesWithLogs(List<Document> list, long profileId) {
 		// se la lista dei documenti è vuota, non viene riempita la matrice di
 		// utility
 		if (list.size() < 1) {
@@ -228,7 +210,7 @@ public class UtilityMatrix {
 		for (Document doc : list) {
 			/* Si recupera l'id dell'utente */
 			Long userId = doc.getLong(USER_ID);
-			if (userId == null)
+			if (userId == null || userId == profileId)
 				continue;
 			/*
 			 * Si recupera la tipologia di azione presente nel log in maniera da
@@ -249,7 +231,7 @@ public class UtilityMatrix {
 					break;
 
 				/* Calcola il valore da attribuire alla preferenza */
-				value = computeValue(3);
+				value = Utils.computeValue(3);
 
 				/*
 				 * Si aggiunge la preferenza sulla provincia, le si assegna il
@@ -270,7 +252,7 @@ public class UtilityMatrix {
 					break;
 
 				/* Calcola il valore da attribuire alla preferenza */
-				value = computeValue(3);
+				value = Utils.computeValue(3);
 
 				/*
 				 * Si aggiunge la preferenza sul comune, le si assegna il tag
@@ -290,7 +272,7 @@ public class UtilityMatrix {
 					break;
 
 				/* Calcola il valore da attribuire alla preferenza */
-				value = computeValue(3);
+				value = Utils.computeValue(3);
 
 				/*
 				 * Si aggiunge la preferenza sulla provincia, le si assegna il
@@ -354,11 +336,12 @@ public class UtilityMatrix {
 						sortedPreferences.add(preference);
 					} else {
 						/* Se presente si aggiorna il punteggio */
-						if(sortedPreferences.get(present).getScore() == preference.getScore())
+						if (sortedPreferences.get(present).getScore() == preference
+								.getScore())
 							continue;
-						if(sortedPreferences.get(present).getScore() == 3)
+						if (sortedPreferences.get(present).getScore() == 3)
 							continue;
-						
+
 						int score = sortedPreferences.get(present).getScore()
 								+ preference.getScore();
 						sortedPreferences.get(present).setScore(score);

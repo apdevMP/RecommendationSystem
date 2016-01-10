@@ -215,7 +215,7 @@ public class DBManager {
 		MongoCollection<Document> collection = getCollectionByName(configuration
 				.getSchool_collection());
 		Document doc = collection.find(new Document("code", school)).first();
-		// System.out.println(doc.get("code"));
+
 		return doc;
 
 	}
@@ -290,7 +290,9 @@ public class DBManager {
 	public FindIterable<Document> findWatches(int index) {
 		MongoCollection<Document> collection = getCollectionByName(configuration
 				.getWatches_collection());
-		FindIterable<Document> iterable = collection.find().limit(configuration.getDoc_per_page()).skip(index * configuration.getDoc_per_page());
+		FindIterable<Document> iterable = collection.find()
+				.limit(configuration.getDoc_per_page())
+				.skip(index * configuration.getDoc_per_page());
 
 		return iterable;
 	}
@@ -301,7 +303,31 @@ public class DBManager {
 		FindIterable<Document> iterable = collection
 				.find(new Document("$or", Arrays.asList(new Document("action",
 						action[0]), new Document("action", action[1]),
-						new Document("action", action[2])))).limit(configuration.getDoc_per_page()).skip(index * configuration.getDoc_per_page());
+						new Document("action", action[2]))))
+				.limit(configuration.getDoc_per_page())
+				.skip(index * configuration.getDoc_per_page());
+		return iterable;
+	}
+
+	public FindIterable<Document> findLogsByIdAndAction(long userId,
+			String[] actions) {
+		MongoCollection<Document> collection = getCollectionByName(configuration
+				.getLog_collection());
+		FindIterable<Document> iterable = collection.find(new Document("$and",
+				Arrays.asList(
+						new Document("$or", Arrays
+								.asList(new Document("action", actions[0]),
+										new Document("action", actions[1]),
+										new Document("action", actions[2]))),
+						new Document("userId", userId))));
+		return iterable;
+	}
+
+	public FindIterable<Document> findWatchById(long userId) {
+		MongoCollection<Document> collection = getCollectionByName(configuration
+				.getWatches_collection());
+		FindIterable<Document> iterable = collection.find(new Document("userId",userId));
+
 		return iterable;
 	}
 

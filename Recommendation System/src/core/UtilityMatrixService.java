@@ -81,7 +81,7 @@ public class UtilityMatrixService {
 		LOGGER.info("[" + UtilityMatrixService.class.getName()
 				+ "] Creating utility matrix..");
 		// dalle liste viene creata la matrice di utilit� che viene restituita
-		UtilityMatrixCreator ums = new UtilityMatrixCreator();
+		UtilityMatrixCreator ums = new UtilityMatrixCreator(userProfile);
 		UtilityMatrix uMatrix = ums
 				.fillMatrixPreferences(listWatches, listLogs);
 
@@ -92,6 +92,8 @@ public class UtilityMatrixService {
 		// istanzio un queryManager per recuperare dati dalle collezioni
 		queryManager = new QueryManager();
 
+		long profileId = userProfile.getId();
+		
 		FindIterable<Document> itWatches = null;
 		FindIterable<Document> itLogs = null;
 		boolean finishLog = false;
@@ -128,16 +130,19 @@ public class UtilityMatrixService {
 			}
 
 			if (!finishLog) {
-				utilityMatrixPreference.fillPreferencesWithLogs(listLogs);
+				utilityMatrixPreference.fillPreferencesWithLogs(listLogs,profileId);
 			}
 			if (!finishWatch) {
-				utilityMatrixPreference.fillPreferencesWithWatches(listWatches);
+				utilityMatrixPreference.fillPreferencesWithWatches(listWatches,profileId);
 			}
 			cont++;
 		}
 
 		LOGGER.info("[" + UtilityMatrixService.class.getName()
 				+ "] Watches and Logs examined.");
+		System.out.println(utilityMatrixPreference.getPreferences().size());
+		utilityMatrixPreference.addListToPreferences(userProfile.getUserPreferences());
+		System.out.println(utilityMatrixPreference.getPreferences().size());
 		utilityMatrixPreference.sortForPlacePreferences();
 
 		return utilityMatrixPreference;

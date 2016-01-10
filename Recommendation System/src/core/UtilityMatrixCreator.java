@@ -12,6 +12,7 @@ import org.bson.Document;
 public class UtilityMatrixCreator {
 
 	private UtilityMatrix utilityMatrix;
+	private Profile userProfile;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(UtilityMatrixCreator.class.getName());
@@ -19,8 +20,9 @@ public class UtilityMatrixCreator {
 	/**
 	 * Costruttore di default
 	 */
-	public UtilityMatrixCreator() {
+	public UtilityMatrixCreator(Profile profile) {
 		utilityMatrix = new UtilityMatrix();
+		userProfile = profile;
 	}
 
 	/**
@@ -59,8 +61,9 @@ public class UtilityMatrixCreator {
 		 * Riempie la lista di preferenze utilizzando i dati provenienti da log
 		 * e watches
 		 */
-		utilityMatrix.fillPreferencesWithWatches(listFromWatch);
-		utilityMatrix.fillPreferencesWithLogs(listFromLog);
+		utilityMatrix.fillPreferencesWithWatches(listFromWatch,
+				userProfile.getId());
+		utilityMatrix.fillPreferencesWithLogs(listFromLog, userProfile.getId());
 
 		/*
 		 * Ordina la lista di preferenze in base alla tipologie del luogo,ovvero
@@ -82,9 +85,11 @@ public class UtilityMatrixCreator {
 		 * Riempie la lista di preferenze utilizzando i dati provenienti da log
 		 * e watches
 		 */
-		utilityMatrix.fillPreferencesWithWatches(listFromWatch);
-		utilityMatrix.fillPreferencesWithLogs(listFromLog);
+		utilityMatrix.fillPreferencesWithWatches(listFromWatch,
+				userProfile.getId());
+		utilityMatrix.fillPreferencesWithLogs(listFromLog, userProfile.getId());
 
+		
 		/*
 		 * Ordina la lista di preferenze in base alla tipologie del luogo,ovvero
 		 * nell'ordine province,comuni,scuole

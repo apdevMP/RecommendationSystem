@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import core.CustomRecommendedItem;
 import core.Profile;
+import core.ProfileManager;
 import core.RecommenderService;
 import utils.Configuration;
 import view.StartWindow;
@@ -64,10 +65,11 @@ public class Controller
 				String teachingRole = window.getClassCode();
 				String region = window.getRegion();
 				Double score = window.getScore();
-			//	Double score = 2.0;
-				long id = 0;
-
-				Profile userProfile = new Profile(id, teachingRole, score, region);
+			
+				long id = 52657;
+				Profile userProfile = ProfileManager.createProfile(id, teachingRole, score, region);
+				System.out.println(userProfile.getUserPreferences().size());
+				//Profile userProfile = new Profile(id, teachingRole, score, region);
 				LOGGER.info("[" + Controller.class.getName() + "] Starting recommendation system for: " + userProfile.toString());
 				recommenderService = new RecommenderService(userProfile);
 
