@@ -3,6 +3,9 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+
+import javax.swing.JOptionPane;
 
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.eval.RecommenderBuilder;
@@ -52,8 +55,14 @@ public class EvaluationController
 				{
 					score = startEvaluation();
 					publishScore(score);
+				} catch (FileNotFoundException e1)
+				{
+					JOptionPane.showMessageDialog(null, "Cannot create file data model. File .csv is missing");
+					System.exit(0);
+					
 				} catch (Exception e1)
 				{
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
@@ -72,7 +81,9 @@ public class EvaluationController
 
 		RandomUtils.useTestSeed();
 
+		
 		DataModel model = new FileDataModel(new File("matrix_value.csv"));
+		
 
 		RecommenderEvaluator evaluator = new AverageAbsoluteDifferenceRecommenderEvaluator();
 
