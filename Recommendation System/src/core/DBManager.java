@@ -121,11 +121,6 @@ public class DBManager {
 		return iterable;
 	}
 
-	/*
-	 * public FindIterable<Document> findNearCities(){ FindIterable<Document>
-	 * iterable = null; return iterable; }
-	 */
-
 	/**
 	 * Recupera una lista di documenti dai Watches filtrati per la materia
 	 * insegnata
@@ -290,8 +285,9 @@ public class DBManager {
 	public FindIterable<Document> findWatches(int index) {
 		MongoCollection<Document> collection = getCollectionByName(configuration
 				.getWatches_collection());
-		FindIterable<Document> iterable = collection.find()
-				.limit(configuration.getDoc_per_page())
+		FindIterable<Document> iterable = collection
+				.find(new Document("lastEventData.context.year", new Document(
+						"$gt", 2000))).limit(configuration.getDoc_per_page())
 				.skip(index * configuration.getDoc_per_page());
 
 		return iterable;
@@ -301,9 +297,14 @@ public class DBManager {
 		MongoCollection<Document> collection = getCollectionByName(configuration
 				.getLog_collection());
 		FindIterable<Document> iterable = collection
-				.find(new Document("$or", Arrays.asList(new Document("action",
-						action[0]), new Document("action", action[1]),
-						new Document("action", action[2]))))
+				.find(new Document("$and",
+						Arrays.asList(
+								new Document("$or", Arrays.asList(new Document(
+										"action", action[0]), new Document(
+										"action", action[1]), new Document(
+										"action", action[2]))), new Document(
+										"attributes.year", new Document("$gt",
+												2014)))))
 				.limit(configuration.getDoc_per_page())
 				.skip(index * configuration.getDoc_per_page());
 		return iterable;
@@ -326,7 +327,8 @@ public class DBManager {
 	public FindIterable<Document> findWatchById(long userId) {
 		MongoCollection<Document> collection = getCollectionByName(configuration
 				.getWatches_collection());
-		FindIterable<Document> iterable = collection.find(new Document("userId",userId));
+		FindIterable<Document> iterable = collection.find(new Document(
+				"userId", userId));
 
 		return iterable;
 	}
