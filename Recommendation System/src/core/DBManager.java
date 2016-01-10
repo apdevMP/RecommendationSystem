@@ -304,7 +304,7 @@ public class DBManager {
 										"action", action[1]), new Document(
 										"action", action[2]))), new Document(
 										"attributes.year", new Document("$gt",
-												2014)))))
+												2000)))))
 				.limit(configuration.getDoc_per_page())
 				.skip(index * configuration.getDoc_per_page());
 		return iterable;

@@ -7,6 +7,29 @@ import core.UtilityMatrixPreference;
 public class Utils {
 
 	/**
+	 * Calcola il valore da assegnare all'interno della matrice
+	 * 
+	 * @param score
+	 * @param userScore
+	 * @param eventType
+	 * @return valore calcolato
+	 */
+	public static int computeValue(long eventType) {
+		int value = 0;
+
+		if (eventType == 2) {
+			value = 0;
+		}
+		if (eventType == 1) {
+			value = 2;
+		}
+		// vale per i log
+		if (eventType == 3) {
+			value = 1;
+		}
+		return value;
+	}
+	/**
 	 * Metodo che restituisce il massimo tra {@code a} e {@code b}
 	 * 
 	 * @param a
