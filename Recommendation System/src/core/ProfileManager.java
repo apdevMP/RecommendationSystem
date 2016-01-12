@@ -9,6 +9,12 @@ import utils.Utils;
 import com.google.common.collect.Lists;
 import com.mongodb.client.FindIterable;
 
+/**
+ * Classe per la gestione e la creazione della classe {@link Profile}
+ * 
+ * @author Andrea
+ * 
+ */
 public class ProfileManager {
 
 	private static final String TARGET = "target";
@@ -24,31 +30,58 @@ public class ProfileManager {
 	private static final String[] actions = { "webapi_school_aggregates",
 			"webapi_municipality_aggregates", "webapi_get_best_schools" };
 
+	/**
+	 * Metodo statico per la creazione del profilo
+	 * 
+	 * @param id
+	 * @param teachingRole
+	 * @param score
+	 * @param position
+	 * @return
+	 */
 	public static Profile createProfile(long id, String teachingRole,
 			double score, String position) {
+		/* Istanzia il profilo passandogli gli opportuni parametri */
 		Profile profile = new Profile(id, teachingRole, score, position);
+		/* Riempie la lista di preferenze */
 		fillListOfUserPreference(profile);
 
+		/* Restituisce il profilo */
 		return profile;
 	}
 
+	/**
+	 * Riempie la lista di preferenze del profilo
+	 * 
+	 * @param profile
+	 */
 	private static void fillListOfUserPreference(Profile profile) {
+		/* Si istanzia il QueryManager e si richiamano gli opportuni metodi */
 		QueryManager queryManager = new QueryManager();
 
+		/* Recupera la lista di log in base all'id dell'utente */
 		FindIterable<Document> logByIdLists = queryManager
 				.getLogsByActionAndId(profile.getId(), actions);
-
+		/* Recupera la lista dei Watch in base all'id dell'utente */
 		FindIterable<Document> watchByIdLists = queryManager
 				.getWatchById(profile.getId());
 
 		List<UtilityMatrixPreference> userPreference = profile
 				.getUserPreferences();
 
+		/* Si riempie la lista */
 		fillListWithLogs(profile, logByIdLists, userPreference);
 		fillListWithWatches(profile, watchByIdLists, userPreference);
 		profile.setUserPreferences(userPreference);
 	}
 
+	/**
+	 * Riempie la lista del profilo utente con le preferenze dei Watch
+	 * 
+	 * @param profile
+	 * @param logByIdLists
+	 * @param userPreference
+	 */
 	private static void fillListWithLogs(Profile profile,
 			FindIterable<Document> logByIdLists,
 			List<UtilityMatrixPreference> userPreference) {
@@ -62,7 +95,7 @@ public class ProfileManager {
 
 		/* Vengono iterati tutti i documenti */
 		for (Document doc : list) {
-			
+
 			/* Si recupera l'id dell'utente */
 			Long userId = doc.getLong(USER_ID);
 			if (userId != profile.getId() || userId == null)
@@ -142,6 +175,13 @@ public class ProfileManager {
 
 	}
 
+	/**
+	 * Riempie la lista del profilo utente con le preferenze dei Watch
+	 * 
+	 * @param profile
+	 * @param watchByIdLists
+	 * @param userPreference
+	 */
 	private static void fillListWithWatches(Profile profile,
 			FindIterable<Document> watchByIdLists,
 			List<UtilityMatrixPreference> userPreference) {
@@ -180,8 +220,8 @@ public class ProfileManager {
 					break;
 
 				/*
-				 * TODO Si calcola il punteggio in base al fatto che il watch
-				 * sia aggiunto o rimosso
+				 * Si calcola il punteggio in base al fatto che il watch sia
+				 * aggiunto o rimosso
 				 */
 				Document ledProvince = (Document) doc.get(LAST_EVENT_DATA);
 				if (ledProvince != null) {
@@ -208,8 +248,8 @@ public class ProfileManager {
 					break;
 
 				/*
-				 * TODO Si calcola il punteggio in base al fatto che il watch
-				 * sia aggiunto o rimosso
+				 * Si calcola il punteggio in base al fatto che il watch sia
+				 * aggiunto o rimosso
 				 */
 				Document ledMunicipality = (Document) doc.get(LAST_EVENT_DATA);
 				if (ledMunicipality != null) {
@@ -235,8 +275,8 @@ public class ProfileManager {
 					break;
 
 				/*
-				 * TODO Si calcola il punteggio in base al fatto che il watch
-				 * sia aggiunto o rimosso
+				 * Si calcola il punteggio in base al fatto che il watch sia
+				 * aggiunto o rimosso
 				 */
 				Document ledSchool = (Document) doc.get(LAST_EVENT_DATA);
 				if (ledSchool != null) {
