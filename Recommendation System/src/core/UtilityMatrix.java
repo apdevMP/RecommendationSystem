@@ -9,7 +9,8 @@ import org.bson.Document;
 import utils.Utils;
 
 /**
- * Questa classe rappresenta la matrice di utilitï¿½ ricavata dai dati
+ * Questa classe rappresenta la matrice di utilità ricavata dai dati. Essa si
+ * basa su una lista di {@link UtilityMatrixPreference}
  * 
  */
 public class UtilityMatrix {
@@ -19,17 +20,9 @@ public class UtilityMatrix {
 	private static final String KEY = "key";
 	private static final String LAST_EVENT_DATA = "lastEventData";
 	private static final String USER_ID = "userId";
-	@SuppressWarnings("unused")
-	private static final String CONTEXT = "context";
-	@SuppressWarnings("unused")
-	private static final String USER_SCORE = "userScore";
 	private static final String EVENT_TYPE = "eventType";
-	@SuppressWarnings("unused")
-	private static final String SCORE = "score";
 	private static final String CODE_MUNICIPALITY = "codeMunicipality";
 	private static final String CODE_PROVINCE = "codeProvince";
-	@SuppressWarnings("unused")
-	private static final String PROVINCE_CODE = "provinceCode";
 	private static final String ACTION = "action";
 	private static final String ATTRIBUTES = "attributes";
 
@@ -42,27 +35,99 @@ public class UtilityMatrix {
 	private int contSchool;
 
 	/**
-	 * Costruttore di default per la matrice di utilitï¿½
+	 * Costruttore di default per la matrice di utilità
 	 */
 	public UtilityMatrix() {
-
+		/*
+		 * Si istanzia la lista delle preferenze che verrà riempita richiamando
+		 * gli opportuni metodi
+		 */
 		preferences = new ArrayList<UtilityMatrixPreference>();
-		// Azzero i contatori
+		/* Si azzerano i contatori */
 		contProvince = 0;
 		contMunicipality = 0;
 		contSchool = 0;
 	}
 
+	/**
+	 * Recupera la lista delle preferenze
+	 * 
+	 * @return
+	 */
 	public List<UtilityMatrixPreference> getPreferences() {
 		return preferences;
 	}
-	
-	public void addListToPreferences(List<UtilityMatrixPreference> userPreferences){
+
+	/**
+	 * Aggiunge una lista di preferenze a quella all'interno della matrice di
+	 * utilità
+	 * 
+	 * @param userPreferences
+	 */
+	public void addListToPreferences(
+			List<UtilityMatrixPreference> userPreferences) {
 		preferences.addAll(userPreferences);
 	}
 
 	/**
-	 * Riempie la lista di preferenze utilizzando i watches
+	 * 
+	 * Restituisce il contatore delle province presenti all'interno della lista
+	 * 
+	 * @return
+	 */
+	public int getContProvince() {
+		return contProvince;
+	}
+
+	/**
+	 * Imposta il contatore delle province presenti all'interno della lista
+	 * 
+	 * @param contProvince
+	 */
+	public void setContProvince(int contProvince) {
+		this.contProvince = contProvince;
+	}
+
+	/**
+	 * 
+	 * Restituisce il contatore dei comuni presenti all'interno della lista
+	 * 
+	 * @return
+	 */
+	public int getContMunicipality() {
+		return contMunicipality;
+	}
+
+	/**
+	 * Imposta il contatore dei comuni presenti all'interno della lista
+	 * 
+	 * @param contMunicipality
+	 */
+	public void setContMunicipality(int contMunicipality) {
+		this.contMunicipality = contMunicipality;
+	}
+
+	/**
+	 * 
+	 * Restituisce il contatore delle scuole presenti all'interno della lista
+	 * 
+	 * @return
+	 */
+	public int getContSchool() {
+		return contSchool;
+	}
+
+	/**
+	 * Imposta il contatore delle scuole presenti all'interno della lista
+	 * 
+	 * @param contSchool
+	 */
+	public void setContSchool(int contSchool) {
+		this.contSchool = contSchool;
+	}
+
+	/**
+	 * Riempie la lista di preferenze utilizzando la lista dei Watch recuperati
 	 * 
 	 * @param list
 	 * @param profileId
@@ -80,17 +145,19 @@ public class UtilityMatrix {
 
 		/*
 		 * Si effettua un ciclo su ogni documento presente nella lista dei
-		 * Watches
+		 * Watches per prelevare i dati rilevanti
 		 */
 		for (Document doc : list) {
 
 			/*
-			 * Si recupera l'id dell'utente e il target del watch
+			 * Si recupera l'id dell'utente e si verifica se è uguale a quello
+			 * del profilo a cui si sta consigliando
 			 */
 			long userId = doc.getLong(USER_ID);
 			if (userId == profileId)
 				continue;
 
+			/* Si recupera il target e il tipo di watch */
 			Document target = (Document) doc.get(TARGET);
 			long typeId = target.getLong(TYPE_ID);
 
@@ -107,8 +174,8 @@ public class UtilityMatrix {
 					break;
 
 				/*
-				 * TODO Si calcola il punteggio in base al fatto che il watch
-				 * sia aggiunto o rimosso
+				 * Si calcola il punteggio in base al fatto che il watch sia
+				 * aggiunto o rimosso
 				 */
 				Document ledProvince = (Document) doc.get(LAST_EVENT_DATA);
 				if (ledProvince != null) {
@@ -135,8 +202,8 @@ public class UtilityMatrix {
 					break;
 
 				/*
-				 * TODO Si calcola il punteggio in base al fatto che il watch
-				 * sia aggiunto o rimosso
+				 * Si calcola il punteggio in base al fatto che il watch sia
+				 * aggiunto o rimosso
 				 */
 				Document ledMunicipality = (Document) doc.get(LAST_EVENT_DATA);
 				if (ledMunicipality != null) {
@@ -162,8 +229,8 @@ public class UtilityMatrix {
 					break;
 
 				/*
-				 * TODO Si calcola il punteggio in base al fatto che il watch
-				 * sia aggiunto o rimosso
+				 * Si calcola il punteggio in base al fatto che il watch sia
+				 * aggiunto o rimosso
 				 */
 				Document ledSchool = (Document) doc.get(LAST_EVENT_DATA);
 				if (ledSchool != null) {
@@ -179,7 +246,7 @@ public class UtilityMatrix {
 						value));
 
 				/*
-				 * String provinceFromSchool = queryManager
+				 * TODO String provinceFromSchool = queryManager
 				 * .getProvinceFromSchool(school); String municipalityFromSchool
 				 * = queryManager .getMunicipalityFromSchool(school);
 				 * preferences.add(new UtilityMatrixPreference(userId,
@@ -193,7 +260,8 @@ public class UtilityMatrix {
 	}
 
 	/**
-	 * Riempie la lista delle preferenze utilizzando i log recuperati
+	 * Riempie la lista delle preferenze utilizzando la lista del log recuperata
+	 * dal database
 	 * 
 	 * @param list
 	 * @param profileId
@@ -208,7 +276,10 @@ public class UtilityMatrix {
 
 		/* Vengono iterati tutti i documenti */
 		for (Document doc : list) {
-			/* Si recupera l'id dell'utente */
+			/*
+			 * Si recupera l'id dell'utente e si verifica se esso è uguale a
+			 * quello del profilo a cui consigliare
+			 */
 			Long userId = doc.getLong(USER_ID);
 			if (userId == null || userId == profileId)
 				continue;
@@ -284,30 +355,6 @@ public class UtilityMatrix {
 				break;
 			}
 		}
-	}
-
-	public int getContProvince() {
-		return contProvince;
-	}
-
-	public void setContProvince(int contProvince) {
-		this.contProvince = contProvince;
-	}
-
-	public int getContMunicipality() {
-		return contMunicipality;
-	}
-
-	public void setContMunicipality(int contMunicipality) {
-		this.contMunicipality = contMunicipality;
-	}
-
-	public int getContSchool() {
-		return contSchool;
-	}
-
-	public void setContSchool(int contSchool) {
-		this.contSchool = contSchool;
 	}
 
 	/**

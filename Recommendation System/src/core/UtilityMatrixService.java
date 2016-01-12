@@ -12,11 +12,16 @@ import org.bson.Document;
 import com.google.common.collect.Lists;
 import com.mongodb.client.FindIterable;
 
+/**
+ * Classe di Servizio per il riempimento ed il salvataggio su file della matrice
+ * di utilità
+ * 
+ * 
+ * 
+ */
 public class UtilityMatrixService {
 
 	private Profile userProfile;
-	@SuppressWarnings("unused")
-	private String region;
 	private QueryManager queryManager;
 	private Map<String, Long> itemsMap;
 	private Map<String, Long> categoriesMap;
@@ -27,125 +32,111 @@ public class UtilityMatrixService {
 	private static final String[] actions = { "webapi_school_aggregates",
 			"webapi_municipality_aggregates", "webapi_get_best_schools" };
 
+	/**
+	 * Costruttore di default
+	 */
 	public UtilityMatrixService() {
-
+		this.categoriesMap = new HashMap<String, Long>();
 	}
 
-	public UtilityMatrixService(Profile profile, String region) {
+	/**
+	 * Costruttore che utilizza il profilo utente
+	 * 
+	 * @param profile
+	 */
+	public UtilityMatrixService(Profile profile) {
 		this.userProfile = profile;
-		this.region = region;
-
 		this.categoriesMap = new HashMap<String, Long>();
 
 	}
 
 	/**
-	 * Recupera le liste di log e watch per creare la matrice di utilitï¿½
-	 * composta da UtilityMatrixPreference
+	 * Crea una {@link UtilityMatrix} utilizzando le preferenze recuperate dalle
+	 * collezioni di Watch e Log
 	 * 
 	 * @return
 	 */
-	public UtilityMatrix createPreferences() {
-		// istanzio un queryManager per recuperare dati dalle collezioni
-		queryManager = new QueryManager();
-
-		// si recupera la materia di insegnamento dell'utente
-		@SuppressWarnings("unused")
-		String teachingRole = userProfile.getTeachingRole();
-
-		// si recupera la lista di watch e di log in base alla materia di
-		// insegnamento
-		// FindIterable<Document> itWatches =
-		// queryManager.findWatchesByTeachingRole(teachingRole);
-		LOGGER.info("[" + UtilityMatrixService.class.getName()
-				+ "] Finding watches...");
-
-		FindIterable<Document> itWatches = queryManager.findWatches();
-		// FindIterable<Document> itLogs =
-		// queryManager.findLogsByTeachingRole(teachingRole);
-		LOGGER.info("[" + UtilityMatrixService.class.getName()
-				+ "] Finding logs...");
-		;
-		FindIterable<Document> itLogs = queryManager.getLogsByAction(actions);
-
-		// le liste di watch e log vengono filtrate per regione
-		// ArrayList<Document> listWatches =
-		// Filter.filterWatchesByRegion(itWatches, region);
-		// ArrayList<Document> listLogs = Filter.filterLogsByRegion(itLogs,
-		// region);
-
-		// Utilizzo le liste per semplicitï¿½
-		List<Document> listWatches = Lists.newArrayList(itWatches);
-		List<Document> listLogs = Lists.newArrayList(itLogs);
-
-		LOGGER.info("[" + UtilityMatrixService.class.getName()
-				+ "] Creating utility matrix..");
-		// dalle liste viene creata la matrice di utilitï¿½ che viene restituita
-		UtilityMatrixCreator ums = new UtilityMatrixCreator(userProfile);
-		UtilityMatrix uMatrix = ums
-				.fillMatrixPreferences(listWatches, listLogs);
-
-		return uMatrix;
-	}
-
 	public UtilityMatrix createPreferencesWithPagination() {
-		// istanzio un queryManager per recuperare dati dalle collezioni
+		/* Istanzio un queryManager per recuperare dati dalle collezioni */
 		queryManager = new QueryManager();
 
+		/* Si recupera il profile dell'utente */
 		long profileId = userProfile.getId();
-		
+
+		/*
+		 * Si inizializzano le condizioni di usciti e gli iterable di Watch e
+		 * Log
+		 */
 		FindIterable<Document> itWatches = null;
 		FindIterable<Document> itLogs = null;
 		boolean finishLog = false;
 		boolean finishWatch = false;
 		int cont = 0;
+
 		LOGGER.info("[" + UtilityMatrixService.class.getName()
 				+ "] Finding watches...");
 		LOGGER.info("[" + UtilityMatrixService.class.getName()
 				+ "] Finding logs...");
-		UtilityMatrix utilityMatrixPreference = new UtilityMatrix();
+
+		/* Si inizializza la UtilityMatrix */
+		UtilityMatrix utilityMatrix = new UtilityMatrix();
 		for (;;) {
 
-			// si recupera la lista di watch e di log
+			/* Se i Watch non sono finiti, si recupera una pagina di Watch */
 			if (!finishWatch) {
 				itWatches = queryManager.findWatches(cont);
 			}
 
+			/* Se i Log non sono finiti, si recupera una pagina di Log */
 			if (!finishLog) {
 				itLogs = queryManager.getLogsByAction(actions, cont);
 			}
-			// Utilizzo le liste per semplicitï¿½
+			/* Si utilizzano le liste convertendo gli oggetti FindIterable */
 			List<Document> listWatches = Lists.newArrayList(itWatches);
 			List<Document> listLogs = Lists.newArrayList(itLogs);
 
+			/* Se la lista dei Log è vuota imposta il flag a true */
 			if (listLogs.isEmpty()) {
 				finishLog = true;
 			}
+
+			/* Se la lista dei Watch è vuota imposta il flag a true */
 			if (listWatches.isEmpty()) {
 				finishWatch = true;
 			}
 
+			/* Se entrambi i flag di uscita sono true si esce dal ciclo */
 			if (finishLog && finishWatch) {
 				break;
 			}
 
+			/* Se la lista dei Log non è vuota,si riempie la matrice di utilità */
 			if (!finishLog) {
-				utilityMatrixPreference.fillPreferencesWithLogs(listLogs,profileId);
+				utilityMatrix.fillPreferencesWithLogs(listLogs, profileId);
 			}
+
+			/* Se la lista dei Log non è vuota,si riempie la matrice di utilità */
 			if (!finishWatch) {
-				utilityMatrixPreference.fillPreferencesWithWatches(listWatches,profileId);
+				utilityMatrix
+						.fillPreferencesWithWatches(listWatches, profileId);
 			}
 			cont++;
 		}
 
 		LOGGER.info("[" + UtilityMatrixService.class.getName()
 				+ "] Watches and Logs examined.");
-		System.out.println(utilityMatrixPreference.getPreferences().size());
-		utilityMatrixPreference.addListToPreferences(userProfile.getUserPreferences());
-		System.out.println(utilityMatrixPreference.getPreferences().size());
-		utilityMatrixPreference.sortForPlacePreferences();
 
-		return utilityMatrixPreference;
+		/*
+		 * Si aggiunge la lista ricavata dal profilo utente a quella della
+		 * matrice di utilità
+		 */
+		utilityMatrix.addListToPreferences(userProfile.getUserPreferences());
+
+		/* Si ordinano le preferenze all'interno della matrice di utilità */
+		utilityMatrix.sortForPlacePreferences();
+
+		/* Restituisce la matrice di utilità */
+		return utilityMatrix;
 
 	}
 
@@ -168,6 +159,7 @@ public class UtilityMatrixService {
 		LOGGER.info("[" + UtilityMatrixService.class.getName()
 				+ "] Saving data..");
 		try {
+			/* Si crea il file nel quale verranno salvate le preferenze */
 			FileWriter writer = new FileWriter("matrix_value.csv");
 
 			long counter = 0;
@@ -235,6 +227,7 @@ public class UtilityMatrixService {
 				}
 
 			}
+			/* Si chiude il file */
 			writer.flush();
 			writer.close();
 

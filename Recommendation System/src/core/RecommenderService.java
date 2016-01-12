@@ -21,6 +21,10 @@ import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
+/**
+ * Classe di servizio per effettuare le raccomandazioni
+ * 
+ */
 public class RecommenderService {
 
 	private Profile userProfile;
@@ -41,14 +45,12 @@ public class RecommenderService {
 
 		List<CustomRecommendedItem> finalList = new ArrayList<CustomRecommendedItem>();
 
-		UtilityMatrixService creator = new UtilityMatrixService(userProfile,
-				region);
+		UtilityMatrixService utilityMatrixService = new UtilityMatrixService(
+				userProfile);
 
-		// UtilityMatrix matrix = creator.createUtilityMatrix();
-		// creator.saveMatrix(matrix);
-		// UtilityMatrix matrix = creator.createPreferences();
-		UtilityMatrix matrix = creator.createPreferencesWithPagination();
-		creator.savePreferences(matrix);
+		UtilityMatrix matrix = utilityMatrixService
+				.createPreferencesWithPagination();
+		utilityMatrixService.savePreferences(matrix);
 
 		try {
 			DataModel model = new FileDataModel(new File("matrix_value.csv"));
@@ -83,8 +85,8 @@ public class RecommenderService {
 				}
 
 				RankingService rankingService = new RankingService(
-						recommendedItems, creator.getItemsMap(),
-						creator.getCategoriesMap(), userProfile);
+						recommendedItems, utilityMatrixService.getItemsMap(),
+						utilityMatrixService.getCategoriesMap(), userProfile);
 
 				/*
 				 * ottenimento della lista dei risultati da stampare sulla
