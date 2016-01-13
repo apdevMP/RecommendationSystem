@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
 import org.apache.mahout.cf.taste.impl.neighborhood.ThresholdUserNeighborhood;
-
+import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
 import org.apache.mahout.cf.taste.impl.recommender.slopeone.SlopeOneRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.EuclideanDistanceSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
@@ -21,18 +21,27 @@ import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
+import utils.Configuration;
+
 /**
  * Classe di servizio per effettuare le raccomandazioni
  * 
  */
-public class RecommenderService {
+public class RecommenderService
+{
 
-	private Profile userProfile;
-	private static final Logger LOGGER = Logger
-			.getLogger(RecommenderService.class.getName());
+	private Profile				userProfile;
+	private Configuration configuration = null;
+	private static final Logger	LOGGER	= Logger.getLogger(RecommenderService.class.getName());
 
-	public RecommenderService(Profile profile) {
+	public RecommenderService(Profile profile)
+	{
 		userProfile = profile;
+		if (configuration == null)
+		{
+			configuration = Configuration.getIstance();
+
+		}
 	}
 
 	/**
@@ -41,51 +50,47 @@ public class RecommenderService {
 	 * 
 	 * @param region
 	 */
-	public List<CustomRecommendedItem> recommendItems(String region) {
+	public List<CustomRecommendedItem> recommendItems(String region)
+	{
 
 		List<CustomRecommendedItem> finalList = new ArrayList<CustomRecommendedItem>();
 
-		UtilityMatrixService utilityMatrixService = new UtilityMatrixService(
-				userProfile);
+		UtilityMatrixService utilityMatrixService = new UtilityMatrixService(userProfile);
 
-		UtilityMatrix matrix = utilityMatrixService
-				.createPreferencesWithPagination();
+		UtilityMatrix matrix = utilityMatrixService.createPreferencesWithPagination();
 		utilityMatrixService.savePreferences(matrix);
 
-		try {
-			DataModel model = new FileDataModel(new File("matrix_value.csv"));
+		try
+		{
+			DataModel model = new FileDataModel(new File(userProfile.getId()+".csv"));
 			UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
 			UserSimilarity similarity2 = new EuclideanDistanceSimilarity(model);
 			UserSimilarity similarity3 = new LogLikelihoodSimilarity(model);
 			// ItemSimilarity similarity = new
 			// PearsonCorrelationSimilarity(model);
 			// Optimizer optimizer = new ConjugateGradientOptimizer();
-			Recommender recommender = new SlopeOneRecommender(model);
-			UserNeighborhood neighborhood = new ThresholdUserNeighborhood(1,
-					similarity2, model);
-			// Recommender recommender = new GenericUserBasedRecommender(model,
-			// neighborhood, similarity2);
+		//	Recommender recommender = new SlopeOneRecommender(model);
+			UserNeighborhood neighborhood = new ThresholdUserNeighborhood(1, similarity2, model);
+			 Recommender recommender = new GenericUserBasedRecommender(model, neighborhood, similarity2);
 			// Recommender cachingRecommender = new
 			// CachingRecommender(recommender);
 
-			LOGGER.info("\n\n[" + RecommenderService.class.getName()
-					+ "] Starting recommender service..");
+			LOGGER.info("\n\n[" + RecommenderService.class.getName() + "] Starting recommender service..");
 
-			List<RecommendedItem> recommendedItems = recommender.recommend(
-					userProfile.getId(), 70);
+			System.out.println(configuration.getRecommended_items());
+			List<RecommendedItem> recommendedItems = recommender.recommend(userProfile.getId(),configuration.getRecommended_items() );
 
-			LOGGER.info("[" + RecommenderService.class.getName()
-					+ "] List of recommended items created");
+			LOGGER.info("[" + RecommenderService.class.getName() + "] List of recommended items created");
 
-			if (!recommendedItems.isEmpty()) {
-				for (RecommendedItem item : recommendedItems) {
-					LOGGER.info("id:" + item.getItemID() + ", value:"
-							+ item.getValue());
+			if (!recommendedItems.isEmpty())
+			{
+				for (RecommendedItem item : recommendedItems)
+				{
+					LOGGER.info("id:" + item.getItemID() + ", value:" + item.getValue());
 
 				}
 
-				RankingService rankingService = new RankingService(
-						recommendedItems, utilityMatrixService.getItemsMap(),
+				RankingService rankingService = new RankingService(recommendedItems, utilityMatrixService.getItemsMap(),
 						utilityMatrixService.getCategoriesMap(), userProfile);
 
 				/*
@@ -94,15 +99,15 @@ public class RecommenderService {
 				 */
 				finalList = rankingService.getFinalList();
 
-			} else {
-				LOGGER.warning("[" + RecommenderService.class.getName()
-						+ "] Empty recommendation list");
+			} else
+			{
+				LOGGER.warning("[" + RecommenderService.class.getName() + "] Empty recommendation list");
 
 			}
 
-		} catch (IOException | TasteException e) {
-			LOGGER.log(Level.SEVERE, "[" + RecommenderService.class.getName()
-					+ "] Exception: ", e);
+		} catch (IOException | TasteException e)
+		{
+			LOGGER.log(Level.SEVERE, "[" + RecommenderService.class.getName() + "] Exception: ", e);
 		}
 
 		return finalList;

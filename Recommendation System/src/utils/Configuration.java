@@ -25,13 +25,15 @@ public class Configuration
 	private String					neo_password;
 	private String					neo_server_address;
 	private int						neo_port;
-	private int 					doc_per_page;
+	private int						doc_per_page;
 	private long					user_id;
+	private int					recommended_items;
+	private int					items_per_list;
 	private static Configuration	configuration	= null;
 
 	private Configuration()
 	{
-		
+
 	}
 
 	/**
@@ -240,7 +242,7 @@ public class Configuration
 	{
 		this.neo_port = neo_port;
 	}
-	
+
 	public int getDoc_per_page()
 	{
 		return doc_per_page;
@@ -251,34 +253,57 @@ public class Configuration
 		this.doc_per_page = doc_per_page;
 	}
 
-	public long getUserId() {
+	public long getUserId()
+	{
 		return user_id;
 	}
 
-	public void setUserId(long user_id) {
+	public void setUserId(long user_id)
+	{
 		this.user_id = user_id;
 	}
 
-	
+	public int getRecommended_items()
+	{
+		return recommended_items;
+	}
+
+	public void setRecommended_items(int recommended_items)
+	{
+		this.recommended_items = recommended_items;
+	}
+
+	public int getItem_per_list()
+	{
+		return items_per_list;
+	}
+
+	public void setItem_per_list(int item_per_list)
+	{
+		this.items_per_list = item_per_list;
+	}
+
 	private static void retrieveValues(String path)
 	{
 		// TODO Auto-generated method stub
-				Gson gson = new Gson();
-				BufferedReader br = null;
+		Gson gson = new Gson();
+		BufferedReader br = null;
 
-				try
-				{
-					br = new BufferedReader(new FileReader(path));
-				} catch (FileNotFoundException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				//configuration = Configuration.getIstance();
-				configuration = gson.fromJson(br, Configuration.class);		
+		try
+		{
+			br = new BufferedReader(new FileReader(path));
+		} catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//configuration = Configuration.getIstance();
+		configuration = gson.fromJson(br, Configuration.class);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -292,5 +317,4 @@ public class Configuration
 				+ getNeo_port() + "]";
 	}
 
-	
 }

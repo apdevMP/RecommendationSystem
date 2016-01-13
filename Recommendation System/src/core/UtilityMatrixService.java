@@ -14,7 +14,7 @@ import com.mongodb.client.FindIterable;
 
 /**
  * Classe di Servizio per il riempimento ed il salvataggio su file della matrice
- * di utilità
+ * di utilitï¿½
  * 
  * 
  * 
@@ -95,12 +95,12 @@ public class UtilityMatrixService {
 			List<Document> listWatches = Lists.newArrayList(itWatches);
 			List<Document> listLogs = Lists.newArrayList(itLogs);
 
-			/* Se la lista dei Log è vuota imposta il flag a true */
+			/* Se la lista dei Log ï¿½ vuota imposta il flag a true */
 			if (listLogs.isEmpty()) {
 				finishLog = true;
 			}
 
-			/* Se la lista dei Watch è vuota imposta il flag a true */
+			/* Se la lista dei Watch ï¿½ vuota imposta il flag a true */
 			if (listWatches.isEmpty()) {
 				finishWatch = true;
 			}
@@ -110,12 +110,12 @@ public class UtilityMatrixService {
 				break;
 			}
 
-			/* Se la lista dei Log non è vuota,si riempie la matrice di utilità */
+			/* Se la lista dei Log non ï¿½ vuota,si riempie la matrice di utilitï¿½ */
 			if (!finishLog) {
 				utilityMatrix.fillPreferencesWithLogs(listLogs, profileId);
 			}
 
-			/* Se la lista dei Log non è vuota,si riempie la matrice di utilità */
+			/* Se la lista dei Log non ï¿½ vuota,si riempie la matrice di utilitï¿½ */
 			if (!finishWatch) {
 				utilityMatrix
 						.fillPreferencesWithWatches(listWatches, profileId);
@@ -128,14 +128,14 @@ public class UtilityMatrixService {
 
 		/*
 		 * Si aggiunge la lista ricavata dal profilo utente a quella della
-		 * matrice di utilità
+		 * matrice di utilitï¿½
 		 */
 		utilityMatrix.addListToPreferences(userProfile.getUserPreferences());
 
-		/* Si ordinano le preferenze all'interno della matrice di utilità */
+		/* Si ordinano le preferenze all'interno della matrice di utilitï¿½ */
 		utilityMatrix.sortForPlacePreferences();
 
-		/* Restituisce la matrice di utilità */
+		/* Restituisce la matrice di utilitï¿½ */
 		return utilityMatrix;
 
 	}
@@ -160,7 +160,7 @@ public class UtilityMatrixService {
 				+ "] Saving data..");
 		try {
 			/* Si crea il file nel quale verranno salvate le preferenze */
-			FileWriter writer = new FileWriter("matrix_value.csv");
+			FileWriter writer = new FileWriter(userProfile.getId()+".csv");
 
 			long counter = 0;
 			this.itemsMap = new HashMap<String, Long>();
