@@ -1,6 +1,3 @@
-/**
- * 
- */
 package utils;
 
 import java.io.BufferedReader;
@@ -8,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 import com.google.gson.Gson;
-
-import core.GraphManager;
 
 /**
  * @author Vanessa
@@ -31,6 +26,7 @@ public class Configuration
 	private String					neo_server_address;
 	private int						neo_port;
 	private int 					doc_per_page;
+	private long					user_id;
 	private static Configuration	configuration	= null;
 
 	private Configuration()
@@ -255,6 +251,15 @@ public class Configuration
 		this.doc_per_page = doc_per_page;
 	}
 
+	public long getUserId() {
+		return user_id;
+	}
+
+	public void setUserId(long user_id) {
+		this.user_id = user_id;
+	}
+
+	
 	private static void retrieveValues(String path)
 	{
 		// TODO Auto-generated method stub
@@ -287,4 +292,5 @@ public class Configuration
 				+ getNeo_port() + "]";
 	}
 
+	
 }

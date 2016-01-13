@@ -13,6 +13,7 @@ import core.CustomRecommendedItem;
 import core.Profile;
 import core.ProfileManager;
 import core.RecommenderService;
+import core.UtilityMatrixPreference;
 import utils.Configuration;
 import view.StartWindow;
 
@@ -59,24 +60,24 @@ public class Controller
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-
 				// recupero dei dati inseriti dall'utente
 				window.getTextArea().setText(null);
 				String teachingRole = window.getClassCode();
 				String region = window.getRegion();
 				Double score = window.getScore();
-			
-				long id = 52657;
-				Profile userProfile = ProfileManager.createProfile(id, teachingRole, score, region);
+				
+				Profile userProfile = ProfileManager.createProfile(configuration.getUserId(), teachingRole, score, region);
 				System.out.println(userProfile.getUserPreferences().size());
-				//Profile userProfile = new Profile(id, teachingRole, score, region);
+				for(UtilityMatrixPreference u : userProfile.getUserPreferences()){
+					System.out.println("Preference: " + u.getPlaceId() + " - " + u.getScore());
+				}
 				LOGGER.info("[" + Controller.class.getName() + "] Starting recommendation system for: " + userProfile.toString());
 				recommenderService = new RecommenderService(userProfile);
 
-				long startTime = System.nanoTime();
+				long startTime = System.currentTimeMillis();
 
-				List<CustomRecommendedItem> recommendedItems = recommenderService.recommendByRegion(region);
-				long endTime = System.nanoTime();
+				List<CustomRecommendedItem> recommendedItems = recommenderService.recommendItems(region);
+				long endTime = System.currentTimeMillis();
 
 				LOGGER.info("Execution time: " + (endTime - startTime));
 

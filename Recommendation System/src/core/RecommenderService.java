@@ -41,7 +41,7 @@ public class RecommenderService {
 	 * 
 	 * @param region
 	 */
-	public List<CustomRecommendedItem> recommendByRegion(String region) {
+	public List<CustomRecommendedItem> recommendItems(String region) {
 
 		List<CustomRecommendedItem> finalList = new ArrayList<CustomRecommendedItem>();
 
