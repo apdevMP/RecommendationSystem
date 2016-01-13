@@ -72,7 +72,7 @@ public class RecommenderService {
 					+ "] Starting recommender service..");
 
 			List<RecommendedItem> recommendedItems = recommender.recommend(
-					52657, 20);
+					userProfile.getId(), 70);
 
 			LOGGER.info("[" + RecommenderService.class.getName()
 					+ "] List of recommended items created");

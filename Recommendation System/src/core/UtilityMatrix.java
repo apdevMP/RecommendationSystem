@@ -9,37 +9,38 @@ import org.bson.Document;
 import utils.Utils;
 
 /**
- * Questa classe rappresenta la matrice di utilità ricavata dai dati. Essa si
+ * Questa classe rappresenta la matrice di utilitï¿½ ricavata dai dati. Essa si
  * basa su una lista di {@link UtilityMatrixPreference}
  * 
  */
-public class UtilityMatrix {
+public class UtilityMatrix
+{
 
-	private static final String TARGET = "target";
-	private static final String TYPE_ID = "typeId";
-	private static final String KEY = "key";
-	private static final String LAST_EVENT_DATA = "lastEventData";
-	private static final String USER_ID = "userId";
-	private static final String EVENT_TYPE = "eventType";
-	private static final String CODE_MUNICIPALITY = "codeMunicipality";
-	private static final String CODE_PROVINCE = "codeProvince";
-	private static final String ACTION = "action";
-	private static final String ATTRIBUTES = "attributes";
+	private static final String				TARGET				= "target";
+	private static final String				TYPE_ID				= "typeId";
+	private static final String				KEY					= "key";
+	private static final String				LAST_EVENT_DATA		= "lastEventData";
+	private static final String				USER_ID				= "userId";
+	private static final String				EVENT_TYPE			= "eventType";
+	private static final String				CODE_MUNICIPALITY	= "codeMunicipality";
+	private static final String				CODE_PROVINCE		= "codeProvince";
+	private static final String				ACTION				= "action";
+	private static final String				ATTRIBUTES			= "attributes";
 
-	private static final Logger LOGGER = Logger.getLogger(UtilityMatrix.class
-			.getName());
+	private static final Logger				LOGGER				= Logger.getLogger(UtilityMatrix.class.getName());
 
-	private List<UtilityMatrixPreference> preferences;
-	private int contProvince;
-	private int contMunicipality;
-	private int contSchool;
+	private List<UtilityMatrixPreference>	preferences;
+	private int								contProvince;
+	private int								contMunicipality;
+	private int								contSchool;
 
 	/**
-	 * Costruttore di default per la matrice di utilità
+	 * Costruttore di default per la matrice di utilitï¿½
 	 */
-	public UtilityMatrix() {
+	public UtilityMatrix()
+	{
 		/*
-		 * Si istanzia la lista delle preferenze che verrà riempita richiamando
+		 * Si istanzia la lista delle preferenze che verrï¿½ riempita richiamando
 		 * gli opportuni metodi
 		 */
 		preferences = new ArrayList<UtilityMatrixPreference>();
@@ -54,18 +55,19 @@ public class UtilityMatrix {
 	 * 
 	 * @return
 	 */
-	public List<UtilityMatrixPreference> getPreferences() {
+	public List<UtilityMatrixPreference> getPreferences()
+	{
 		return preferences;
 	}
 
 	/**
 	 * Aggiunge una lista di preferenze a quella all'interno della matrice di
-	 * utilità
+	 * utilitï¿½
 	 * 
 	 * @param userPreferences
 	 */
-	public void addListToPreferences(
-			List<UtilityMatrixPreference> userPreferences) {
+	public void addListToPreferences(List<UtilityMatrixPreference> userPreferences)
+	{
 		preferences.addAll(userPreferences);
 	}
 
@@ -75,7 +77,8 @@ public class UtilityMatrix {
 	 * 
 	 * @return
 	 */
-	public int getContProvince() {
+	public int getContProvince()
+	{
 		return contProvince;
 	}
 
@@ -84,7 +87,8 @@ public class UtilityMatrix {
 	 * 
 	 * @param contProvince
 	 */
-	public void setContProvince(int contProvince) {
+	public void setContProvince(int contProvince)
+	{
 		this.contProvince = contProvince;
 	}
 
@@ -94,7 +98,8 @@ public class UtilityMatrix {
 	 * 
 	 * @return
 	 */
-	public int getContMunicipality() {
+	public int getContMunicipality()
+	{
 		return contMunicipality;
 	}
 
@@ -103,7 +108,8 @@ public class UtilityMatrix {
 	 * 
 	 * @param contMunicipality
 	 */
-	public void setContMunicipality(int contMunicipality) {
+	public void setContMunicipality(int contMunicipality)
+	{
 		this.contMunicipality = contMunicipality;
 	}
 
@@ -113,7 +119,8 @@ public class UtilityMatrix {
 	 * 
 	 * @return
 	 */
-	public int getContSchool() {
+	public int getContSchool()
+	{
 		return contSchool;
 	}
 
@@ -122,7 +129,8 @@ public class UtilityMatrix {
 	 * 
 	 * @param contSchool
 	 */
-	public void setContSchool(int contSchool) {
+	public void setContSchool(int contSchool)
+	{
 		this.contSchool = contSchool;
 	}
 
@@ -132,14 +140,15 @@ public class UtilityMatrix {
 	 * @param list
 	 * @param profileId
 	 */
-	public void fillPreferencesWithWatches(List<Document> list, long profileId) {
+	public void fillPreferencesWithWatches(List<Document> list, long profileId)
+	{
 		/*
-		 * se la lista dei documenti è vuota, non viene riempita la lista di
+		 * se la lista dei documenti ï¿½ vuota, non viene riempita la lista di
 		 * preferenze
 		 */
-		if (list.size() < 1) {
-			LOGGER.severe("[" + UtilityMatrix.class.getName()
-					+ "] You must fill matrix with not empty list");
+		if (list.size() < 1)
+		{
+			LOGGER.severe("[" + UtilityMatrix.class.getName() + "] You must fill matrix with not empty list");
 			return;
 		}
 
@@ -147,10 +156,11 @@ public class UtilityMatrix {
 		 * Si effettua un ciclo su ogni documento presente nella lista dei
 		 * Watches per prelevare i dati rilevanti
 		 */
-		for (Document doc : list) {
+		for (Document doc : list)
+		{
 
 			/*
-			 * Si recupera l'id dell'utente e si verifica se è uguale a quello
+			 * Si recupera l'id dell'utente e si verifica se ï¿½ uguale a quello
 			 * del profilo a cui si sta consigliando
 			 */
 			long userId = doc.getLong(USER_ID);
@@ -163,98 +173,102 @@ public class UtilityMatrix {
 
 			int value = 0;
 			long eventType = 1;
-			switch ((int) typeId) {
-			case 1:
-				/*
-				 * La preferenza è sulle provincia quindi la si recupera dal
-				 * documento
-				 */
-				String province = target.getString(KEY);
-				if (province == null)
+			switch ((int) typeId)
+			{
+				case 1:
+					/*
+					 * La preferenza ï¿½ sulle provincia quindi la si recupera dal
+					 * documento
+					 */
+					String province = target.getString(KEY);
+					if (province == null)
+						break;
+
+					/*
+					 * Si calcola il punteggio in base al fatto che il watch sia
+					 * aggiunto o rimosso
+					 */
+					Document ledProvince = (Document) doc.get(LAST_EVENT_DATA);
+					if (ledProvince != null)
+					{
+						eventType = ledProvince.getLong(EVENT_TYPE);
+					}
+					value = Utils.computeValue(eventType);
+
+					/*
+					 * Si aggiunge la preferenza sulla provincia, le si assegna
+					 * il tag relativo alle province(1) e il valore calcolato in
+					 * precedenza
+					 */
+					preferences.add(new UtilityMatrixPreference(userId, province, 1, value));
 					break;
 
-				/*
-				 * Si calcola il punteggio in base al fatto che il watch sia
-				 * aggiunto o rimosso
-				 */
-				Document ledProvince = (Document) doc.get(LAST_EVENT_DATA);
-				if (ledProvince != null) {
-					eventType = ledProvince.getLong(EVENT_TYPE);
-				}
-				value = Utils.computeValue(eventType);
+				case 2:
+					/*
+					 * La preferenza ï¿½ sul comune quindi lo si recupera dal
+					 * documento
+					 */
+					String municipality = target.getString(KEY);
+					if (municipality == null)
+						break;
 
-				/*
-				 * Si aggiunge la preferenza sulla provincia, le si assegna il
-				 * tag relativo alle province(1) e il valore calcolato in
-				 * precedenza
-				 */
-				preferences.add(new UtilityMatrixPreference(userId, province,
-						1, value));
-				break;
+					/*
+					 * Si calcola il punteggio in base al fatto che il watch sia
+					 * aggiunto o rimosso
+					 */
+					Document ledMunicipality = (Document) doc.get(LAST_EVENT_DATA);
+					if (ledMunicipality != null)
+					{
+						eventType = ledMunicipality.getLong(EVENT_TYPE);
+					}
+					value = Utils.computeValue(eventType);
 
-			case 2:
-				/*
-				 * La preferenza è sul comune quindi lo si recupera dal
-				 * documento
-				 */
-				String municipality = target.getString(KEY);
-				if (municipality == null)
+					/*
+					 * Si aggiunge la preferenza sul comune, le si assegna il
+					 * tag relativo ai comuni(2) e il valore calcolato in
+					 * precedenza
+					 */
+					preferences.add(new UtilityMatrixPreference(userId, municipality, 2, value));
 					break;
 
-				/*
-				 * Si calcola il punteggio in base al fatto che il watch sia
-				 * aggiunto o rimosso
-				 */
-				Document ledMunicipality = (Document) doc.get(LAST_EVENT_DATA);
-				if (ledMunicipality != null) {
-					eventType = ledMunicipality.getLong(EVENT_TYPE);
-				}
-				value = Utils.computeValue(eventType);
+				case 3:
+					/*
+					 * La preferenza ï¿½ sulle scuola quindi la si recupera dal
+					 * documento
+					 */
+					String school = target.getString(KEY);
+					if (school == null)
+						break;
 
-				/*
-				 * Si aggiunge la preferenza sul comune, le si assegna il tag
-				 * relativo ai comuni(2) e il valore calcolato in precedenza
-				 */
-				preferences.add(new UtilityMatrixPreference(userId,
-						municipality, 2, value));
-				break;
+					/*
+					 * Si calcola il punteggio in base al fatto che il watch sia
+					 * aggiunto o rimosso
+					 */
+					Document ledSchool = (Document) doc.get(LAST_EVENT_DATA);
+					if (ledSchool != null)
+					{
+						eventType = ledSchool.getLong(EVENT_TYPE);
+					}
+					value = Utils.computeValue(eventType);
 
-			case 3:
-				/*
-				 * La preferenza è sulle scuola quindi la si recupera dal
-				 * documento
-				 */
-				String school = target.getString(KEY);
-				if (school == null)
+					/*
+					 * Si aggiunge la preferenza sulla scuola, le si assegna il
+					 * tag relativo alle scuole(3) e il valore calcolato in
+					 * precedenza
+					 */
+					preferences.add(new UtilityMatrixPreference(userId, school, 3, value));
+
+					/*
+					 * TODO String provinceFromSchool = queryManager
+					 * .getProvinceFromSchool(school); String
+					 * municipalityFromSchool = queryManager
+					 * .getMunicipalityFromSchool(school); preferences.add(new
+					 * UtilityMatrixPreference(userId, provinceFromSchool, 1,
+					 * value)); preferences.add(new
+					 * UtilityMatrixPreference(userId, municipalityFromSchool,
+					 * 2, value));
+					 */
 					break;
-
-				/*
-				 * Si calcola il punteggio in base al fatto che il watch sia
-				 * aggiunto o rimosso
-				 */
-				Document ledSchool = (Document) doc.get(LAST_EVENT_DATA);
-				if (ledSchool != null) {
-					eventType = ledSchool.getLong(EVENT_TYPE);
-				}
-				value = Utils.computeValue(eventType);
-
-				/*
-				 * Si aggiunge la preferenza sulla scuola, le si assegna il tag
-				 * relativo alle scuole(3) e il valore calcolato in precedenza
-				 */
-				preferences.add(new UtilityMatrixPreference(userId, school, 3,
-						value));
-
-				/*
-				 * TODO String provinceFromSchool = queryManager
-				 * .getProvinceFromSchool(school); String municipalityFromSchool
-				 * = queryManager .getMunicipalityFromSchool(school);
-				 * preferences.add(new UtilityMatrixPreference(userId,
-				 * provinceFromSchool, 1, value)); preferences.add(new
-				 * UtilityMatrixPreference(userId, municipalityFromSchool, 2,
-				 * value));
-				 */
-				break;
 			}
 		}
 	}
@@ -266,18 +280,21 @@ public class UtilityMatrix {
 	 * @param list
 	 * @param profileId
 	 */
-	public void fillPreferencesWithLogs(List<Document> list, long profileId) {
-		// se la lista dei documenti è vuota, non viene riempita la matrice di
+	public void fillPreferencesWithLogs(List<Document> list, long profileId)
+	{
+		// se la lista dei documenti ï¿½ vuota, non viene riempita la matrice di
 		// utility
-		if (list.size() < 1) {
+		if (list.size() < 1)
+		{
 			System.out.println("You must fill matrix with not empty list");
 			return;
 		}
 
 		/* Vengono iterati tutti i documenti */
-		for (Document doc : list) {
+		for (Document doc : list)
+		{
 			/*
-			 * Si recupera l'id dell'utente e si verifica se esso è uguale a
+			 * Si recupera l'id dell'utente e si verifica se esso ï¿½ uguale a
 			 * quello del profilo a cui consigliare
 			 */
 			Long userId = doc.getLong(USER_ID);
@@ -291,68 +308,66 @@ public class UtilityMatrix {
 			String action = doc.getString(ACTION);
 
 			int value = 0;
-			switch (action) {
-			case "webapi_municipality_aggregates":
-				/*
-				 * La preferenza è sulle provincia quindi la si recupera dal
-				 * documento
-				 */
-				String province = attributes.getString(CODE_PROVINCE);
-				if (province == null)
+			switch (action)
+			{
+				case "webapi_municipality_aggregates":
+					/*
+					 * La preferenza ï¿½ sulle provincia quindi la si recupera dal
+					 * documento
+					 */
+					String province = attributes.getString(CODE_PROVINCE);
+					if (province == null)
+						break;
+
+					/* Calcola il valore da attribuire alla preferenza */
+					value = Utils.computeValue(3);
+
+					/*
+					 * Si aggiunge la preferenza sulla provincia, le si assegna
+					 * il tag relativo alle province(1) e il valore calcolato in
+					 * precedenza
+					 */
+					preferences.add(new UtilityMatrixPreference(userId, province, 1, value));
 					break;
 
-				/* Calcola il valore da attribuire alla preferenza */
-				value = Utils.computeValue(3);
+				case "webapi_school_aggregates":
+					/*
+					 * La preferenza ï¿½ sul comune quindi lo si recupera dal
+					 * documento
+					 */
+					String municipality = attributes.getString(CODE_MUNICIPALITY);
+					if (municipality == null)
+						break;
 
-				/*
-				 * Si aggiunge la preferenza sulla provincia, le si assegna il
-				 * tag relativo alle province(1) e il valore calcolato in
-				 * precedenza
-				 */
-				preferences.add(new UtilityMatrixPreference(userId, province,
-						1, value));
-				break;
+					/* Calcola il valore da attribuire alla preferenza */
+					value = Utils.computeValue(3);
 
-			case "webapi_school_aggregates":
-				/*
-				 * La preferenza è sul comune quindi lo si recupera dal
-				 * documento
-				 */
-				String municipality = attributes.getString(CODE_MUNICIPALITY);
-				if (municipality == null)
+					/*
+					 * Si aggiunge la preferenza sul comune, le si assegna il
+					 * tag relativo ai comuni(2) e il valore calcolato in
+					 * precedenza
+					 */
+					preferences.add(new UtilityMatrixPreference(userId, municipality, 2, value));
 					break;
+				case "webapi_get_best_schools":
+					/*
+					 * La preferenza ï¿½ sulle provincia quindi la si recupera dal
+					 * documento
+					 */
+					String provinceFromBestSchool = attributes.getString(CODE_PROVINCE);
+					if (provinceFromBestSchool == null)
+						break;
 
-				/* Calcola il valore da attribuire alla preferenza */
-				value = Utils.computeValue(3);
+					/* Calcola il valore da attribuire alla preferenza */
+					value = Utils.computeValue(3);
 
-				/*
-				 * Si aggiunge la preferenza sul comune, le si assegna il tag
-				 * relativo ai comuni(2) e il valore calcolato in precedenza
-				 */
-				preferences.add(new UtilityMatrixPreference(userId,
-						municipality, 2, value));
-				break;
-			case "webapi_get_best_schools":
-				/*
-				 * La preferenza è sulle provincia quindi la si recupera dal
-				 * documento
-				 */
-				String provinceFromBestSchool = attributes
-						.getString(CODE_PROVINCE);
-				if (provinceFromBestSchool == null)
+					/*
+					 * Si aggiunge la preferenza sulla provincia, le si assegna
+					 * il tag relativo alle province(1) e il valore calcolato in
+					 * precedenza
+					 */
+					preferences.add(new UtilityMatrixPreference(userId, provinceFromBestSchool, 1, value));
 					break;
-
-				/* Calcola il valore da attribuire alla preferenza */
-				value = Utils.computeValue(3);
-
-				/*
-				 * Si aggiunge la preferenza sulla provincia, le si assegna il
-				 * tag relativo alle province(1) e il valore calcolato in
-				 * precedenza
-				 */
-				preferences.add(new UtilityMatrixPreference(userId,
-						provinceFromBestSchool, 1, value));
-				break;
 			}
 		}
 	}
@@ -361,49 +376,60 @@ public class UtilityMatrix {
 	 * Ordina gli elementi all'interno della lista di preferenza in ordine
 	 * crescente per tag
 	 */
-	public void sortForPlacePreferences() {
+	public void sortForPlacePreferences()
+	{
 		/* Istanzia una nuova lista dove verranno ordinati gli elementi */
 		List<UtilityMatrixPreference> sortedPreferences = new ArrayList<UtilityMatrixPreference>();
 		/*
 		 * Il ciclo va da 1 a 3, ovvero i diversi possibili tag che si possono
 		 * avere
 		 */
-		for (int i = 1; i < 4; ++i) {
-			for (int j = 0; j < preferences.size(); j++) {
+		for (int i = 1; i < 4; ++i)
+		{
+			for (int j = 0; j < preferences.size(); j++)
+			{
 				/*
 				 * Per ogni elemento presente all'interno della lista viene
-				 * verificato se esso è già presente nella lista delle
+				 * verificato se esso ï¿½ giï¿½ presente nella lista delle
 				 * preferenze ordinate
 				 */
 				UtilityMatrixPreference preference = preferences.get(j);
-				if (preference.getTag() == i) {
+				if (preference.getTag() == i)
+				{
 					int present = Utils.isInList(sortedPreferences, preference);
-					if (present == -1) {
+					if (present == -1)
+					{
 						/* Se non presente si aggiunge */
+						if (preference.getScore() == 0)
+						{
+							preference.setScore(2);
+						}
 						sortedPreferences.add(preference);
-					} else {
+					} else
+					{
 						/* Se presente si aggiorna il punteggio */
-						if (sortedPreferences.get(present).getScore() == preference
-								.getScore())
+						if (sortedPreferences.get(present).getScore() == preference.getScore())
 							continue;
 						if (sortedPreferences.get(present).getScore() == 3)
 							continue;
 
-						int score = sortedPreferences.get(present).getScore()
-								+ preference.getScore();
+						int score = sortedPreferences.get(present).getScore() + preference.getScore();
 						sortedPreferences.get(present).setScore(score);
 					}
 				}
 
 			}
 			/* Vengono recuperati i contatori delle tipologie di tag */
-			if (i == 1) {
+			if (i == 1)
+			{
 				contProvince = sortedPreferences.size();
 			}
-			if (i == 2) {
+			if (i == 2)
+			{
 				contMunicipality = sortedPreferences.size();
 			}
-			if (i == 3) {
+			if (i == 3)
+			{
 				contSchool = sortedPreferences.size();
 			}
 		}
