@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import org.bson.Document;
 
 import core.service.PersistenceService;
+import core.service.profile.Profile;
 
 import utils.Utils;
 
@@ -144,7 +145,7 @@ public class UtilityMatrix {
 	 * @param list
 	 * @param profileId
 	 */
-	public void fillPreferencesWithWatches(List<Document> list, long profileId) {
+	public void fillPreferencesWithWatches(List<Document> list, Profile profile) {
 		/*
 		 * se la lista dei documenti � vuota, non viene riempita la lista di
 		 * preferenze
@@ -166,13 +167,16 @@ public class UtilityMatrix {
 			 * del profilo a cui si sta consigliando
 			 */
 			long userId = doc.getLong(USER_ID);
-			if (userId == profileId)
+			if (userId == profile.getId())
 				continue;
 
 			/* Si recupera il target e il tipo di watch */
 			Document target = (Document) doc.get(TARGET);
 			long typeId = target.getLong(TYPE_ID);
 
+			Document context = null;
+			String teachingRole = null;
+			int bonus = 0;
 			int value = 0;
 			long eventType = 1;
 			switch ((int) typeId) {
@@ -193,6 +197,17 @@ public class UtilityMatrix {
 				if (ledProvince != null) {
 					eventType = ledProvince.getLong(EVENT_TYPE);
 				}
+				
+				context = (Document) ledProvince.get("context");
+				teachingRole = context.getString("teachingRoleCode"); 
+				bonus = 0;
+				if(teachingRole == null)
+					bonus = 0;
+				else {
+					if(teachingRole.equals(profile.getTeachingRole()))
+						bonus = 1;
+					else bonus = 0;
+				}
 				value = Utils.computeValue(eventType);
 
 				/*
@@ -201,7 +216,7 @@ public class UtilityMatrix {
 				 * precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId, province,
-						PROVINCE_ID, value));
+						PROVINCE_ID, value,bonus));
 				break;
 
 			case 2:
@@ -221,6 +236,16 @@ public class UtilityMatrix {
 				if (ledMunicipality != null) {
 					eventType = ledMunicipality.getLong(EVENT_TYPE);
 				}
+				context = (Document) ledMunicipality.get("context");
+				teachingRole = context.getString("teachingRoleCode"); 
+				bonus = 0;
+				if(teachingRole == null)
+					bonus = 0;
+				else {
+					if(teachingRole.equals(profile.getTeachingRole()))
+						bonus = 1;
+					else bonus = 0;
+				}
 				value = Utils.computeValue(eventType);
 
 				/*
@@ -228,13 +253,13 @@ public class UtilityMatrix {
 				 * relativo ai comuni(2) e il valore calcolato in precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId,
-						municipality, MUNICIPALITY_ID, value));
+						municipality, MUNICIPALITY_ID, value,bonus));
 
 				break;
 
 			case 3:
 				/*
-				 * La preferenza � sulle scuola quindi la si recupera dal
+				 * La preferenza è sulle scuola quindi la si recupera dal
 				 * documento
 				 */
 				String school = target.getString(KEY);
@@ -249,6 +274,17 @@ public class UtilityMatrix {
 				if (ledSchool != null) {
 					eventType = ledSchool.getLong(EVENT_TYPE);
 				}
+				
+				context = (Document) ledSchool.get("context");
+				teachingRole = context.getString("teachingRoleCode"); 
+				bonus = 0;
+				if(teachingRole == null)
+					bonus = 0;
+				else {
+					if(teachingRole.equals(profile.getTeachingRole()))
+						bonus = 1;
+					else bonus = 0;
+				}
 				value = Utils.computeValue(eventType);
 
 				/*
@@ -256,7 +292,7 @@ public class UtilityMatrix {
 				 * relativo alle scuole(3) e il valore calcolato in precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId, school,
-						SCHOOL_ID, value));
+						SCHOOL_ID, value,bonus));
 
 				String provinceFromSchool = null;
 				String municipalityFromSchool = null;
@@ -272,11 +308,11 @@ public class UtilityMatrix {
 				}
 				if (provinceFromSchool != null)
 					preferences.add(new UtilityMatrixPreference(userId,
-							provinceFromSchool, PROVINCE_ID, value));
+							provinceFromSchool, PROVINCE_ID, value,bonus));
 
 				if (municipalityFromSchool != null)
 					preferences.add(new UtilityMatrixPreference(userId,
-							municipalityFromSchool, MUNICIPALITY_ID, value));
+							municipalityFromSchool, MUNICIPALITY_ID, value,bonus));
 
 				break;
 			}
@@ -290,7 +326,7 @@ public class UtilityMatrix {
 	 * @param list
 	 * @param profileId
 	 */
-	public void fillPreferencesWithLogs(List<Document> list, long profileId) {
+	public void fillPreferencesWithLogs(List<Document> list, Profile profile) {
 		// se la lista dei documenti � vuota, non viene riempita la matrice di
 		// utility
 		if (list.size() < 1) {
@@ -305,7 +341,7 @@ public class UtilityMatrix {
 			 * quello del profilo a cui consigliare
 			 */
 			Long userId = doc.getLong(USER_ID);
-			if (userId == null || userId == profileId)
+			if (userId == null || userId == profile.getId())
 				continue;
 			/*
 			 * Si recupera la tipologia di azione presente nel log in maniera da
@@ -313,8 +349,8 @@ public class UtilityMatrix {
 			 */
 			String action = doc.getString(ACTION);
 			Document attributes = (Document) doc.get(ATTRIBUTES);
-			
-
+			String teachingRole = null;
+			int bonus = 0;
 			int value = 0;
 			switch (action) {
 			case "webapi_municipality_aggregates":
@@ -325,7 +361,16 @@ public class UtilityMatrix {
 				String province = attributes.getString(CODE_PROVINCE);
 				if (province == null)
 					break;
-
+				
+				teachingRole = attributes.getString("teachingRoleCodeTo"); 
+				bonus = 0;
+				if(teachingRole == null)
+					bonus = 0;
+				else {
+					if(teachingRole.equals(profile.getTeachingRole()))
+						bonus = 1;
+					else bonus = 0;
+				}
 				/* Calcola il valore da attribuire alla preferenza */
 				value = Utils.computeValue(3);
 
@@ -335,7 +380,7 @@ public class UtilityMatrix {
 				 * precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId, province,
-						PROVINCE_ID, value));
+						PROVINCE_ID, value,bonus));
 				break;
 
 			case "webapi_school_aggregates":
@@ -347,6 +392,15 @@ public class UtilityMatrix {
 				if (municipality == null)
 					break;
 
+				teachingRole = attributes.getString("teachingRoleCodeTo"); 
+				bonus = 0;
+				if(teachingRole == null)
+					bonus = 0;
+				else {
+					if(teachingRole.equals(profile.getTeachingRole()))
+						bonus = 1;
+					else bonus = 0;
+				}
 				/* Calcola il valore da attribuire alla preferenza */
 				value = Utils.computeValue(3);
 
@@ -355,7 +409,7 @@ public class UtilityMatrix {
 				 * relativo ai comuni(2) e il valore calcolato in precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId,
-						municipality, MUNICIPALITY_ID, value));
+						municipality, MUNICIPALITY_ID, value,bonus));
 				break;
 			case "webapi_get_best_schools":
 				/*
@@ -367,16 +421,25 @@ public class UtilityMatrix {
 				if (provinceFromBestSchool == null)
 					break;
 
+				teachingRole = attributes.getString("codTeachingRoles"); 
+				bonus = 0;
+				if(teachingRole == null)
+					bonus = 0;
+				else {
+					if(teachingRole.equals(profile.getTeachingRole()))
+						bonus = 1;
+					else bonus = 0;
+				}
 				/* Calcola il valore da attribuire alla preferenza */
 				value = Utils.computeValue(3);
-
+				
 				/*
 				 * Si aggiunge la preferenza sulla provincia, le si assegna il
 				 * tag relativo alle province(1) e il valore calcolato in
 				 * precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId,
-						provinceFromBestSchool, PROVINCE_ID, value));
+						provinceFromBestSchool, PROVINCE_ID, value,bonus));
 				break;
 
 			case "webapi_get_school_detail":
@@ -394,7 +457,7 @@ public class UtilityMatrix {
 				 * precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId,
-						school, SCHOOL_ID, value));
+						school, SCHOOL_ID, value,bonus));
 				break;
 			}
 		}
@@ -434,7 +497,7 @@ public class UtilityMatrix {
 							continue;
 						if (sortedPreferences.get(present).getScore() == 3)
 							continue;
-
+						
 						int score = sortedPreferences.get(present).getScore()
 								+ preference.getScore();
 						sortedPreferences.get(present).setScore(score);
@@ -458,5 +521,13 @@ public class UtilityMatrix {
 		 * tag
 		 */
 		preferences = sortedPreferences;
+	}
+	
+	public void addBonusToScorePreferences(){
+		for(UtilityMatrixPreference u : preferences){
+			if(u.getBonus()==1){
+				u.addBonus();
+			}
+		}
 	}
 }

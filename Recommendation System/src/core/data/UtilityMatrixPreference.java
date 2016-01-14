@@ -15,7 +15,7 @@ public class UtilityMatrixPreference {
 						// 2: municipality
 						// 3: school
 	private int score; // punteggio relativo al luogo
-
+	private int bonus;
 	/**
 	 * Costruttore
 	 * 
@@ -25,11 +25,12 @@ public class UtilityMatrixPreference {
 	 * @param score
 	 */
 	public UtilityMatrixPreference(long userId, String placeId, int tag,
-			int score) {
+			int score,int bonus) {
 		this.userId = userId;
 		this.placeId = placeId;
 		this.tag = tag;
 		this.score = score;
+		this.setBonus(bonus);
 	}
 
 	public long getUserId() {
@@ -62,6 +63,18 @@ public class UtilityMatrixPreference {
 
 	public void setScore(int score) {
 		this.score = score;
+	}
+
+	public int getBonus() {
+		return bonus;
+	}
+
+	public void setBonus(int bonus) {
+		this.bonus = bonus;
+	}
+	
+	public void addBonus(){
+		score = score + bonus;
 	}
 
 }

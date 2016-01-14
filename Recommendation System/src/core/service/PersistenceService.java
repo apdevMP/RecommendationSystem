@@ -32,7 +32,6 @@ public class PersistenceService {
 	public PersistenceService() {
 		dbManager = MongoDBManager.getIstance();
 		graphManager = GraphManager.getIstance();
-		// configuration = Configuration.getIstance();
 	}
 
 	/**

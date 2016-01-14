@@ -2,16 +2,17 @@ package utils;
 
 import java.util.List;
 
-import core.UtilityMatrixPreference;
+import core.data.UtilityMatrixPreference;
 
 public class Utils {
 
 	/**
 	 * Calcola il valore da assegnare all'interno della matrice
-	 * 
+	 * @param eventType
+	 * @param bonusTeachingRole 
 	 * @param score
 	 * @param userScore
-	 * @param eventType
+	 * 
 	 * @return valore calcolato
 	 */
 	public static int computeValue(long eventType) {
@@ -23,7 +24,7 @@ public class Utils {
 		if (eventType == 1) {
 			value = 2;
 		}
-		// vale per i log
+		/* vale per i log */
 		if (eventType == 3) {
 			value = 1;
 		}
@@ -44,18 +45,18 @@ public class Utils {
 	}
 
 	/**
-	 * Metodo che permette di verificare se all'interno di {@code list} è
+	 * Metodo che permette di verificare se all'interno di {@code list} ï¿½
 	 * presente la {@link UtilityMatrixPreference} {@code p}
 	 * 
 	 * @param list
 	 *            lista di UtilityMatrixPreference
 	 * @param p
-	 *            preferenza la cui presenza nella lista è da verificaree
+	 *            preferenza la cui presenza nella lista ï¿½ da verificaree
 	 * @return l'indice nella lista se presente, -1 altrimenti
 	 */
 	public static int isInList(List<UtilityMatrixPreference> list,
 			UtilityMatrixPreference p) {
-		/* Inizializzo la variabile che verifica se la preferenza è presente */
+		/* Inizializzo la variabile che verifica se la preferenza ï¿½ presente */
 		int present = -1;
 		/*
 		 * Per ogni preferenza presente nella lista vengono recuperati id
@@ -76,7 +77,7 @@ public class Utils {
 			}
 		}
 		/*
-		 * Restituisce -1 perchè la preferenza p non è presente all'interno
+		 * Restituisce -1 perchï¿½ la preferenza p non ï¿½ presente all'interno
 		 * della lista
 		 */
 		return present;

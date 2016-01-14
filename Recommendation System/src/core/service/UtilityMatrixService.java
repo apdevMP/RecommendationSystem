@@ -18,9 +18,7 @@ import core.service.profile.Profile;
 
 /**
  * Classe di Servizio per il riempimento ed il salvataggio su file della matrice
- * di utilit�
- * 
- * 
+ * di utilità
  * 
  */
 public class UtilityMatrixService {
@@ -64,9 +62,6 @@ public class UtilityMatrixService {
 	public UtilityMatrix createPreferencesWithPagination() {
 		/* Istanzio un queryManager per recuperare dati dalle collezioni */
 		queryManager = new PersistenceService();
-
-		/* Si recupera il profile dell'utente */
-		long profileId = userProfile.getId();
 
 		/*
 		 * Si inizializzano le condizioni di usciti e gli iterable di Watch e
@@ -115,15 +110,15 @@ public class UtilityMatrixService {
 				break;
 			}
 
-			/* Se la lista dei Log non � vuota,si riempie la matrice di utilit� */
+			/* Se la lista dei Log non � vuota,si riempie la matrice di utilità */
 			if (!finishLog) {
-				utilityMatrix.fillPreferencesWithLogs(listLogs, profileId);
+				utilityMatrix.fillPreferencesWithLogs(listLogs, userProfile);
 			}
 
-			/* Se la lista dei Log non � vuota,si riempie la matrice di utilit� */
+			/* Se la lista dei Log non � vuota,si riempie la matrice di utilità */
 			if (!finishWatch) {
-				utilityMatrix
-						.fillPreferencesWithWatches(listWatches, profileId);
+				utilityMatrix.fillPreferencesWithWatches(listWatches,
+						userProfile);
 			}
 			offset++;
 		}
@@ -137,9 +132,13 @@ public class UtilityMatrixService {
 		 */
 		utilityMatrix.addListToPreferences(userProfile.getUserPreferences());
 
-		/* Si ordinano le preferenze all'interno della matrice di utilit� */
+		/*
+		 * Si ordinano le preferenze all'interno della matrice di utilità e si
+		 * aggiungono i bonus
+		 */
 		utilityMatrix.sortForPlacePreferences();
-
+		//utilityMatrix.addBonusToScorePreferences();
+		
 		/* Restituisce la matrice di utilit� */
 		return utilityMatrix;
 

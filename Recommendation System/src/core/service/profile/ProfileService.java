@@ -8,7 +8,6 @@ import org.bson.Document;
 import utils.Utils;
 
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.Service;
 import com.mongodb.client.FindIterable;
 
 import core.data.UtilityMatrixPreference;
@@ -42,6 +41,7 @@ public class ProfileService {
 	private static final int MUNICIPALITY_ID = 2;
 	private static final int SCHOOL_ID = 3;
 
+	private static final int BONUS = 1;
 	/**
 	 * Metodo statico per la creazione del profilo
 	 * 
@@ -140,7 +140,7 @@ public class ProfileService {
 				 * precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						province, PROVINCE_ID, value));
+						province, PROVINCE_ID, value,BONUS));
 				break;
 
 			case "webapi_school_aggregates":
@@ -160,7 +160,7 @@ public class ProfileService {
 				 * relativo ai comuni(2) e il valore calcolato in precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						municipality, MUNICIPALITY_ID, value));
+						municipality, MUNICIPALITY_ID, value,BONUS));
 				break;
 			case "webapi_get_best_schools":
 				/*
@@ -181,7 +181,7 @@ public class ProfileService {
 				 * precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						provinceFromBestSchool, PROVINCE_ID, value));
+						provinceFromBestSchool, PROVINCE_ID, value,BONUS));
 				break;
 			case "webapi_get_school_detail":
 
@@ -198,7 +198,7 @@ public class ProfileService {
 				 * precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId, school,
-						SCHOOL_ID, value));
+						SCHOOL_ID, value,BONUS));
 				break;
 			}
 
@@ -266,7 +266,7 @@ public class ProfileService {
 				 * precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						province, PROVINCE_ID, value));
+						province, PROVINCE_ID, value,BONUS));
 				break;
 
 			case 2:
@@ -293,7 +293,7 @@ public class ProfileService {
 				 * relativo ai comuni(2) e il valore calcolato in precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						municipality, MUNICIPALITY_ID, value));
+						municipality, MUNICIPALITY_ID, value,BONUS));
 				break;
 
 			case 3:
@@ -320,7 +320,7 @@ public class ProfileService {
 				 * relativo alle scuole(3) e il valore calcolato in precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId, school,
-						SCHOOL_ID, value));
+						SCHOOL_ID, value,BONUS));
 				PersistenceService service = new PersistenceService();
 
 				String provinceFromSchool = null;
@@ -336,11 +336,11 @@ public class ProfileService {
 				}
 				if (provinceFromSchool != null)
 					userPreference.add(new UtilityMatrixPreference(userId,
-							provinceFromSchool, PROVINCE_ID, value));
+							provinceFromSchool, PROVINCE_ID, value,BONUS));
 
 				if (municipalityFromSchool != null)
 					userPreference.add(new UtilityMatrixPreference(userId,
-							municipalityFromSchool, MUNICIPALITY_ID, value));
+							municipalityFromSchool, MUNICIPALITY_ID, value,BONUS));
 
 				break;
 			}
