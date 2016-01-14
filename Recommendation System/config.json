@@ -8,7 +8,7 @@
 	"watches_collection" : "watch",
 	"profile_collection" : "profile",
 	"neo_username" : "neo4j",
-	"neo_password" : "vanessa",
+	"neo_password" : "ilaria10",
 	"neo_server_address" : "localhost",
 	"neo_port" : 7474,
 	"doc_per_page" : 7000,

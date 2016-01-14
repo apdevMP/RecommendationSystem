@@ -16,18 +16,18 @@ import com.mongodb.client.MongoDatabase;
  * Classe che gestisce la connessione con il database e le query da effettuare
  * 
  */
-public class DBManager {
+public class MongoDBManager {
 
 	private static MongoClient client = null;
 	private static Configuration configuration = null;
 
 	private MongoDatabase database;
-	private static DBManager manager = null;
+	private static MongoDBManager manager = null;
 
-	private static final Logger LOGGER = Logger.getLogger(DBManager.class
+	private static final Logger LOGGER = Logger.getLogger(MongoDBManager.class
 			.getName());
 
-	private DBManager() {
+	private MongoDBManager() {
 
 		startConnection();
 		setDatabase();
@@ -38,13 +38,13 @@ public class DBManager {
 	 * 
 	 * @return
 	 */
-	public static DBManager getIstance() {
+	public static MongoDBManager getIstance() {
 		if (configuration == null) {
 			configuration = Configuration.getIstance();
 
 		}
 		if (manager == null)
-			manager = new DBManager();
+			manager = new MongoDBManager();
 		return manager;
 
 	}
@@ -60,7 +60,7 @@ public class DBManager {
 					configuration.getMongo_port());
 
 		} else {
-			LOGGER.warning("[" + DBManager.class.getName()
+			LOGGER.warning("[" + MongoDBManager.class.getName()
 					+ "]Connection already started");
 		}
 	}

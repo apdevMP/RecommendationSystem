@@ -22,7 +22,7 @@ import com.mongodb.client.FindIterable;
 public class UtilityMatrixService {
 
 	private Profile userProfile;
-	private QueryManager queryManager;
+	private PersistenceService queryManager;
 	private Map<String, Long> itemsMap;
 	private Map<String, Long> categoriesMap;
 
@@ -58,7 +58,7 @@ public class UtilityMatrixService {
 	 */
 	public UtilityMatrix createPreferencesWithPagination() {
 		/* Istanzio un queryManager per recuperare dati dalle collezioni */
-		queryManager = new QueryManager();
+		queryManager = new PersistenceService();
 
 		/* Si recupera il profile dell'utente */
 		long profileId = userProfile.getId();
