@@ -1,5 +1,6 @@
 package core;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.bson.Document;
@@ -7,6 +8,7 @@ import org.bson.Document;
 import utils.Utils;
 
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.Service;
 import com.mongodb.client.FindIterable;
 
 /**
@@ -27,8 +29,15 @@ public class ProfileManager {
 	private static final String CODE_PROVINCE = "codeProvince";
 	private static final String ACTION = "action";
 	private static final String ATTRIBUTES = "attributes";
+	private static final String ID = "id";
+
 	private static final String[] actions = { "webapi_school_aggregates",
-			"webapi_municipality_aggregates", "webapi_get_best_schools" };
+			"webapi_municipality_aggregates", "webapi_get_best_schools",
+			"webapi_get_school_detail" };
+
+	private static final int PROVINCE_ID = 1;
+	private static final int MUNICIPALITY_ID = 2;
+	private static final int SCHOOL_ID = 3;
 
 	/**
 	 * Metodo statico per la creazione del profilo
@@ -41,6 +50,7 @@ public class ProfileManager {
 	 */
 	public static Profile createProfile(long id, String teachingRole,
 			double score, String position) {
+
 		/* Istanzia il profilo passandogli gli opportuni parametri */
 		Profile profile = new Profile(id, teachingRole, score, position);
 		/* Riempie la lista di preferenze */
@@ -57,7 +67,7 @@ public class ProfileManager {
 	 */
 	private static void fillListOfUserPreference(Profile profile) {
 		/* Si istanzia il QueryManager e si richiamano gli opportuni metodi */
-		QueryManager queryManager = new QueryManager();
+		PersistenceService queryManager = new PersistenceService();
 
 		/* Recupera la lista di log in base all'id dell'utente */
 		FindIterable<Document> logByIdLists = queryManager
@@ -87,7 +97,7 @@ public class ProfileManager {
 			List<UtilityMatrixPreference> userPreference) {
 
 		List<Document> list = Lists.newArrayList(logByIdLists);
-		// se la lista dei documenti è vuota, non viene riempita la matrice di
+		// se la lista dei documenti ï¿½ vuota, non viene riempita la matrice di
 		// utility
 		if (list.size() < 1) {
 			return;
@@ -111,7 +121,7 @@ public class ProfileManager {
 			switch (action) {
 			case "webapi_municipality_aggregates":
 				/*
-				 * La preferenza è sulle provincia quindi la si recupera dal
+				 * La preferenza ï¿½ sulle provincia quindi la si recupera dal
 				 * documento
 				 */
 				String province = attributes.getString(CODE_PROVINCE);
@@ -127,12 +137,12 @@ public class ProfileManager {
 				 * precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						province, 1, value));
+						province, PROVINCE_ID, value));
 				break;
 
 			case "webapi_school_aggregates":
 				/*
-				 * La preferenza è sul comune quindi lo si recupera dal
+				 * La preferenza ï¿½ sul comune quindi lo si recupera dal
 				 * documento
 				 */
 				String municipality = attributes.getString(CODE_MUNICIPALITY);
@@ -147,11 +157,11 @@ public class ProfileManager {
 				 * relativo ai comuni(2) e il valore calcolato in precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						municipality, 2, value));
+						municipality, MUNICIPALITY_ID, value));
 				break;
 			case "webapi_get_best_schools":
 				/*
-				 * La preferenza è sulle provincia quindi la si recupera dal
+				 * La preferenza ï¿½ sulle provincia quindi la si recupera dal
 				 * documento
 				 */
 				String provinceFromBestSchool = attributes
@@ -168,9 +178,27 @@ public class ProfileManager {
 				 * precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						provinceFromBestSchool, 1, value));
+						provinceFromBestSchool, PROVINCE_ID, value));
+				break;
+			case "webapi_get_school_detail":
+
+				String school = attributes.getString(ID);
+				if (school == null)
+					break;
+
+				/* Calcola il valore da attribuire alla preferenza */
+				value = Utils.computeValue(3);
+
+				/*
+				 * Si aggiunge la preferenza sulla provincia, le si assegna il
+				 * tag relativo alle province(1) e il valore calcolato in
+				 * precedenza
+				 */
+				userPreference.add(new UtilityMatrixPreference(userId, school,
+						SCHOOL_ID, value));
 				break;
 			}
+
 		}
 
 	}
@@ -188,7 +216,7 @@ public class ProfileManager {
 
 		List<Document> list = Lists.newArrayList(watchByIdLists);
 		/*
-		 * se la lista dei documenti è vuota, non viene riempita la lista di
+		 * se la lista dei documenti ï¿½ vuota, non viene riempita la lista di
 		 * preferenze
 		 */
 		if (list.size() < 1) {
@@ -212,7 +240,7 @@ public class ProfileManager {
 			switch ((int) typeId) {
 			case 1:
 				/*
-				 * La preferenza è sulle provincia quindi la si recupera dal
+				 * La preferenza ï¿½ sulle provincia quindi la si recupera dal
 				 * documento
 				 */
 				String province = target.getString(KEY);
@@ -235,12 +263,12 @@ public class ProfileManager {
 				 * precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						province, 1, value));
+						province, PROVINCE_ID, value));
 				break;
 
 			case 2:
 				/*
-				 * La preferenza è sul comune quindi lo si recupera dal
+				 * La preferenza ï¿½ sul comune quindi lo si recupera dal
 				 * documento
 				 */
 				String municipality = target.getString(KEY);
@@ -262,12 +290,12 @@ public class ProfileManager {
 				 * relativo ai comuni(2) e il valore calcolato in precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						municipality, 2, value));
+						municipality, MUNICIPALITY_ID, value));
 				break;
 
 			case 3:
 				/*
-				 * La preferenza è sulle scuola quindi la si recupera dal
+				 * La preferenza ï¿½ sulle scuola quindi la si recupera dal
 				 * documento
 				 */
 				String school = target.getString(KEY);
@@ -289,7 +317,27 @@ public class ProfileManager {
 				 * relativo alle scuole(3) e il valore calcolato in precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId, school,
-						3, value));
+						SCHOOL_ID, value));
+				PersistenceService service = new PersistenceService();
+
+				String provinceFromSchool = null;
+				String municipalityFromSchool = null;
+
+				try {
+					provinceFromSchool = service.getProvinceFromSchool(school);
+					municipalityFromSchool = service
+							.getMunicipalityFromSchool(school);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (provinceFromSchool != null)
+					userPreference.add(new UtilityMatrixPreference(userId,
+							provinceFromSchool, PROVINCE_ID, value));
+
+				if (municipalityFromSchool != null)
+					userPreference.add(new UtilityMatrixPreference(userId,
+							municipalityFromSchool, MUNICIPALITY_ID, value));
 
 				break;
 			}

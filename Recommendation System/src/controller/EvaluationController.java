@@ -22,105 +22,105 @@ import org.apache.mahout.cf.taste.recommender.Recommender;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 import org.apache.mahout.common.RandomUtils;
 
+import utils.Configuration;
 import view.EvaluationWindow;
 
-public class EvaluationController
-{
+public class EvaluationController {
 
-	private EvaluationWindow		evaluationWindow;
-	private ActionListener			listener;
-	private static UserSimilarity	userSimilarity;
-	private int						similarityCode;
-	private double					trainingSet;
-	private double					testSet;
+	private EvaluationWindow evaluationWindow;
+	private ActionListener listener;
+	private static UserSimilarity userSimilarity;
+	private int similarityCode;
+	private double trainingSet;
+	private double testSet;
+	private static Configuration configuration;
 
-	public EvaluationController(EvaluationWindow window)
-	{
+	public EvaluationController(EvaluationWindow window) {
+
+		if (configuration == null) {
+			configuration = Configuration.getIstance();
+
+		}
 		this.evaluationWindow = window;
 	}
 
-	public void evaluate()
-	{
+	public void evaluate() {
 		listener = new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				similarityCode = evaluationWindow.getSimilarity();
 				trainingSet = evaluationWindow.getTrainingSet();
 				testSet = evaluationWindow.getTestSet();
 
 				double score;
-				try
-				{
+				try {
 					score = startEvaluation();
 					publishScore(score);
-				} catch (FileNotFoundException e1)
-				{
-					JOptionPane.showMessageDialog(null, "Cannot create file data model. File .csv is missing");
+				} catch (FileNotFoundException e1) {
+					JOptionPane
+							.showMessageDialog(null,
+									"Cannot create file data model. File .csv is missing");
 					System.exit(0);
-					
-				} catch (Exception e1)
-				{
+
+				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
 			}
 
-			private void publishScore(double score)
-			{
+			private void publishScore(double score) {
 				evaluationWindow.getScoreLabel().setText("" + score);
 			}
 		};
 		evaluationWindow.getBtnStart().addActionListener(listener);
 	}
 
-	public double startEvaluation() throws Exception
-	{
+	public double startEvaluation() throws Exception {
 
 		RandomUtils.useTestSeed();
 
-		
-		DataModel model = new FileDataModel(new File("matrix_value.csv"));
-		
+		DataModel model = new FileDataModel(new File(configuration.getUserId() + ".csv"));
 
 		RecommenderEvaluator evaluator = new AverageAbsoluteDifferenceRecommenderEvaluator();
 
 		RecommenderBuilder recommenderBuilder = new RecommenderBuilder() {
 
 			@Override
-			public Recommender buildRecommender(final DataModel model) throws TasteException
-			{
+			public Recommender buildRecommender(final DataModel model)
+					throws TasteException {
 
 				setSimilarity(model);
 
 				/*
 				 * FIXME per ora proviamo solo con la ThresholdUserNeighborhood
 				 */
-				UserNeighborhood neighborhood = new ThresholdUserNeighborhood(1, userSimilarity, model);
+				UserNeighborhood neighborhood = new ThresholdUserNeighborhood(
+						1, userSimilarity, model);
 
-				//	Recommender cachingRecommender = new CachingRecommender(recommender);
+				// Recommender cachingRecommender = new
+				// CachingRecommender(recommender);
 
-				return new GenericUserBasedRecommender(model, neighborhood, userSimilarity);
+				return new GenericUserBasedRecommender(model, neighborhood,
+						userSimilarity);
 
 			}
 
-			private void setSimilarity(DataModel model) throws TasteException
-			{
-				switch (similarityCode)
-				{
-					case 0:
-						userSimilarity = new PearsonCorrelationSimilarity(model);
-						break;
-					case 1:
-						userSimilarity = new EuclideanDistanceSimilarity(model);
-						break;
+			private void setSimilarity(DataModel model) throws TasteException {
+				switch (similarityCode) {
+				case 0:
+					userSimilarity = new PearsonCorrelationSimilarity(model);
+					break;
+				case 1:
+					userSimilarity = new EuclideanDistanceSimilarity(model);
+					break;
 				}
 			}
 		};
 
-		return evaluator.evaluate(recommenderBuilder, null, model, trainingSet, testSet);
+		return evaluator.evaluate(recommenderBuilder, null, model, trainingSet,
+				testSet);
 
 	}
 }

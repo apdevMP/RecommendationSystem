@@ -11,7 +11,6 @@ import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
 import org.apache.mahout.cf.taste.impl.neighborhood.ThresholdUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
-import org.apache.mahout.cf.taste.impl.recommender.slopeone.SlopeOneRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.EuclideanDistanceSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
@@ -63,8 +62,10 @@ public class RecommenderService
 		try
 		{
 			DataModel model = new FileDataModel(new File(userProfile.getId()+".csv"));
+			@SuppressWarnings("unused")
 			UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
 			UserSimilarity similarity2 = new EuclideanDistanceSimilarity(model);
+			@SuppressWarnings("unused")
 			UserSimilarity similarity3 = new LogLikelihoodSimilarity(model);
 			// ItemSimilarity similarity = new
 			// PearsonCorrelationSimilarity(model);

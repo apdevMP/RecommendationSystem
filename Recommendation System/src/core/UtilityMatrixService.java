@@ -30,7 +30,8 @@ public class UtilityMatrixService {
 			.getLogger(UtilityMatrixService.class.getName());
 
 	private static final String[] actions = { "webapi_school_aggregates",
-			"webapi_municipality_aggregates", "webapi_get_best_schools" };
+			"webapi_municipality_aggregates", "webapi_get_best_schools",
+			"webapi_get_school_detail" };
 
 	/**
 	 * Costruttore di default
@@ -71,7 +72,7 @@ public class UtilityMatrixService {
 		FindIterable<Document> itLogs = null;
 		boolean finishLog = false;
 		boolean finishWatch = false;
-		int cont = 0;
+		int offset = 0;
 
 		LOGGER.info("[" + UtilityMatrixService.class.getName()
 				+ "] Finding watches...");
@@ -84,12 +85,12 @@ public class UtilityMatrixService {
 
 			/* Se i Watch non sono finiti, si recupera una pagina di Watch */
 			if (!finishWatch) {
-				itWatches = queryManager.findWatches(cont);
+				itWatches = queryManager.findWatches(offset);
 			}
 
 			/* Se i Log non sono finiti, si recupera una pagina di Log */
 			if (!finishLog) {
-				itLogs = queryManager.getLogsByAction(actions, cont);
+				itLogs = queryManager.getLogsByAction(actions, offset);
 			}
 			/* Si utilizzano le liste convertendo gli oggetti FindIterable */
 			List<Document> listWatches = Lists.newArrayList(itWatches);
@@ -120,7 +121,7 @@ public class UtilityMatrixService {
 				utilityMatrix
 						.fillPreferencesWithWatches(listWatches, profileId);
 			}
-			cont++;
+			offset++;
 		}
 
 		LOGGER.info("[" + UtilityMatrixService.class.getName()
@@ -160,7 +161,7 @@ public class UtilityMatrixService {
 				+ "] Saving data..");
 		try {
 			/* Si crea il file nel quale verranno salvate le preferenze */
-			FileWriter writer = new FileWriter(userProfile.getId()+".csv");
+			FileWriter writer = new FileWriter(userProfile.getId() + ".csv");
 
 			long counter = 0;
 			this.itemsMap = new HashMap<String, Long>();

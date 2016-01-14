@@ -26,6 +26,7 @@ public class UtilityMatrix {
 	private static final String CODE_PROVINCE = "codeProvince";
 	private static final String ACTION = "action";
 	private static final String ATTRIBUTES = "attributes";
+	private static final String ID = "id";
 	
 	private static final int PROVINCE_ID = 1;
 	private static final int MUNICIPALITY_ID = 2;
@@ -33,6 +34,7 @@ public class UtilityMatrix {
 
 	private static final Logger LOGGER = Logger.getLogger(UtilityMatrix.class
 			.getName());
+	
 
 	private List<UtilityMatrixPreference> preferences;
 	private int contProvince;
@@ -225,8 +227,7 @@ public class UtilityMatrix {
 				 */
 				preferences.add(new UtilityMatrixPreference(userId,
 						municipality, MUNICIPALITY_ID, value));
-				
-				
+
 				break;
 
 			case 3:
@@ -252,8 +253,8 @@ public class UtilityMatrix {
 				 * Si aggiunge la preferenza sulla scuola, le si assegna il tag
 				 * relativo alle scuole(3) e il valore calcolato in precedenza
 				 */
-				preferences.add(new UtilityMatrixPreference(userId, school, SCHOOL_ID,
-						value));
+				preferences.add(new UtilityMatrixPreference(userId, school,
+						SCHOOL_ID, value));
 
 				String provinceFromSchool = null;
 				String municipalityFromSchool = null;
@@ -308,8 +309,9 @@ public class UtilityMatrix {
 			 * Si recupera la tipologia di azione presente nel log in maniera da
 			 * effettuare uno switch su di essa
 			 */
-			Document attributes = (Document) doc.get(ATTRIBUTES);
 			String action = doc.getString(ACTION);
+			Document attributes = (Document) doc.get(ATTRIBUTES);
+			
 
 			int value = 0;
 			switch (action) {
@@ -331,7 +333,7 @@ public class UtilityMatrix {
 				 * precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId, province,
-						1, value));
+						PROVINCE_ID, value));
 				break;
 
 			case "webapi_school_aggregates":
@@ -351,7 +353,7 @@ public class UtilityMatrix {
 				 * relativo ai comuni(2) e il valore calcolato in precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId,
-						municipality, 2, value));
+						municipality, MUNICIPALITY_ID, value));
 				break;
 			case "webapi_get_best_schools":
 				/*
@@ -372,7 +374,25 @@ public class UtilityMatrix {
 				 * precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId,
-						provinceFromBestSchool, 1, value));
+						provinceFromBestSchool, PROVINCE_ID, value));
+				break;
+
+			case "webapi_get_school_detail":
+				
+				String school = attributes.getString(ID); 
+				if (school == null)
+					break;
+
+				/* Calcola il valore da attribuire alla preferenza */
+				value = Utils.computeValue(3);
+
+				/*
+				 * Si aggiunge la preferenza sulla provincia, le si assegna il
+				 * tag relativo alle province(1) e il valore calcolato in
+				 * precedenza
+				 */
+				preferences.add(new UtilityMatrixPreference(userId,
+						school, SCHOOL_ID, value));
 				break;
 			}
 		}
