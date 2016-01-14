@@ -70,7 +70,7 @@ public class GraphManager
 			properties.put("password", password);
 
 			// FIXME prendere da filed di config
-			connection = DriverManager.getConnection("jdbc:neo4j://localhost:7474/", properties);
+			connection = DriverManager.getConnection("jdbc:neo4j://"+configuration.getNeo_server_address()+":"+configuration.getNeo_port()+"/", properties);
 
 		} catch (SQLException | ClassNotFoundException e)
 		{
@@ -78,6 +78,37 @@ public class GraphManager
 			e.printStackTrace();
 		}
 
+	}
+	
+	
+	public String queryMunicipalityCodeFromSchool(String schoolId) throws SQLException{
+		Statement stmt = connection.createStatement();
+
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'}) RETURN n.municipalityCode LIMIT 1");
+		String municipalityCode = null;
+		while (rs.next())
+		{
+			String appString = rs.getString("n.municipalityCode");
+			if (appString != null)
+				municipalityCode = appString;
+		}
+		return municipalityCode;
+	}
+	
+	
+	
+	public String queryProvinceCodeFromSchool(String schoolId) throws SQLException{
+		Statement stmt = connection.createStatement();
+
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'}) RETURN n.provinceCode LIMIT 1");
+		String provinceCode = null;
+		while (rs.next())
+		{
+			String appString = rs.getString("n.provinceCode");
+			if (appString != null)
+				provinceCode = appString;
+		}
+		return provinceCode;
 	}
 
 	/**
