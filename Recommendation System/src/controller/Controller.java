@@ -9,11 +9,11 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.logging.Logger;
 
-import core.CustomRecommendedItem;
-import core.Profile;
-import core.ProfileManager;
-import core.RecommenderService;
-import core.UtilityMatrixPreference;
+import core.data.CustomRecommendedItem;
+import core.data.UtilityMatrixPreference;
+import core.service.RecommenderService;
+import core.service.profile.Profile;
+import core.service.profile.ProfileService;
 import utils.Configuration;
 import view.StartWindow;
 
@@ -66,7 +66,7 @@ public class Controller
 				String region = window.getRegion();
 				Double score = window.getScore();
 				
-				Profile userProfile = ProfileManager.createProfile(configuration.getUserId(), teachingRole, score, region);
+				Profile userProfile = ProfileService.createProfile(configuration.getUserId(), teachingRole, score, region);
 				System.out.println(userProfile.getUserPreferences().size());
 				for(UtilityMatrixPreference u : userProfile.getUserPreferences()){
 					System.out.println("Preference: " + u.getPlaceId() + " - " + u.getScore());

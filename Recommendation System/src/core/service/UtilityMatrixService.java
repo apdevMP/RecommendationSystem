@@ -1,4 +1,4 @@
-package core;
+package core.service;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +11,10 @@ import org.bson.Document;
 
 import com.google.common.collect.Lists;
 import com.mongodb.client.FindIterable;
+
+import core.data.UtilityMatrix;
+import core.data.UtilityMatrixPreference;
+import core.service.profile.Profile;
 
 /**
  * Classe di Servizio per il riempimento ed il salvataggio su file della matrice

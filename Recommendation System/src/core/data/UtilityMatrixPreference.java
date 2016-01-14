@@ -1,4 +1,4 @@
-package core;
+package core.data;
 
 /**
  * Classe di supporto per l'utilizzo di Mahout in maniera semplificata.
@@ -10,7 +10,7 @@ public class UtilityMatrixPreference {
 
 	private long userId; // Id dell'utente
 	private String placeId; // Id del luogo
-	private int tag; // Può essere di tre tipi:
+	private int tag; // Puï¿½ essere di tre tipi:
 						// 1: province
 						// 2: municipality
 						// 3: school

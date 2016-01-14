@@ -1,4 +1,4 @@
-package core;
+package core.service;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +19,10 @@ import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
+
+import core.data.CustomRecommendedItem;
+import core.data.UtilityMatrix;
+import core.service.profile.Profile;
 
 import utils.Configuration;
 

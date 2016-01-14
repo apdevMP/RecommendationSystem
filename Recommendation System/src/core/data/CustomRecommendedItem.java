@@ -1,4 +1,4 @@
-package core;
+package core.data;
 
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 

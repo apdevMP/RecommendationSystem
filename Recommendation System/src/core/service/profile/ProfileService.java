@@ -1,4 +1,4 @@
-package core;
+package core.service.profile;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -11,13 +11,16 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Service;
 import com.mongodb.client.FindIterable;
 
+import core.data.UtilityMatrixPreference;
+import core.service.PersistenceService;
+
 /**
  * Classe per la gestione e la creazione della classe {@link Profile}
  * 
  * @author Andrea
  * 
  */
-public class ProfileManager {
+public class ProfileService {
 
 	private static final String TARGET = "target";
 	private static final String TYPE_ID = "typeId";

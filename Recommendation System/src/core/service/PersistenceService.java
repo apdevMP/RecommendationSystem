@@ -1,4 +1,4 @@
-package core;
+package core.service;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,6 +10,10 @@ import org.bson.Document;
 
 import com.google.gson.Gson;
 import com.mongodb.client.FindIterable;
+
+import core.persistence.GraphManager;
+import core.persistence.MongoDBManager;
+import core.service.profile.Profile;
 
 /**
  * Classe di servizio che si frappone tra il sistema e il DBManager

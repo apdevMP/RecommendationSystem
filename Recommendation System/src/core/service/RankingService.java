@@ -1,4 +1,4 @@
-package core;
+package core.service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,6 +9,9 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
+
+import core.data.CustomRecommendedItem;
+import core.service.profile.Profile;
 
 /**
  * Servizio per la classificazione finale degli item raccomandati in base a: -
@@ -29,7 +32,7 @@ public class RankingService
 	private String						userPosition;
 	private String						teachingRole;
 	private Double						score;
-	private QueryManager				queryManager;
+	private PersistenceService				queryManager;
 	private static int					ELEMENTS_PER_LIST	= 5;
 
 	private static final Logger			LOGGER				= Logger.getLogger(RankingService.class.getName());
@@ -50,7 +53,7 @@ public class RankingService
 		/*
 		 * crea un'istanza di QueryManager per effettuare le query sui db
 		 */
-		queryManager = new QueryManager();
+		queryManager = new PersistenceService();
 
 		/*
 		 * recupera la posizione dell'utente dal profilo per il primo filtraggio
