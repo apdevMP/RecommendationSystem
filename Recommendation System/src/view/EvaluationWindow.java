@@ -22,8 +22,9 @@ public class EvaluationWindow
 	private JFrame					frame;
 	private JComboBox<String>		similarityComboBox;
 	private JComboBox<String>		neighborhoodComboBox;
-	public static final String[]	similarityArray		= { "Pearson Correlation Similarity", "Euclidean Distance Similarity", "Item Pearson Correlation Similarity" };
-	public static final String[]	neighborhoodArray	= { "ThresholdUserNeighborhood" };
+	public static final String[]	similarityArray		= { "Pearson Correlation Similarity", "Euclidean Distance Similarity",
+			"Tanimoto Coefficient Similarity", "Log Likelihood Similarity" };
+	public static final String[]	neighborhoodArray	= { "ThresholdUserNeighborhood", "NearestNUserNeighborhood" };
 	private JTextField				trainingTextField;
 	private JTextField				testTextField;
 	private JButton					btnStart;
@@ -146,18 +147,46 @@ public class EvaluationWindow
 		switch (similarityComboBox.getSelectedItem().toString())
 		{
 			case "Pearson Correlation Similarity":
-
 				choice = 0;
 				break;
+				
 			case "Euclidean Distance Similarity":
 				choice = 1;
 				break;
+
+			case "Tanimoto Coefficient Similarity":
+				choice = 2;
+				break;
+
+			case "Log Likelihood Similarity":
+				choice = 3;
+				break;
+
 			default:
 				choice = 1;
 				break;
 		}
 		return choice;
 
+	}
+	
+	public int getNeighborhood(){
+		int choice;
+		switch (neighborhoodComboBox.getSelectedItem().toString())
+		{
+			case "ThresholdUserNeighborhood":
+				choice = 0;
+				break;
+				
+			case "NearestNUserNeighborhood":	
+				choice = 1;
+				break;
+
+			default:
+				choice =0;
+				break;
+		}
+		return choice;
 	}
 
 	public Double getTrainingSet()

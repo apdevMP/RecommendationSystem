@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
+import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.neighborhood.ThresholdUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.EuclideanDistanceSimilarity;
@@ -23,7 +24,6 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 import core.data.CustomRecommendedItem;
 import core.data.UtilityMatrix;
 import core.service.profile.Profile;
-
 import utils.Configuration;
 
 /**
@@ -71,22 +71,19 @@ public class RecommenderService
 			UserSimilarity similarity2 = new EuclideanDistanceSimilarity(model);
 			@SuppressWarnings("unused")
 			UserSimilarity similarity3 = new LogLikelihoodSimilarity(model);
-			// ItemSimilarity similarity = new
-			// PearsonCorrelationSimilarity(model);
-			// Optimizer optimizer = new ConjugateGradientOptimizer();
-		//	Recommender recommender = new SlopeOneRecommender(model);
-			UserNeighborhood neighborhood = new ThresholdUserNeighborhood(1, similarity2, model);
-			 Recommender recommender = new GenericUserBasedRecommender(model, neighborhood, similarity2);
-			// Recommender cachingRecommender = new
-			// CachingRecommender(recommender);
+			
+			UserNeighborhood nearestNeighborhood = new NearestNUserNeighborhood(100, similarity2, model);
+			UserNeighborhood threasholdNeighborhood = new ThresholdUserNeighborhood(10, similarity2, model);
+			 Recommender recommender = new GenericUserBasedRecommender(model, nearestNeighborhood, similarity2);
+
 
 			LOGGER.info("\n\n[" + RecommenderService.class.getName() + "] Starting recommender service..");
 
-			System.out.println(configuration.getRecommended_items());
 			List<RecommendedItem> recommendedItems = recommender.recommend(userProfile.getId(),configuration.getRecommended_items() );
 
 			LOGGER.info("[" + RecommenderService.class.getName() + "] List of recommended items created");
 
+			System.out.println("list size: "+recommendedItems.size()+"\n");
 			if (!recommendedItems.isEmpty())
 			{
 				for (RecommendedItem item : recommendedItems)

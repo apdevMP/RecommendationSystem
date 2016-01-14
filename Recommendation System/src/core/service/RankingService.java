@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 
+import utils.Configuration;
 import core.data.CustomRecommendedItem;
 import core.service.profile.Profile;
 
@@ -32,15 +33,16 @@ public class RankingService
 	private String						userPosition;
 	private String						teachingRole;
 	private Double						score;
-	private PersistenceService				queryManager;
-	private static int					ELEMENTS_PER_LIST	= 5;
+	private PersistenceService			queryManager;
+	private static Configuration		configuration;
 
-	private static final Logger			LOGGER				= Logger.getLogger(RankingService.class.getName());
+	private static final Logger			LOGGER	= Logger.getLogger(RankingService.class.getName());
 
 	public RankingService(List<RecommendedItem> recommendedItems, Map<String, Long> itemsMap, Map<String, Long> categoriesMap, Profile userProfile)
 	{
 
 		LOGGER.info("[" + RankingService.class.getName() + "] Starting ranking service..");
+		configuration = Configuration.getIstance();
 
 		/*
 		 * istanzia le liste che dovranno essere popolate con gli item creati
@@ -63,7 +65,7 @@ public class RankingService
 		teachingRole = userProfile.getTeachingRole();
 		score = userProfile.getScore();
 
-		LOGGER.info("[" + RankingService.class.getName() + "] ++++++++++++++++++++++++++++score = "+score);
+		LOGGER.info("[" + RankingService.class.getName() + "] ++++++++++++++++++++++++++++score = " + score);
 		/*
 		 * crea tre liste separate per distinguere gli item in - province -
 		 * comuni -scuole
@@ -150,7 +152,7 @@ public class RankingService
 
 		LOGGER.info("\n\n----- FINAL LIST ---");
 		finalList = new ArrayList<CustomRecommendedItem>();
-		getRecommendedItemsList(ELEMENTS_PER_LIST);
+		getRecommendedItemsList(configuration.getDoc_per_page());
 		for (CustomRecommendedItem item : finalList)
 		{
 			LOGGER.info(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
@@ -382,10 +384,10 @@ public class RankingService
 			 */
 			try
 			{
-				
+
 				if (queryManager.isScoreMatchingTransfers(realID, teachingRole, score))
 				{
-					LOGGER.info("[" + RankingService.class.getName() + "] +++++++++ Scuola "+realID+" trovato score compatibile");
+					LOGGER.info("[" + RankingService.class.getName() + "] +++++++++ Scuola " + realID + " trovato score compatibile");
 					school.setRanking(school.getRanking() + 1);
 				}
 

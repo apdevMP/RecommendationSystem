@@ -4,15 +4,16 @@ import java.util.List;
 
 import core.data.UtilityMatrixPreference;
 
+
+
 public class Utils {
 
 	/**
 	 * Calcola il valore da assegnare all'interno della matrice
-	 * @param eventType
-	 * @param bonusTeachingRole 
+	 * 
 	 * @param score
 	 * @param userScore
-	 * 
+	 * @param eventType
 	 * @return valore calcolato
 	 */
 	public static int computeValue(long eventType) {
@@ -24,7 +25,7 @@ public class Utils {
 		if (eventType == 1) {
 			value = 2;
 		}
-		/* vale per i log */
+		// vale per i log
 		if (eventType == 3) {
 			value = 1;
 		}
