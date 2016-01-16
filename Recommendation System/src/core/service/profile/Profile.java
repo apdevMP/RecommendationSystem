@@ -64,15 +64,15 @@ public class Profile {
 		return profile;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString() {
-		return "Profile [id=" + id + ", teachingRole=" + teachingRole
-				+ ", score=" + score + "]";
+	public String toString()
+	{
+		return "Profile [id=" + id + ", teachingRole=" + teachingRole + ", score=" + score + ", position=" + position + "]";
 	}
+
+
 
 }

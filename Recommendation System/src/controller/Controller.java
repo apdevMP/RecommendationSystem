@@ -9,6 +9,8 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
 import core.data.CustomRecommendedItem;
 import core.data.UtilityMatrixPreference;
 import core.service.RecommenderService;
@@ -60,15 +62,31 @@ public class Controller
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
+
+				//disabilito il bottone di avvio
+				window.getButtonStart().setEnabled(false);
+				window.getButtonStop().setEnabled(false);
+
 				// recupero dei dati inseriti dall'utente
-				window.getTextArea().setText(null);
+				window.getTextArea().setSelectionStart(0);
+				window.getTextArea().append(null);
+				
 				String teachingRole = window.getClassCode();
 				String region = window.getRegion();
-				Double score = window.getScore();
-				
+				Double score = 0.0;
+				try
+				{
+					score = window.getScore();
+				} catch (NumberFormatException ex)
+				{
+					JOptionPane.showMessageDialog(null, "Score value not correct. Restart the system");
+					System.exit(1);
+				}
+
 				Profile userProfile = ProfileService.createProfile(configuration.getUserId(), teachingRole, score, region);
 				System.out.println(userProfile.getUserPreferences().size());
-				for(UtilityMatrixPreference u : userProfile.getUserPreferences()){
+				for (UtilityMatrixPreference u : userProfile.getUserPreferences())
+				{
 					System.out.println("Preference: " + u.getPlaceId() + " - " + u.getScore());
 				}
 				LOGGER.info("[" + Controller.class.getName() + "] Starting recommendation system for: " + userProfile.toString());
@@ -79,14 +97,16 @@ public class Controller
 				List<CustomRecommendedItem> recommendedItems = recommenderService.recommendItems(region);
 				long endTime = System.currentTimeMillis();
 
-				LOGGER.info("Execution time: " + (endTime - startTime));
+				Long executionTime = new Long((endTime - startTime) / 1000);
+				double executionTimeInSeconds = executionTime.doubleValue();
+				LOGGER.info("Execution time: " + executionTimeInSeconds + " seconds.");
 
 				showResults(recommendedItems);
 
 			}
 
 		};
-		window.getButton().addActionListener(listener);
+		window.getButtonStart().addActionListener(listener);
 	}
 
 	/**
@@ -96,8 +116,13 @@ public class Controller
 	{
 		DecimalFormat numberFormat = new DecimalFormat("#.00");
 
+
 		for (CustomRecommendedItem item : list)
 			window.getTextArea().append(item.getRealID() + "\t value:" + numberFormat.format(item.getValue()) + "\tranking:" + item.getRanking()
 					+ "\n");
+window.getTextArea().append("\n-----\n\n");
+		//una volta stampata la lista, riabilito il bottone di avvio
+		window.getButtonStart().setEnabled(true);
+
 	}
 }

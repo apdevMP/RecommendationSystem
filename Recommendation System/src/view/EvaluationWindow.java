@@ -2,7 +2,6 @@ package view;
 
 import java.awt.EventQueue;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;

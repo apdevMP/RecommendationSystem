@@ -2,6 +2,7 @@ package core.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,6 +24,7 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 import core.data.CustomRecommendedItem;
 import core.data.UtilityMatrix;
+import core.persistence.GraphManager;
 import core.service.profile.Profile;
 import utils.Configuration;
 
@@ -83,6 +85,16 @@ public class RecommenderService
 
 			LOGGER.info("[" + RecommenderService.class.getName() + "] List of recommended items created");
 
+			/*
+			 * chiudo la connessione a Neo4j
+			 */
+//			GraphManager graphManager = GraphManager.getIstance();
+//			if(GraphManager.getIstance() != null){
+//				System.out.println("chiudo connessione");
+//				graphManager.closeConnection();
+//				
+//			}
+			
 			System.out.println("list size: "+recommendedItems.size()+"\n");
 			if (!recommendedItems.isEmpty())
 			{
@@ -110,7 +122,7 @@ public class RecommenderService
 		} catch (IOException | TasteException e)
 		{
 			LOGGER.log(Level.SEVERE, "[" + RecommenderService.class.getName() + "] Exception: ", e);
-		}
+		} 
 
 		return finalList;
 		// System.exit(0);

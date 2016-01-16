@@ -35,7 +35,6 @@ public class RankingService
 	private Double						score;
 	private PersistenceService			queryManager;
 	private static Configuration		configuration;
-
 	private static final Logger			LOGGER	= Logger.getLogger(RankingService.class.getName());
 
 	public RankingService(List<RecommendedItem> recommendedItems, Map<String, Long> itemsMap, Map<String, Long> categoriesMap, Profile userProfile)
@@ -55,6 +54,7 @@ public class RankingService
 		/*
 		 * crea un'istanza di QueryManager per effettuare le query sui db
 		 */
+
 		queryManager = new PersistenceService();
 
 		/*
@@ -141,6 +141,9 @@ public class RankingService
 		 * a questo punto le tre liste sono state riempite, quindi si passa alla
 		 * classificazione
 		 */
+		printList(provinceIdList);
+		printList(municipalityIdList);
+		printList(schoolsIdList);
 		updateRankings();
 		LOGGER.info("[" + RankingService.class.getName() + "] Updating process for rankings terminated. Classification in progress.. ");
 
@@ -152,7 +155,7 @@ public class RankingService
 
 		LOGGER.info("\n\n----- FINAL LIST ---");
 		finalList = new ArrayList<CustomRecommendedItem>();
-		getRecommendedItemsList(configuration.getDoc_per_page());
+		getRecommendedItemsList(configuration.getItem_per_list());
 		for (CustomRecommendedItem item : finalList)
 		{
 			LOGGER.info(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
@@ -229,12 +232,15 @@ public class RankingService
 	 */
 	private void updateRankings()
 	{
-		if (!provinceIdList.isEmpty())
-			rankProvinces();
-		if (!municipalityIdList.isEmpty())
-			rankMunicipalities();
+
 		if (!schoolsIdList.isEmpty())
 			rankSchools();
+
+		if (!municipalityIdList.isEmpty())
+			rankMunicipalities();
+
+		if (!provinceIdList.isEmpty())
+			rankProvinces();
 
 	}
 
@@ -289,12 +295,13 @@ public class RankingService
 			if (queryManager.isProvinceInRegion(userPosition, province.getRealID()) == 0)
 			{
 				province.setRanking(province.getRanking() + 1);
+
 			}
 
 			//CLASSIFICAZIONE IN BASE AL TEACHING ROLE
 			try
 			{
-				if (queryManager.freePositionAvailableInMunicipality(province.getRealID(), teachingRole) == true)
+				if (queryManager.freePositionAvailableInProvince(province.getRealID(), teachingRole) == true)
 				{
 					province.setRanking(province.getRanking() + 1);
 				}
@@ -334,7 +341,6 @@ public class RankingService
 			{
 				e.printStackTrace();
 			}
-
 		}
 	}
 
@@ -343,11 +349,12 @@ public class RankingService
 	 */
 	public void rankSchools()
 	{
-
+		System.out.println("comincio scuole");
 		for (CustomRecommendedItem school : schoolsIdList)
 		{
 
 			String realID = school.getRealID();
+			System.out.println("ESAMINO SCUOLA: " + realID);
 
 			/*
 			 * CLASSIFICAZIONE IN BASE ALLA POSIZIONE se la scuola trovata si
@@ -356,7 +363,7 @@ public class RankingService
 			 */
 			if (queryManager.isSchoolInRegion(userPosition, realID) == 0)
 			{
-
+				System.out.println("SI");
 				school.setRanking(school.getRanking() + 1);
 			}
 
@@ -387,7 +394,7 @@ public class RankingService
 
 				if (queryManager.isScoreMatchingTransfers(realID, teachingRole, score))
 				{
-					LOGGER.info("[" + RankingService.class.getName() + "] +++++++++ Scuola " + realID + " trovato score compatibile");
+
 					school.setRanking(school.getRanking() + 1);
 				}
 

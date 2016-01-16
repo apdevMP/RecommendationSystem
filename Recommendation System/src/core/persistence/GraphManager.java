@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -51,40 +52,50 @@ public class GraphManager
 		//Se l'istanza � nulla ne crea una altrimenti la restituisce
 
 		if (manager == null)
+		{
+			//	System.out.println("manager è null");
 			manager = new GraphManager();
+		}
+		//	else System.out.println("manager non è null");
 		return manager;
 
 	}
 
 	public void connectToGraph(String user, String password)
 	{
+		System.out.println("connessione a neo4j");
 
 		try
 		{
 			// Make sure Neo4j Driver is registered
 			Class.forName("org.neo4j.jdbc.Driver");
-
 			//Authentication
 			Properties properties = new Properties();
 			properties.put("user", user);
 			properties.put("password", password);
+			connection = DriverManager.getConnection("jdbc:neo4j://" + configuration.getNeo_server_address() + ":" + configuration.getNeo_port()
+					+ "/", properties);
+			connection.clearWarnings();
 
-			// FIXME prendere da filed di config
-			connection = DriverManager.getConnection("jdbc:neo4j://"+configuration.getNeo_server_address()+":"+configuration.getNeo_port()+"/", properties);
-
-		} catch (SQLException | ClassNotFoundException e)
+		} catch (ClassNotFoundException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			System.out.println("org.neo4j.jdbc.Driver not found");
+			System.exit(1);
+		} catch (SQLException e)
+		{
+			System.out.println("Cannot get connection to Neo4j.");
+			System.exit(1);
 		}
 
 	}
-	
-	
-	public String queryMunicipalityCodeFromSchool(String schoolId) throws SQLException{
+
+	public String queryMunicipalityCodeFromSchool(String schoolId) throws SQLException
+	{
 		Statement stmt = connection.createStatement();
 
 		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'}) RETURN n.municipalityCode LIMIT 1");
+		stmt.setQueryTimeout(3);
 		String municipalityCode = null;
 		while (rs.next())
 		{
@@ -92,14 +103,14 @@ public class GraphManager
 			if (appString != null)
 				municipalityCode = appString;
 		}
+		stmt.closeOnCompletion();
 		return municipalityCode;
 	}
-	
-	
-	
-	public String queryProvinceCodeFromSchool(String schoolId) throws SQLException{
-		Statement stmt = connection.createStatement();
 
+	public String queryProvinceCodeFromSchool(String schoolId) throws SQLException
+	{
+		Statement stmt = connection.createStatement();
+		stmt.setQueryTimeout(3);
 		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'}) RETURN n.provinceCode LIMIT 1");
 		String provinceCode = null;
 		while (rs.next())
@@ -108,6 +119,7 @@ public class GraphManager
 			if (appString != null)
 				provinceCode = appString;
 		}
+		stmt.closeOnCompletion();
 		return provinceCode;
 	}
 
@@ -125,15 +137,15 @@ public class GraphManager
 	{
 
 		Statement stmt = connection.createStatement();
+		stmt.setQueryTimeout(3);
 
 		ResultSet rs = stmt.executeQuery("MATCH (n:School {provinceCode:'" + provinceCode + "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'"
 				+ teachingRole + "'}]->()) as outgoing," + " size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]-()) as incoming,"
-				+ " n RETURN (outgoing - incoming) as freePositions");
-
+				+ " n WHERE (outgoing-incoming)>0 RETURN (outgoing - incoming) as freePositions LIMIT 1");
 		/*
-		 * in questo caso la query restituisce i posti liberi per ogni scuola
-		 * della provincia, per cui basta restituire true nel momento in cui si
-		 * trova una entry con il campo freePosition positivo
+		 * la query restituisce un unico risultato nel caso in cui esso sia
+		 * positivo, altrimenti l'insieme sarà vuoto e il che vorrà dire che non
+		 * ci sono posizioni aperte
 		 */
 
 		boolean freePositionAvailable = false;
@@ -142,13 +154,11 @@ public class GraphManager
 
 			if (rs.getInt("freePositions") > 0)
 			{
-				//System.out.println("posizioni libere:" + rs.getInt("freePositions"));
 				freePositionAvailable = true;
-				break;
 			}
 
 		}
-
+		stmt.closeOnCompletion();
 		return freePositionAvailable;
 
 	}
@@ -167,16 +177,17 @@ public class GraphManager
 	{
 
 		Statement stmt = connection.createStatement();
+		stmt.setQueryTimeout(3);
 
 		ResultSet rs = stmt.executeQuery("MATCH (n:School {municipalityCode:'" + municipalityCode
 				+ "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]->()) as outgoing,"
 				+ " size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]-()) as incoming,"
-				+ " n RETURN (outgoing - incoming) as freePositions");
+				+ " n WHERE (outgoing-incoming)>0 RETURN (outgoing - incoming) as freePositions LIMIT 1"); //TODO MESSO LIMIT
 
 		/*
-		 * in questo caso la query restituisce i posti liberi per ogni scuola
-		 * del comune, per cui basta restituire true nel momento in cui si trova
-		 * una entry con il campo freePosition positivo
+		 * la query restituisce un unico risultato nel caso in cui esso sia
+		 * positivo, altrimenti l'insieme sarà vuoto e il che vorrà dire che non
+		 * ci sono posizioni aperte
 		 */
 
 		boolean freePositionAvailable = false;
@@ -185,13 +196,12 @@ public class GraphManager
 
 			if (rs.getInt("freePositions") > 0)
 			{
-				//	System.out.println("posizioni libere:" + rs.getInt("freePositions"));
 				freePositionAvailable = true;
-				break;
 			}
 
 		}
 
+		stmt.closeOnCompletion();
 		return freePositionAvailable;
 
 	}
@@ -211,6 +221,7 @@ public class GraphManager
 	{
 
 		Statement stmt = connection.createStatement();
+		stmt.setQueryTimeout(3);
 		int numberOfResults = 0;
 
 		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'})-[r:TRANSFER_MAIN]->() WHERE r.teachingRoleArea = '"
@@ -223,13 +234,15 @@ public class GraphManager
 
 		}
 
+		stmt.closeOnCompletion();
 		return numberOfResults;
 
 	}
 
 	/**
 	 * Controlla sul grafo se tra gli utenti trasferiti da quella scuola ce ne
-	 * sono alcuni con score relazionabile a quello dell'utente (minore o uguale)
+	 * sono alcuni con score relazionabile a quello dell'utente (minore o
+	 * uguale)
 	 * 
 	 * @param schoolId
 	 * @param teachingRole
@@ -241,6 +254,7 @@ public class GraphManager
 	{
 
 		Statement stmt = connection.createStatement();
+		stmt.setQueryTimeout(3);
 		int numberOfResults = 0;
 
 		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'})-[r:TRANSFER_MAIN]->() WHERE r.teachingRoleArea = '"
@@ -255,6 +269,7 @@ public class GraphManager
 
 		}
 
+		stmt.closeOnCompletion();
 		//ritorna il numero di matching per la condizione specificata
 		return numberOfResults;
 
@@ -276,6 +291,7 @@ public class GraphManager
 	{
 
 		Statement stmt = connection.createStatement();
+		stmt.setQueryTimeout(3);
 		int numberOfResults = 0;
 
 		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'"
@@ -289,30 +305,10 @@ public class GraphManager
 			numberOfResults += rs.getInt("freePositions");
 		}
 
+		stmt.closeOnCompletion();
 		return numberOfResults;
 	}
 
-	/**
-	 * TODO non utilizzato Permette di recuperare le scuole con maggior numero
-	 * di trasferimenti in uscita all'interno di un comune
-	 * 
-	 * @param region
-	 * @throws SQLException
-	 */
-	public void queryMostQuotedSchoolInMunicipality(String municipalityCode) throws SQLException
-	{
-
-		Statement stmt = connection.createStatement();
-
-		//dato che in un comune il numero di scuole è limitato,per ora le visualizziamo tutte nella classifica
-		ResultSet rs = stmt.executeQuery("MATCH (n:School)-[r:TRANSFER_MAIN]->c WHERE n.municipalityCode = '" + municipalityCode
-				+ "' RETURN n.code, count(r) AS number_of_connections ORDER BY number_of_connections DESC");
-		while (rs.next())
-		{
-			//System.out.println(rs.getString("n.code") + "  ,#traferimenti in uscita:" + rs.getString("number_of_connections"));
-		}
-
-	}
 
 	/**
 	 * Recupera il nome del comune a partire dal codice identificativo e lo
@@ -322,13 +318,15 @@ public class GraphManager
 	 * @return
 	 * @throws SQLException
 	 */
-	public String queryMunicipalityName(String municipalityCode) throws SQLException
+	public String queryMunicipalityName(String municipalityCode) throws SQLException, SQLTimeoutException
 	{
 
 		Statement stmt = connection.createStatement();
+		stmt.setQueryTimeout(3);
+		stmt.closeOnCompletion();
 
-		//TODO
 		ResultSet rs = stmt.executeQuery("MATCH (n:School) WHERE n.municipalityCode = '" + municipalityCode + "' RETURN n.municipalityName LIMIT 1");
+
 		String municipality = null;
 		while (rs.next())
 		{
@@ -336,6 +334,7 @@ public class GraphManager
 			if (appString != null)
 				municipality = appString;
 		}
+		stmt.closeOnCompletion();
 		return municipality;
 	}
 
@@ -347,8 +346,8 @@ public class GraphManager
 	public long queryMunicipalityId(String municipalityCode) throws SQLException
 	{
 		Statement stmt = connection.createStatement();
+		stmt.setQueryTimeout(3);
 
-		//TODO
 		ResultSet rs = stmt.executeQuery("MATCH (n:School) WHERE n.municipalityCode = '" + municipalityCode + "' RETURN n.municipalityId LIMIT 1");
 		long municipalityId = 0;
 		while (rs.next())
@@ -363,7 +362,7 @@ public class GraphManager
 	public ArrayList<String> retrieveClassCodes() throws SQLException
 	{
 		Statement stmt = connection.createStatement();
-
+		stmt.setQueryTimeout(3);
 		ArrayList<String> classCodeStrings = new ArrayList<>();
 
 		//dato che in un comune il numero di scuole è limitato,per ora le visualizziamo tutte nella classifica
@@ -373,12 +372,18 @@ public class GraphManager
 		while (rs.next())
 		{
 
-			//System.out.println(rs.getString("teachingRoleArea"));
 			classCodeStrings.add(rs.getString("teachingRoleArea"));
 
 		}
 		//System.out.println("#classi:" + count);
 		return classCodeStrings;
+	}
+
+	public void closeConnection() throws SQLException
+	{
+		connection.close();
+		manager = null;
+
 	}
 
 }

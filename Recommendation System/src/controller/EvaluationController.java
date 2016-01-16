@@ -24,7 +24,6 @@ import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.Recommender;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 import org.apache.mahout.common.RandomUtils;
-import org.neo4j.cypherdsl.grammar.Return;
 
 import utils.Configuration;
 import view.EvaluationWindow;
