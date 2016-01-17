@@ -4,7 +4,6 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
@@ -24,7 +23,9 @@ import javax.swing.JComboBox;
 
 import utils.Configuration;
 import controller.Controller;
-import core.GraphManager;
+import core.persistence.GraphManager;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class StartWindow
 {
@@ -33,7 +34,7 @@ public class StartWindow
 	private JTextField			textFieldScore;
 	private JComboBox<String>	comboBoxRegion;
 	private JComboBox<String>	comboBoxClass;
-	private JButton				btnGo;
+	private JButton				btnGo, btnStop;
 	private JTextArea			textArea;
 	private static GraphManager	gManager;
 	public static Configuration	configuration;
@@ -144,8 +145,18 @@ public class StartWindow
 		panelData.add(comboBoxRegion);
 
 		btnGo = new JButton("Avvia");
-		btnGo.setBounds(28, 280, 117, 29);
+		btnGo.setBounds(6, 280, 78, 29);
 		panelData.add(btnGo);
+		
+		btnStop = new JButton("Chiudi");
+		btnStop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(1);
+			}
+		});
+		btnStop.setBounds(82, 280, 78, 29);
+		panelData.add(btnStop);
+		btnStop.setEnabled(true);
 
 		JPanel panelResult = new JPanel();
 		panelResult.setBackground(Color.WHITE);
@@ -157,7 +168,6 @@ public class StartWindow
 
 		textArea = new JTextArea();
 		textArea.setBounds(6, 6, 304, 303);
-		//	scrollPane.add(textArea);
 
 		JScrollPane scrollPane = new JScrollPane(textArea);
 		scrollPane.setBorder(null);
@@ -168,9 +178,14 @@ public class StartWindow
 
 	}
 
-	public JButton getButton()
+	public JButton getButtonStart()
 	{
 		return btnGo;
+	
+	}
+	
+	public JButton getButtonStop(){
+		return btnStop;
 	}
 
 	public JTextArea getTextArea()
@@ -184,7 +199,7 @@ public class StartWindow
 		return comboBoxRegion.getSelectedItem().toString();
 	}
 
-	public Double getScore()
+	public Double getScore() throws NumberFormatException
 	{
 		if (!textFieldScore.getText().isEmpty())
 			return Double.parseDouble(textFieldScore.getText());
@@ -196,5 +211,4 @@ public class StartWindow
 	{
 		return comboBoxClass.getSelectedItem().toString();
 	}
-
 }
