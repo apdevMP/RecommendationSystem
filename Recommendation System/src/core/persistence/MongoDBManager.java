@@ -241,7 +241,7 @@ public class MongoDBManager {
 		FindIterable<Document> iterable = collection
 				.find(new Document("$or", Arrays.asList(new Document("action",
 						action[0]), new Document("action", action[1]),
-						new Document("action", action[2]))));
+						new Document("action", action[2]),new Document("action",action[3]))));
 		return iterable;
 	}
 
@@ -297,14 +297,15 @@ public class MongoDBManager {
 		MongoCollection<Document> collection = getCollectionByName(configuration
 				.getLog_collection());
 		FindIterable<Document> iterable = collection
-				.find(new Document("$and", Arrays.asList(
-						new Document("$or", Arrays.asList(
-								new Document("action", action[0]),
-								new Document("action", action[1]), 
-								new Document("action", action[2]),
-								new Document("action", action[3]))),
-						new Document("attributes.year", new Document("$gt",
-								2000)))))
+				.find(new Document("$or", Arrays.asList(
+						new Document("$and", Arrays.asList(
+								new Document("$or", Arrays.asList(new Document(
+										"action", action[0]), new Document(
+										"action", action[1]), new Document(
+										"action", action[2]))), new Document(
+										"attributes.year", new Document("$gt",
+												2000)))), new Document(
+								"action", action[3]))))
 				.limit(configuration.getDoc_per_page())
 				.skip(index * configuration.getDoc_per_page());
 		return iterable;
@@ -316,11 +317,11 @@ public class MongoDBManager {
 				.getLog_collection());
 		FindIterable<Document> iterable = collection.find(new Document("$and",
 				Arrays.asList(
-						new Document("$or", Arrays
-								.asList(new Document("action", actions[0]),
-										new Document("action", actions[1]),
-										new Document("action", actions[2]),
-										new Document("action", actions[3]))),
+						new Document("$or", Arrays.asList(new Document(
+								"action", actions[0]), new Document("action",
+								actions[1]),
+								new Document("action", actions[2]),
+								new Document("action", actions[3]))),
 						new Document("userId", userId))));
 		return iterable;
 	}
