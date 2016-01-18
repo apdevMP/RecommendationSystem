@@ -17,7 +17,7 @@ import utils.Configuration;
  * 
  * Classe GraphManager per la gestione delle connessioni e delle query al db di
  * neo4j. Implementato come singleton per una corretta gestione delle
- * connessioni.
+ * connessioni. 
  *
  */
 public class GraphManager

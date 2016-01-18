@@ -24,7 +24,7 @@ public class PersistenceService
 {
 
 	private MongoDBManager	dbManager;
-	private GraphManager	graphManager;
+	private GraphManager	graphManager; 
 
 	// private static Configuration configuration = null;
 

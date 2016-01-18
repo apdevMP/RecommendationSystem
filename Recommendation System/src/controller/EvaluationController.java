@@ -4,13 +4,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
 import org.apache.mahout.cf.taste.common.TasteException;
+import org.apache.mahout.cf.taste.eval.IRStatistics;
 import org.apache.mahout.cf.taste.eval.RecommenderBuilder;
 import org.apache.mahout.cf.taste.eval.RecommenderEvaluator;
+import org.apache.mahout.cf.taste.eval.RecommenderIRStatsEvaluator;
 import org.apache.mahout.cf.taste.impl.eval.AverageAbsoluteDifferenceRecommenderEvaluator;
+import org.apache.mahout.cf.taste.impl.eval.GenericRecommenderIRStatsEvaluator;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
 import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.neighborhood.ThresholdUserNeighborhood;
@@ -67,12 +71,17 @@ public class EvaluationController
 				{
 					score = startEvaluation();
 					publishScore(score);
+					computePrecisionRecall();
 				} catch (FileNotFoundException e1)
 				{
 					JOptionPane.showMessageDialog(null, "Cannot create file data model. File .csv is missing");
 					System.exit(0);
 
-				} catch (Exception e1)
+				}catch (IllegalArgumentException e2) {
+					System.out.println("Cannot compute precision recall: "+e2.getMessage());
+				}
+				
+				catch (Exception e1)
 				{
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -115,6 +124,25 @@ public class EvaluationController
 
 	}
 
+	public void computePrecisionRecall() throws TasteException, IOException
+	{
+		RandomUtils.useTestSeed();
+		DataModel model = new FileDataModel(new File(configuration.getUserId() + ".csv"));
+		RecommenderIRStatsEvaluator evaluator = new GenericRecommenderIRStatsEvaluator();
+		RecommenderBuilder recommenderBuilder = new RecommenderBuilder() {
+			@Override
+			public Recommender buildRecommender(DataModel model) throws TasteException
+			{
+				UserNeighborhood neighborhood = setUserNeighborhood(3, getSimilarity(model), model);
+				return new GenericUserBasedRecommender(model, neighborhood, getSimilarity(model));
+			}
+		};
+		IRStatistics stats = evaluator.evaluate(recommenderBuilder, null, model, null, 10, 3, 1.0);
+		System.out.println("Recall: "+stats.getRecall());
+		System.out.println("Precision: "+stats.getPrecision());
+		
+	}
+
 	/**
 	 * Metodo di appoggio per recuperare il tipo di similarità da istanziare a
 	 * seconda della scelta fatta nell'interfaccia
@@ -147,7 +175,7 @@ public class EvaluationController
 	}
 
 	/**
-	 * Metodo di appoggio per recuperare il tipo di Neighborhood da utilizzare 
+	 * Metodo di appoggio per recuperare il tipo di Neighborhood da utilizzare
 	 * 
 	 * @param threshold
 	 * @param userSimilarity
