@@ -11,8 +11,9 @@
 	"neo_password" : "ilaria10",
 	"neo_server_address" : "localhost",
 	"neo_port" : 7474,
-	"doc_per_page" : 7000,
-	"user_id" : 11677,
+	"doc_per_page" : 700,
+	"user_id" : 53398,
 	"recommended_items" : 70,
-	"items_per_list" : 6
+	"items_per_list" : 6,
+	"year" = 2000
 }
