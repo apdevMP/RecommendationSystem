@@ -241,7 +241,7 @@ public class MongoDBManager {
 		FindIterable<Document> iterable = collection
 				.find(new Document("$or", Arrays.asList(new Document("action",
 						action[0]), new Document("action", action[1]),
-						new Document("action", action[2]),new Document("action",action[3]))));
+						new Document("action", action[2]))));
 		return iterable;
 	}
 
@@ -297,15 +297,15 @@ public class MongoDBManager {
 		MongoCollection<Document> collection = getCollectionByName(configuration
 				.getLog_collection());
 		FindIterable<Document> iterable = collection
-				.find(new Document("$or", Arrays.asList(
+				.find(
 						new Document("$and", Arrays.asList(
 								new Document("$or", Arrays.asList(new Document(
 										"action", action[0]), new Document(
 										"action", action[1]), new Document(
-										"action", action[2]))), new Document(
+										"action", action[2]),new Document(
+												"action", action[3]))), new Document(
 										"attributes.year", new Document("$gt",
-												2000)))), new Document(
-								"action", action[3]))))
+												2000)))) )
 				.limit(configuration.getDoc_per_page())
 				.skip(index * configuration.getDoc_per_page());
 		return iterable;

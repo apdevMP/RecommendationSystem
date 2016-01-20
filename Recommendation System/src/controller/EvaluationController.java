@@ -137,7 +137,7 @@ public class EvaluationController
 				return new GenericUserBasedRecommender(model, neighborhood, getSimilarity(model));
 			}
 		};
-		IRStatistics stats = evaluator.evaluate(recommenderBuilder, null, model, null, 10, 3, 1.0);
+		IRStatistics stats = evaluator.evaluate(recommenderBuilder, null, model, null, 5, 3, 1.0);
 		System.out.println("Recall: "+stats.getRecall());
 		System.out.println("Precision: "+stats.getPrecision());
 		

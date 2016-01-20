@@ -16,12 +16,18 @@ public class Utils {
 	 * @param eventType
 	 * @return valore calcolato
 	 */
+	
+	//FIXME cambiati i punteggi...
 	public static int computeValue(long eventType) {
 		int value = 0;
 
+		//watch rimosso
 		if (eventType == 2) {
-			value = 0;
+			value = 1;
+			//qui c'era zero
 		}
+		
+		//watch aggiunto
 		if (eventType == 1) {
 			value = 2;
 		}
