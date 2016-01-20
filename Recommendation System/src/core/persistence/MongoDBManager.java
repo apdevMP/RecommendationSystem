@@ -53,8 +53,8 @@ public class MongoDBManager {
 	 * Avvia la connessione
 	 */
 	private void startConnection() {
-		// Se client � null allora occorre inizializzare la connessione,
-		// altrimenti gi� esiste
+		// Se client è null allora occorre inizializzare la connessione,
+		// altrimenti già esiste
 		if (client == null) {
 			client = new MongoClient(configuration.getMongo_server_address(),
 					configuration.getMongo_port());
@@ -238,10 +238,12 @@ public class MongoDBManager {
 	public FindIterable<Document> findLogsByAction(String[] action) {
 		MongoCollection<Document> collection = getCollectionByName(configuration
 				.getLog_collection());
+
 		FindIterable<Document> iterable = collection
 				.find(new Document("$or", Arrays.asList(new Document("action",
 						action[0]), new Document("action", action[1]),
 						new Document("action", action[2]))));
+
 		return iterable;
 	}
 
@@ -287,29 +289,31 @@ public class MongoDBManager {
 				.getWatches_collection());
 		FindIterable<Document> iterable = collection
 				.find(new Document("lastEventData.context.year", new Document(
-						"$gt", 2000))).limit(configuration.getDoc_per_page())
+						"$gt", configuration.getYear()))).limit(configuration.getDoc_per_page())
 				.skip(index * configuration.getDoc_per_page());
 
 		return iterable;
 	}
 
+	
 	public FindIterable<Document> findLogsByAction(String[] action, int index) {
 		MongoCollection<Document> collection = getCollectionByName(configuration
 				.getLog_collection());
 		FindIterable<Document> iterable = collection
-				.find(
+				.find(new Document("$or", Arrays.asList(
 						new Document("$and", Arrays.asList(
 								new Document("$or", Arrays.asList(new Document(
 										"action", action[0]), new Document(
 										"action", action[1]), new Document(
-										"action", action[2]),new Document(
-												"action", action[3]))), new Document(
+										"action", action[2]))), new Document(
 										"attributes.year", new Document("$gt",
-												2000)))) )
+												2000)))), new Document(
+								"action", action[3]))))
 				.limit(configuration.getDoc_per_page())
 				.skip(index * configuration.getDoc_per_page());
 		return iterable;
 	}
+
 
 	public FindIterable<Document> findLogsByIdAndAction(long userId,
 			String[] actions) {
