@@ -19,9 +19,11 @@ public class Utils {
 	public static int computeValue(long eventType) {
 		int value = 0;
 
+		//watch rimosso
 		if (eventType == 2) {
 			value = 0;
 		}
+		//watch aggiunto
 		if (eventType == 1) {
 			value = 2;
 		}
@@ -46,22 +48,22 @@ public class Utils {
 	}
 
 	/**
-	 * Metodo che permette di verificare se all'interno di {@code list} �
+	 * Metodo che permette di verificare se all'interno di {@code list} è
 	 * presente la {@link UtilityMatrixPreference} {@code p}
 	 * 
 	 * @param list
 	 *            lista di UtilityMatrixPreference
 	 * @param p
-	 *            preferenza la cui presenza nella lista � da verificaree
+	 *            preferenza la cui presenza nella lista è da verificaree
 	 * @return l'indice nella lista se presente, -1 altrimenti
 	 */
 	public static int isInList(List<UtilityMatrixPreference> list,
 			UtilityMatrixPreference p) {
-		/* Inizializzo la variabile che verifica se la preferenza � presente */
+		/* Inizializzo la variabile che verifica se la preferenza è presente */
 		int present = -1;
 		/*
 		 * Per ogni preferenza presente nella lista vengono recuperati id
-		 * dell'utente,id del posto e tag e vengono confronati con quelli di p
+		 * dell'utente,id del posto e tag e vengono confrontati con quelli di p
 		 */
 		for (int i = 0; i < list.size(); i++) {
 			String place = list.get(i).getPlaceId();
@@ -78,7 +80,7 @@ public class Utils {
 			}
 		}
 		/*
-		 * Restituisce -1 perch� la preferenza p non � presente all'interno
+		 * Restituisce -1 perchè la preferenza p non è presente all'interno
 		 * della lista
 		 */
 		return present;

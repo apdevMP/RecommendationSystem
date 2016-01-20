@@ -458,6 +458,26 @@ public class UtilityMatrix {
 				 */
 				preferences.add(new UtilityMatrixPreference(userId,
 						school, SCHOOL_ID, value,bonus));
+				String provinceFromSchool = null;
+				String municipalityFromSchool = null;
+
+				try {
+					provinceFromSchool = queryManager
+							.getProvinceFromSchool(school);
+					municipalityFromSchool = queryManager
+							.getMunicipalityFromSchool(school);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (provinceFromSchool != null)
+					preferences.add(new UtilityMatrixPreference(userId,
+							provinceFromSchool, PROVINCE_ID, value,bonus));
+
+				if (municipalityFromSchool != null)
+					preferences.add(new UtilityMatrixPreference(userId,
+							municipalityFromSchool, MUNICIPALITY_ID, value,bonus));
+
 				break;
 			}
 		}

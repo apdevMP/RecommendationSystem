@@ -85,6 +85,7 @@ public class Controller
 
 				Profile userProfile = ProfileService.createProfile(configuration.getUserId(), teachingRole, score, region);
 				System.out.println(userProfile.getUserPreferences().size());
+				System.out.println(configuration.getYear());
 				for (UtilityMatrixPreference u : userProfile.getUserPreferences())
 				{
 					System.out.println("Preference: " + u.getPlaceId() + " - " + u.getScore());

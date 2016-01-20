@@ -24,7 +24,7 @@ public class PersistenceService
 {
 
 	private MongoDBManager	dbManager;
-	private GraphManager	graphManager; 
+	private GraphManager	graphManager;
 
 	// private static Configuration configuration = null;
 
@@ -39,7 +39,8 @@ public class PersistenceService
 
 	/**
 	 * Chiude la connessione col DBManager e con il database di MongoDB
-	 * @throws SQLException 
+	 * 
+	 * @throws SQLException
 	 */
 	public void closeConnection() throws SQLException
 	{
@@ -179,13 +180,13 @@ public class PersistenceService
 		// recupero la regione dal documento ed effettuo il confronto tra
 		// stringhe
 		String documentRegion = doc.getString("regionName");
-		System.out.println("documentRegion="+documentRegion);
+		System.out.println("documentRegion=" + documentRegion);
 		if (documentRegion.equals(region))
 		{
 			System.out.println("ritorno 0");
 			return 0;
-		}
-		else{
+		} else
+		{
 			System.out.println("ritorno 1");
 			return 1;
 		}
@@ -472,11 +473,11 @@ public class PersistenceService
 		 */
 		if (school.length() == 10)
 
-			province = school.substring(0, 3);
+			province = school.substring(0, 2);
 
 		else
 			province = graphManager.queryProvinceCodeFromSchool(school);
-		
+
 		return province;
 
 	}

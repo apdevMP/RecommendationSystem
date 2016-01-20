@@ -287,7 +287,7 @@ public class MongoDBManager {
 				.getWatches_collection());
 		FindIterable<Document> iterable = collection
 				.find(new Document("lastEventData.context.year", new Document(
-						"$gt", 2000))).limit(configuration.getDoc_per_page())
+						"$gt", configuration.getYear()))).limit(configuration.getDoc_per_page())
 				.skip(index * configuration.getDoc_per_page());
 
 		return iterable;
@@ -304,7 +304,7 @@ public class MongoDBManager {
 								new Document("action", action[2]),
 								new Document("action", action[3]))),
 						new Document("attributes.year", new Document("$gt",
-								2000)))))
+								configuration.getYear())))))
 				.limit(configuration.getDoc_per_page())
 				.skip(index * configuration.getDoc_per_page());
 		return iterable;

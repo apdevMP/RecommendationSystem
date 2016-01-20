@@ -65,7 +65,6 @@ public class RankingService
 		teachingRole = userProfile.getTeachingRole();
 		score = userProfile.getScore();
 
-		LOGGER.info("[" + RankingService.class.getName() + "] ++++++++++++++++++++++++++++score = " + score);
 		/*
 		 * crea tre liste separate per distinguere gli item in - province -
 		 * comuni -scuole

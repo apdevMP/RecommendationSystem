@@ -27,8 +27,9 @@ public class Configuration
 	private int						neo_port;
 	private int						doc_per_page;
 	private long					user_id;
-	private int					recommended_items;
-	private int					items_per_list;
+	private int						recommended_items;
+	private int						items_per_list;
+	private int						year;
 	private static Configuration	configuration	= null;
 
 	private Configuration()
@@ -281,6 +282,16 @@ public class Configuration
 	public void setItem_per_list(int item_per_list)
 	{
 		this.items_per_list = item_per_list;
+	}
+
+	public int getYear()
+	{
+		return year;
+	}
+
+	public void setYear(int year)
+	{
+		this.year = year;
 	}
 
 	private static void retrieveValues(String path)

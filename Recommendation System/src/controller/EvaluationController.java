@@ -42,6 +42,7 @@ public class EvaluationController
 	private double					trainingSet;
 	private double					testSet;
 	private static Configuration	configuration;
+	private final int neighborhoodValue = 30;
 
 	public EvaluationController(EvaluationWindow window)
 	{
@@ -69,6 +70,7 @@ public class EvaluationController
 				double score;
 				try
 				{
+					System.out.println("neighborhoodValue= "+neighborhoodValue);
 					score = startEvaluation();
 					publishScore(score);
 					computePrecisionRecall();
@@ -112,7 +114,7 @@ public class EvaluationController
 			public Recommender buildRecommender(final DataModel model) throws TasteException
 			{
 
-				UserNeighborhood neighborhood = setUserNeighborhood(10, getSimilarity(model), model);
+				UserNeighborhood neighborhood = setUserNeighborhood(neighborhoodValue, getSimilarity(model), model);
 
 				return new GenericUserBasedRecommender(model, neighborhood, getSimilarity(model));
 
@@ -133,11 +135,11 @@ public class EvaluationController
 			@Override
 			public Recommender buildRecommender(DataModel model) throws TasteException
 			{
-				UserNeighborhood neighborhood = setUserNeighborhood(3, getSimilarity(model), model);
+				UserNeighborhood neighborhood = setUserNeighborhood(neighborhoodValue, getSimilarity(model), model);
 				return new GenericUserBasedRecommender(model, neighborhood, getSimilarity(model));
 			}
 		};
-		IRStatistics stats = evaluator.evaluate(recommenderBuilder, null, model, null, 10, 3, 1.0);
+		IRStatistics stats = evaluator.evaluate(recommenderBuilder, null, model, null, 11, 2.1, 1.0);
 		System.out.println("Recall: "+stats.getRecall());
 		System.out.println("Precision: "+stats.getPrecision());
 		

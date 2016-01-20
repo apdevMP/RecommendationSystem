@@ -199,6 +199,26 @@ public class ProfileService {
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId, school,
 						SCHOOL_ID, value,BONUS));
+				PersistenceService service = new PersistenceService();
+				String provinceFromSchool = null;
+				String municipalityFromSchool = null;
+
+				try {
+					provinceFromSchool = service.getProvinceFromSchool(school);
+					municipalityFromSchool = service
+							.getMunicipalityFromSchool(school);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (provinceFromSchool != null)
+					userPreference.add(new UtilityMatrixPreference(userId,
+							provinceFromSchool, PROVINCE_ID, value,BONUS));
+
+				if (municipalityFromSchool != null)
+					userPreference.add(new UtilityMatrixPreference(userId,
+							municipalityFromSchool, MUNICIPALITY_ID, value,BONUS));
+
 				break;
 			}
 

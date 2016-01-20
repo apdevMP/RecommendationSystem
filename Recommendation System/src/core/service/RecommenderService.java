@@ -16,6 +16,7 @@ import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.EuclideanDistanceSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
+import org.apache.mahout.cf.taste.impl.similarity.TanimotoCoefficientSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
@@ -71,12 +72,12 @@ public class RecommenderService
 			@SuppressWarnings("unused")
 			UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
 			UserSimilarity similarity2 = new EuclideanDistanceSimilarity(model);
-			@SuppressWarnings("unused")
 			UserSimilarity similarity3 = new LogLikelihoodSimilarity(model);
+			UserSimilarity similarity4 = new TanimotoCoefficientSimilarity(model);
 			
-			UserNeighborhood nearestNeighborhood = new NearestNUserNeighborhood(100, similarity2, model);
-			UserNeighborhood threasholdNeighborhood = new ThresholdUserNeighborhood(10, similarity2, model);
-			 Recommender recommender = new GenericUserBasedRecommender(model, nearestNeighborhood, similarity2);
+			UserNeighborhood nearestNeighborhood = new NearestNUserNeighborhood(40, similarity3, model);
+		//	UserNeighborhood threasholdNeighborhood = new ThresholdUserNeighborhood(10, similarity2, model);
+			 Recommender recommender = new GenericUserBasedRecommender(model, nearestNeighborhood, similarity3);
 
 
 			LOGGER.info("\n\n[" + RecommenderService.class.getName() + "] Starting recommender service..");
