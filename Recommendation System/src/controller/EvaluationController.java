@@ -42,7 +42,7 @@ public class EvaluationController
 	private double					trainingSet;
 	private double					testSet;
 	private static Configuration	configuration;
-	private final int neighborhoodValue = 30;
+	private final int				neighborhoodValue	= 30;
 
 	public EvaluationController(EvaluationWindow window)
 	{
@@ -70,7 +70,7 @@ public class EvaluationController
 				double score;
 				try
 				{
-					System.out.println("neighborhoodValue= "+neighborhoodValue);
+					System.out.println("neighborhoodValue= " + neighborhoodValue);
 					score = startEvaluation();
 					publishScore(score);
 					computePrecisionRecall();
@@ -79,14 +79,17 @@ public class EvaluationController
 					JOptionPane.showMessageDialog(null, "Cannot create file data model. File .csv is missing");
 					System.exit(0);
 
-				}catch (IllegalArgumentException e2) {
-					System.out.println("Cannot compute precision recall: "+e2.getMessage());
+				} catch (IllegalArgumentException e2)
+				{
+					System.out.println("Cannot compute precision recall: " + e2.getMessage());
+					evaluationWindow.getPrecisionLabel().setText("NaN");
+					evaluationWindow.getRecallLabel().setText("NaN");
 				}
-				
+
 				catch (Exception e1)
 				{
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+
+					System.out.println(e1.getMessage());
 				}
 
 			}
@@ -140,9 +143,9 @@ public class EvaluationController
 			}
 		};
 		IRStatistics stats = evaluator.evaluate(recommenderBuilder, null, model, null, 11, 2.1, 1.0);
-		System.out.println("Recall: "+stats.getRecall());
-		System.out.println("Precision: "+stats.getPrecision());
-		
+		evaluationWindow.getPrecisionLabel().setText("" + stats.getPrecision());
+		evaluationWindow.getRecallLabel().setText("" + stats.getRecall());
+
 	}
 
 	/**

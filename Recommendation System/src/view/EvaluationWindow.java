@@ -27,7 +27,10 @@ public class EvaluationWindow
 	private JTextField				trainingTextField;
 	private JTextField				testTextField;
 	private JButton					btnStart;
-	private JLabel					scoreLabel;
+	private JLabel					scoreLabel, precisionLabel, recallLabel;
+	private JLabel label;
+	private JLabel label_1;
+
 
 	/**
 	 * Launch the application.
@@ -72,12 +75,12 @@ public class EvaluationWindow
 	private void initialize()
 	{
 		frame = new JFrame();
-		frame.setBounds(100, 100, 495, 326);
+		frame.setBounds(100, 100, 495, 341);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
 		JPanel panel = new JPanel();
-		panel.setBounds(6, 6, 277, 292);
+		panel.setBounds(6, 6, 277, 307);
 		panel.setLayout(null);
 		panel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Evaluation parameters", TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
@@ -120,22 +123,48 @@ public class EvaluationWindow
 		testTextField.setText("1.0");
 
 		btnStart = new JButton("Avvia");
-		btnStart.setBounds(70, 260, 117, 29);
+		btnStart.setBounds(70, 272, 117, 29);
 		panel.add(btnStart);
 
 		JPanel panelScore = new JPanel();
-		panelScore.setBounds(295, 16, 194, 271);
+		panelScore.setBounds(295, 28, 194, 271);
 		panelScore.setLayout(null);
-		panelScore.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Score", TitledBorder.LEADING, TitledBorder.TOP,
+		panelScore.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Evaluation", TitledBorder.LEADING, TitledBorder.TOP,
 				null, null));
 		frame.getContentPane().add(panelScore);
 
 		scoreLabel = new JLabel();
 		scoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		scoreLabel.setFont(new Font("Arial", Font.BOLD, 13));
-		scoreLabel.setBounds(18, 122, 158, 16);
-		scoreLabel.setText(null);
+		scoreLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+		scoreLabel.setBounds(18, 59, 158, 16);
+		scoreLabel.setText("...");
 		panelScore.add(scoreLabel);
+		
+		precisionLabel = new JLabel();
+		precisionLabel.setText("...");
+		precisionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		precisionLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+		precisionLabel.setBounds(18, 134, 158, 16);
+		panelScore.add(precisionLabel);
+		
+		recallLabel = new JLabel();
+		recallLabel.setText("...");
+		recallLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		recallLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+		recallLabel.setBounds(18, 222, 158, 16);
+		panelScore.add(recallLabel);
+		
+		JLabel lblScore = new JLabel("Score");
+		lblScore.setBounds(78, 31, 39, 16);
+		panelScore.add(lblScore);
+		
+		JLabel lblPrecision = new JLabel("Precision");
+		lblPrecision.setBounds(67, 106, 57, 16);
+		panelScore.add(lblPrecision);
+		
+		JLabel lblRecall = new JLabel("Recall");
+		lblRecall.setBounds(78, 194, 39, 16);
+		panelScore.add(lblRecall);
 
 	}
 
@@ -236,5 +265,37 @@ public class EvaluationWindow
 	public void setScoreLabel(JLabel scoreLabel)
 	{
 		this.scoreLabel = scoreLabel;
+	}
+
+	/**
+	 * @return the precisionLabel
+	 */
+	public JLabel getPrecisionLabel()
+	{
+		return precisionLabel;
+	}
+
+	/**
+	 * @param precisionLabel the precisionLabel to set
+	 */
+	public void setPrecisionLabel(JLabel precisionLabel)
+	{
+		this.precisionLabel = precisionLabel;
+	}
+
+	/**
+	 * @return the recallLabel
+	 */
+	public JLabel getRecallLabel()
+	{
+		return recallLabel;
+	}
+
+	/**
+	 * @param recallLabel the recallLabel to set
+	 */
+	public void setRecallLabel(JLabel recallLabel)
+	{
+		this.recallLabel = recallLabel;
 	}
 }

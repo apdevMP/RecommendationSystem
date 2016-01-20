@@ -70,7 +70,7 @@ public class Controller
 				// recupero dei dati inseriti dall'utente
 				window.getTextArea().setSelectionStart(0);
 				window.getTextArea().append(null);
-				
+
 				String teachingRole = window.getClassCode();
 				String region = window.getRegion();
 				Double score = 0.0;
@@ -117,11 +117,10 @@ public class Controller
 	{
 		DecimalFormat numberFormat = new DecimalFormat("#.00");
 
-
 		for (CustomRecommendedItem item : list)
 			window.getTextArea().append(item.getRealID() + "\t value:" + numberFormat.format(item.getValue()) + "\tranking:" + item.getRanking()
 					+ "\n");
-window.getTextArea().append("\n-----\n\n");
+		window.getTextArea().append("\n-----\n\n");
 		//una volta stampata la lista, riabilito il bottone di avvio
 		window.getButtonStart().setEnabled(true);
 

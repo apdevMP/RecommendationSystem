@@ -11,14 +11,22 @@ public class CustomRecommendedItem implements RecommendedItem, Comparable<Custom
 {
 
 	private long	id;
-	private float	value;			//valore assegnato dall'algoritmo di raccomandazione
-	private int		ranking	= 0;	//punteggio
-	private String	realID;		//stringa atta a contenere il vero id dell'item (non quello numerico assegnato per la raccomandazione)
+	private float	value;			
+	private int		ranking	= 0;	
+	private String	realID;		
 
 	public CustomRecommendedItem()
 	{
 	};
 
+	/**
+	 * Costruttore
+	 * 
+	 * @param id		id numerico assegnato per le raccomandazioni
+	 * @param value		valore della raccomandazione
+	 * @param ranking	valore del punteggio
+	 * @param realID	id reale dell'item
+	 */
 	public CustomRecommendedItem(long id, float value, int ranking, String realID)
 	{
 		super();
@@ -53,7 +61,6 @@ public class CustomRecommendedItem implements RecommendedItem, Comparable<Custom
 	@Override
 	public float getValue()
 	{
-		// TODO Auto-generated method stub
 		return this.value;
 	}
 
@@ -87,7 +94,6 @@ public class CustomRecommendedItem implements RecommendedItem, Comparable<Custom
 	@Override
 	public int compareTo(CustomRecommendedItem customRecommendedItem2)
 	{
-		// TODO Auto-generated method stub
 		return customRecommendedItem2.getRanking() - this.getRanking();
 
 	}

@@ -8,7 +8,6 @@ import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import utils.Configuration;
 
@@ -26,8 +25,6 @@ public class GraphManager
 	private Connection				connection;
 	private static GraphManager		manager			= null;
 	private static Configuration	configuration	= null;
-
-	private static Logger			LOGGER			= Logger.getLogger(GraphManager.class.getName());
 
 	private GraphManager()
 	{
@@ -49,7 +46,7 @@ public class GraphManager
 	public static GraphManager getIstance()
 	{
 
-		//Se l'istanza � nulla ne crea una altrimenti la restituisce
+		//Se l'istanza è nulla ne crea una altrimenti la restituisce
 
 		if (manager == null)
 		{
@@ -182,7 +179,7 @@ public class GraphManager
 		ResultSet rs = stmt.executeQuery("MATCH (n:School {municipalityCode:'" + municipalityCode
 				+ "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]->()) as outgoing,"
 				+ " size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]-()) as incoming,"
-				+ " n WHERE (outgoing-incoming)>0 RETURN (outgoing - incoming) as freePositions LIMIT 1"); //TODO MESSO LIMIT
+				+ " n WHERE (outgoing-incoming)>0 RETURN (outgoing - incoming) as freePositions LIMIT 1"); 
 
 		/*
 		 * la query restituisce un unico risultato nel caso in cui esso sia
@@ -301,7 +298,6 @@ public class GraphManager
 		//se ci sono stati trasferimenti in uscita per quel teachingRole, allora restituisce true
 		while (rs.next())
 		{
-			//	System.out.println(rs.getInt("freePositions"));
 			numberOfResults += rs.getInt("freePositions");
 		}
 
@@ -375,7 +371,6 @@ public class GraphManager
 			classCodeStrings.add(rs.getString("teachingRoleArea"));
 
 		}
-		//System.out.println("#classi:" + count);
 		return classCodeStrings;
 	}
 
