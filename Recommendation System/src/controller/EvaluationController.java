@@ -27,7 +27,6 @@ import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.Recommender;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
-import org.apache.mahout.common.RandomUtils;
 
 import utils.Configuration;
 import view.EvaluationWindow;
@@ -64,8 +63,17 @@ public class EvaluationController
 			{
 				similarityCode = evaluationWindow.getSimilarity();
 				neighborhoodCode = evaluationWindow.getNeighborhood();
-				trainingSet = evaluationWindow.getTrainingSet();
-				testSet = evaluationWindow.getTestSet();
+				try
+				{
+					trainingSet = evaluationWindow.getTrainingSet();
+					testSet = evaluationWindow.getTestSet();
+					
+				} catch (NumberFormatException ex)
+				{
+					JOptionPane.showMessageDialog(null, "Training/Test set value not correct. Restart the evaluation.");
+					System.exit(1);
+				}
+				
 
 				double score;
 				try
@@ -105,7 +113,7 @@ public class EvaluationController
 	public double startEvaluation() throws Exception
 	{
 
-		RandomUtils.useTestSeed();
+		//RandomUtils.useTestSeed();
 
 		DataModel model = new FileDataModel(new File(configuration.getUserId() + ".csv"));
 
@@ -131,7 +139,7 @@ public class EvaluationController
 
 	public void computePrecisionRecall() throws TasteException, IOException
 	{
-		RandomUtils.useTestSeed();
+		//RandomUtils.useTestSeed();
 		DataModel model = new FileDataModel(new File(configuration.getUserId() + ".csv"));
 		RecommenderIRStatsEvaluator evaluator = new GenericRecommenderIRStatsEvaluator();
 		RecommenderBuilder recommenderBuilder = new RecommenderBuilder() {

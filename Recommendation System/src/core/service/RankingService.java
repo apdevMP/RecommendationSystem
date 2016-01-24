@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
@@ -40,7 +41,7 @@ public class RankingService
 	public RankingService(List<RecommendedItem> recommendedItems, Map<String, Long> itemsMap, Map<String, Long> categoriesMap, Profile userProfile)
 	{
 
-		LOGGER.info("[" + RankingService.class.getName() + "] Starting ranking service..");
+		LOGGER.info("\n\n[" + RankingService.class.getName() + "] Starting ranking service..");
 		configuration = Configuration.getIstance();
 
 		/*
@@ -69,80 +70,85 @@ public class RankingService
 		 * crea tre liste separate per distinguere gli item in - province -
 		 * comuni -scuole
 		 */
-		for (RecommendedItem item : recommendedItems)
+		try
 		{
-
-			/*
-			 * recupera l'id numerico associato all'item e in base al suo valore
-			 * inserisce l'item all'interno della lista corretta
-			 */
-			long itemId = item.getItemID();
-
-			if (itemId <= categoriesMap.get("province"))
+			for (RecommendedItem item : recommendedItems)
 			{
-				//trovato l'id di una provincia
-				for (Entry<String, Long> entry : itemsMap.entrySet())
+
+				/*
+				 * recupera l'id numerico associato all'item e in base al suo
+				 * valore inserisce l'item all'interno della lista corretta
+				 */
+				long itemId = item.getItemID();
+
+				if (itemId <= categoriesMap.get("province"))
 				{
-					/*
-					 * Recupera il vero id in formato stringa dell'item dalla
-					 * map, lo setta all'interno dell'oggetto e lo salva nella
-					 * lista delle province
-					 */
-					if (entry.getValue().compareTo(itemId) == 0)
+					//trovato l'id di una provincia
+					for (Entry<String, Long> entry : itemsMap.entrySet())
 					{
-						String realId = entry.getKey();
+						/*
+						 * Recupera il vero id in formato stringa dell'item
+						 * dalla map, lo setta all'interno dell'oggetto e lo
+						 * salva nella lista delle province
+						 */
+						if (entry.getValue().compareTo(itemId) == 0)
+						{
+							String realId = entry.getKey();
 
-						CustomRecommendedItem customProvince = new CustomRecommendedItem(itemId, item.getValue(), 0, realId);
+							CustomRecommendedItem customProvince = new CustomRecommendedItem(itemId, item.getValue(), 0, realId);
 
-						provinceIdList.add(customProvince);
-						break;
+							provinceIdList.add(customProvince);
+							break;
+						}
+
 					}
 
 				}
 
-			}
-
-			else if (categoriesMap.get("province") < itemId && itemId <= categoriesMap.get("comuni"))
-			{
-				//trovato l'id di un comune
-				for (Entry<String, Long> entry : itemsMap.entrySet())
+				else if (categoriesMap.get("province") < itemId && itemId <= categoriesMap.get("comuni"))
 				{
-					if (entry.getValue().compareTo(itemId) == 0)
+					//trovato l'id di un comune
+					for (Entry<String, Long> entry : itemsMap.entrySet())
 					{
-						String realId = entry.getKey();
-						CustomRecommendedItem customMunicipality = new CustomRecommendedItem(itemId, item.getValue(), 0, realId);
-						municipalityIdList.add(customMunicipality);
-						break;
+						if (entry.getValue().compareTo(itemId) == 0)
+						{
+							String realId = entry.getKey();
+							CustomRecommendedItem customMunicipality = new CustomRecommendedItem(itemId, item.getValue(), 0, realId);
+							municipalityIdList.add(customMunicipality);
+							break;
+						}
+
+					}
+				}
+
+				else if (categoriesMap.get("comuni") < itemId && itemId <= categoriesMap.get("scuole"))
+				{
+					//trovato l'id di una scuola
+					for (Entry<String, Long> entry : itemsMap.entrySet())
+					{
+						if (entry.getValue().compareTo(itemId) == 0)
+						{
+							String realId = entry.getKey();
+							CustomRecommendedItem customSchool = new CustomRecommendedItem(itemId, item.getValue(), 0, realId);
+							schoolsIdList.add(customSchool);
+							break;
+						}
+
 					}
 
 				}
 			}
-
-			else if (categoriesMap.get("comuni") < itemId && itemId <= categoriesMap.get("scuole"))
-			{
-				//trovato l'id di una scuola
-				for (Entry<String, Long> entry : itemsMap.entrySet())
-				{
-					if (entry.getValue().compareTo(itemId) == 0)
-					{
-						String realId = entry.getKey();
-						CustomRecommendedItem customSchool = new CustomRecommendedItem(itemId, item.getValue(), 0, realId);
-						schoolsIdList.add(customSchool);
-						break;
-					}
-
-				}
-
-			}
+		} catch (NullPointerException e)
+		{
+			LOGGER.log(Level.SEVERE,"[" + RankingService.class.getName() + "] Cannot retrieve realID. File .csv missing.");
+			System.exit(1);
 		}
 
 		/*
 		 * a questo punto le tre liste sono state riempite, quindi si passa alla
 		 * classificazione
 		 */
-		printList(provinceIdList);
-		printList(municipalityIdList);
-		printList(schoolsIdList);
+
 		updateRankings();
 		LOGGER.info("[" + RankingService.class.getName() + "] Updating process for rankings terminated. Classification in progress.. ");
 
@@ -259,13 +265,13 @@ public class RankingService
 
 	private void printSortedLists()
 	{
-		LOGGER.info("\n----- PROVINCE -----");
+		LOGGER.info("\n----- PROVINCES -----");
 		printList(provinceIdList);
 
-		LOGGER.info("\n----- COMUNI -----");
+		LOGGER.info("\n----- MUNICIPALITIES -----");
 		printList(municipalityIdList);
 
-		LOGGER.info("\n----- SCUOLE -----");
+		LOGGER.info("\n----- SCHOOLS -----");
 		printList(schoolsIdList);
 
 	}
@@ -306,7 +312,7 @@ public class RankingService
 				}
 			} catch (SQLException e)
 			{
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName() + "] Cannot execute statement.");
 			}
 
 		}
@@ -338,7 +344,7 @@ public class RankingService
 				}
 			} catch (SQLException e)
 			{
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName() + "] Cannot execute statement.");
 			}
 		}
 	}
@@ -348,12 +354,10 @@ public class RankingService
 	 */
 	public void rankSchools()
 	{
-		System.out.println("comincio scuole");
 		for (CustomRecommendedItem school : schoolsIdList)
 		{
 
 			String realID = school.getRealID();
-			System.out.println("ESAMINO SCUOLA: " + realID);
 
 			/*
 			 * CLASSIFICAZIONE IN BASE ALLA POSIZIONE se la scuola trovata si
@@ -362,7 +366,6 @@ public class RankingService
 			 */
 			if (queryManager.isSchoolInRegion(userPosition, realID) == 0)
 			{
-				System.out.println("SI");
 				school.setRanking(school.getRanking() + 1);
 			}
 
@@ -380,7 +383,7 @@ public class RankingService
 
 			} catch (SQLException e)
 			{
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName() + "] Cannot execute statement.");
 			}
 
 			/*
@@ -391,15 +394,23 @@ public class RankingService
 			try
 			{
 
-				if (queryManager.isScoreMatchingTransfers(realID, teachingRole, score))
+				/*
+				 * Si esegue la query solo se è stato impostato uno score positivo all'avvio.
+				 * In questo modo si evita di eseguire query inutilmente.
+				 * 
+				 */
+				if (score > 0)
 				{
+					if (queryManager.isScoreMatchingTransfers(realID, teachingRole, score))
+					{
 
-					school.setRanking(school.getRanking() + 1);
+						school.setRanking(school.getRanking() + 1);
+					}
 				}
 
 			} catch (SQLException e)
 			{
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName() + "] Cannot execute statement.");
 			}
 
 			/*
@@ -411,12 +422,11 @@ public class RankingService
 			{
 				if (queryManager.freePositionAvailableAtSchool(realID, teachingRole) == true)
 				{
-					//		System.out.println("Posti disponibili nella scuola");
 					school.setRanking(school.getRanking() + 1);
 				}
 			} catch (SQLException e)
 			{
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName() + "] Cannot execute statement.");
 			}
 
 		}

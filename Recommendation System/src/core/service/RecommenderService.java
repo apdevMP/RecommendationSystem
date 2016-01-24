@@ -2,7 +2,6 @@ package core.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -11,7 +10,6 @@ import java.util.logging.Logger;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
 import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
-import org.apache.mahout.cf.taste.impl.neighborhood.ThresholdUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.EuclideanDistanceSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
@@ -25,7 +23,6 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 import core.data.CustomRecommendedItem;
 import core.data.UtilityMatrix;
-import core.persistence.GraphManager;
 import core.service.profile.Profile;
 import utils.Configuration;
 
@@ -56,6 +53,7 @@ public class RecommenderService
 	 * 
 	 * @param region
 	 */
+	@SuppressWarnings("unused")
 	public List<CustomRecommendedItem> recommendItems(String region)
 	{
 
@@ -69,34 +67,24 @@ public class RecommenderService
 		try
 		{
 			DataModel model = new FileDataModel(new File(userProfile.getId()+".csv"));
-			@SuppressWarnings("unused")
+			
 			UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
 			UserSimilarity similarity2 = new EuclideanDistanceSimilarity(model);
 			UserSimilarity similarity3 = new LogLikelihoodSimilarity(model);
 			UserSimilarity similarity4 = new TanimotoCoefficientSimilarity(model);
 			
-			UserNeighborhood nearestNeighborhood = new NearestNUserNeighborhood(40, similarity3, model);
-		//	UserNeighborhood threasholdNeighborhood = new ThresholdUserNeighborhood(10, similarity2, model);
-			 Recommender recommender = new GenericUserBasedRecommender(model, nearestNeighborhood, similarity3);
+			UserNeighborhood nearestNeighborhood = new NearestNUserNeighborhood(30, similarity3, model);
+			Recommender recommender = new GenericUserBasedRecommender(model, nearestNeighborhood, similarity4);
 
 
 			LOGGER.info("\n\n[" + RecommenderService.class.getName() + "] Starting recommender service..");
 
 			List<RecommendedItem> recommendedItems = recommender.recommend(userProfile.getId(),configuration.getRecommended_items() );
 
-			LOGGER.info("[" + RecommenderService.class.getName() + "] List of recommended items created");
+			LOGGER.info("[" + RecommenderService.class.getName() + "] List of recommended items created. Size: "+recommendedItems.size()+"\n");
 
-			/*
-			 * chiudo la connessione a Neo4j
-			 */
-//			GraphManager graphManager = GraphManager.getIstance();
-//			if(GraphManager.getIstance() != null){
-//				System.out.println("chiudo connessione");
-//				graphManager.closeConnection();
-//				
-//			}
 			
-			System.out.println("list size: "+recommendedItems.size()+"\n");
+			LOGGER.info("\n----- RECOMMENDATION LIST -----");
 			if (!recommendedItems.isEmpty())
 			{
 				for (RecommendedItem item : recommendedItems)
@@ -126,7 +114,6 @@ public class RecommenderService
 		} 
 
 		return finalList;
-		// System.exit(0);
 
 	}
 

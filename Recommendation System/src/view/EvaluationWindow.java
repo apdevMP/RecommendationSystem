@@ -28,8 +28,7 @@ public class EvaluationWindow
 	private JTextField				testTextField;
 	private JButton					btnStart;
 	private JLabel					scoreLabel, precisionLabel, recallLabel;
-	private JLabel label;
-	private JLabel label_1;
+
 
 
 	/**

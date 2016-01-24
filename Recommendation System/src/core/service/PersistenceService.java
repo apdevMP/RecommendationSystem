@@ -129,7 +129,7 @@ public class PersistenceService
 		try
 		{
 			municipality = graphManager.queryMunicipalityName(municipality_code);
-			System.out.println("sto qua");
+			
 
 		} catch (SQLTimeoutException e)
 		{
@@ -143,7 +143,6 @@ public class PersistenceService
 		// Se la stringa � null,restituisco non presente
 		if (municipality == null)
 		{
-			System.out.println("municipality null, restituisco 1");
 			return 1;
 		}
 		// Viene recuperato il documento avente il comune trovato in precedenza
@@ -172,7 +171,6 @@ public class PersistenceService
 	{
 		// recupero il documento che contiene il codice della scuola e verifico
 		// se esiste
-		System.out.println("vedo se la scuola è nella regione");
 		Document doc = dbManager.findDocWithSchool(school);
 		if (doc == null)
 			return 1;
@@ -180,14 +178,11 @@ public class PersistenceService
 		// recupero la regione dal documento ed effettuo il confronto tra
 		// stringhe
 		String documentRegion = doc.getString("regionName");
-		System.out.println("documentRegion=" + documentRegion);
 		if (documentRegion.equals(region))
 		{
-			System.out.println("ritorno 0");
 			return 0;
 		} else
 		{
-			System.out.println("ritorno 1");
 			return 1;
 		}
 	}
@@ -329,7 +324,6 @@ public class PersistenceService
 	 */
 	public boolean freePositionAvailableAtSchool(String schoolId, String teachingRole) throws SQLException
 	{
-		System.out.println("vedo se ci sono posizioni libere");
 
 		boolean available = false;
 
@@ -379,7 +373,6 @@ public class PersistenceService
 	 */
 	public boolean isSchoolQuotedForTeachingRole(String schoolId, String teachingRole) throws SQLException
 	{
-		System.out.println("vedo se c'è il teaching role");
 		if (graphManager.queryTeachingRoleInSchool(schoolId, teachingRole) > 0)
 			return true;
 		else
@@ -399,7 +392,6 @@ public class PersistenceService
 	public boolean isScoreMatchingTransfers(String schoolId, String teachingRole, Double score) throws SQLException
 	{
 
-		System.out.println("vedo se ci sono posti per il mio score");
 		if (graphManager.queryScoreMatching(schoolId, teachingRole, score) > 0)
 			return true;
 		else

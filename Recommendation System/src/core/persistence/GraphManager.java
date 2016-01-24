@@ -8,6 +8,8 @@ import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import utils.Configuration;
 
@@ -25,6 +27,7 @@ public class GraphManager
 	private Connection				connection;
 	private static GraphManager		manager			= null;
 	private static Configuration	configuration	= null;
+	private static final Logger			LOGGER	= Logger.getLogger(GraphManager.class.getName());
 
 	private GraphManager()
 	{
@@ -60,7 +63,7 @@ public class GraphManager
 
 	public void connectToGraph(String user, String password)
 	{
-		System.out.println("connessione a neo4j");
+		LOGGER.info("[" + GraphManager.class.getName() + "] Connecting to Neo4j..");
 
 		try
 		{
@@ -76,12 +79,11 @@ public class GraphManager
 
 		} catch (ClassNotFoundException e)
 		{
-
-			System.out.println("org.neo4j.jdbc.Driver not found");
+			LOGGER.log(Level.SEVERE, "[" + GraphManager.class.getName() + "]  org.neo4j.jdbc.Driver not found");
 			System.exit(1);
 		} catch (SQLException e)
 		{
-			System.out.println("Cannot get connection to Neo4j.");
+			LOGGER.log(Level.SEVERE, "[" + GraphManager.class.getName() + "]  Cannot connect to Neo4j");
 			System.exit(1);
 		}
 
