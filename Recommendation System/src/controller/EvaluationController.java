@@ -35,7 +35,7 @@ import view.EvaluationWindow;
  * Claase Controller nell'ambito del pattern MVC che gestisce
  * {@link EvaluationWindow}
  * 
- * @author Andrea
+ * @author apdev
  * 
  */
 public class EvaluationController {
