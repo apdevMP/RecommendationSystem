@@ -4,26 +4,29 @@ import java.util.List;
 
 import core.data.UtilityMatrixPreference;
 
-
-
+/**
+ * Classe che contiene metodi di utilità
+ * 
+ * @author apdev
+ * 
+ */
 public class Utils {
 
 	/**
-	 * Calcola il valore da assegnare all'interno della matrice
+	 * Calcola il valore da assegnare all'{@link UtilityMatrixPreference}
 	 * 
-	 * @param score
-	 * @param userScore
 	 * @param eventType
+	 *            tipologia di evento
 	 * @return valore calcolato
 	 */
 	public static int computeValue(long eventType) {
 		int value = 0;
 
-		//watch rimosso
+		// watch rimosso
 		if (eventType == 2) {
 			value = 0;
 		}
-		//watch aggiunto
+		// watch aggiunto
 		if (eventType == 1) {
 			value = 2;
 		}
@@ -33,12 +36,15 @@ public class Utils {
 		}
 		return value;
 	}
+
 	/**
 	 * Metodo che restituisce il massimo tra {@code a} e {@code b}
 	 * 
 	 * @param a
+	 *            valore intero
 	 * @param b
-	 * @return max
+	 *            valore intero
+	 * @return max valore massimo
 	 */
 	public static int getMax(int a, int b) {
 		if (a > b)
