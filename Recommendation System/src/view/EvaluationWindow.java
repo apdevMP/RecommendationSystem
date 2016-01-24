@@ -15,36 +15,37 @@ import javax.swing.JButton;
 import controller.EvaluationController;
 import java.awt.Font;
 
-public class EvaluationWindow
-{
+/**
+ * Classe per la gestione della GUI per la valutazione del Recommender
+ * 
+ * @author apdev
+ * 
+ */
+public class EvaluationWindow {
 
-	private JFrame					frame;
-	private JComboBox<String>		similarityComboBox;
-	private JComboBox<String>		neighborhoodComboBox;
-	public static final String[]	similarityArray		= { "Pearson Correlation Similarity", "Euclidean Distance Similarity",
+	private JFrame frame;
+	private JComboBox<String> similarityComboBox;
+	private JComboBox<String> neighborhoodComboBox;
+	public static final String[] similarityArray = {
+			"Pearson Correlation Similarity", "Euclidean Distance Similarity",
 			"Tanimoto Coefficient Similarity", "Log Likelihood Similarity" };
-	public static final String[]	neighborhoodArray	= { "ThresholdUserNeighborhood", "NearestNUserNeighborhood" };
-	private JTextField				trainingTextField;
-	private JTextField				testTextField;
-	private JButton					btnStart;
-	private JLabel					scoreLabel, precisionLabel, recallLabel;
-
-
+	public static final String[] neighborhoodArray = {
+			"ThresholdUserNeighborhood", "NearestNUserNeighborhood" };
+	private JTextField trainingTextField;
+	private JTextField testTextField;
+	private JButton btnStart;
+	private JLabel scoreLabel, precisionLabel, recallLabel;
 
 	/**
-	 * Launch the application.
+	 * Lancia l'applicazione
 	 */
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
-			public void run()
-			{
-				try
-				{
+			public void run() {
+				try {
 					EvaluationWindow window = new EvaluationWindow();
 					window.frame.setVisible(true);
-				} catch (Exception e)
-				{
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -52,27 +53,23 @@ public class EvaluationWindow
 	}
 
 	/**
-	 * Create the application.
+	 * Costruttore di default
 	 */
-	public EvaluationWindow()
-	{
+	public EvaluationWindow() {
 		initialize();
 		EvaluationController controller = new EvaluationController(this);
-		try
-		{
+		try {
 			controller.evaluate();
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Inizializza il contenuto dei frame
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void initialize()
-	{
+	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 495, 341);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,7 +78,8 @@ public class EvaluationWindow
 		JPanel panel = new JPanel();
 		panel.setBounds(6, 6, 277, 307);
 		panel.setLayout(null);
-		panel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Evaluation parameters", TitledBorder.LEADING,
+		panel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED,
+				null, null), "Evaluation parameters", TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
 		frame.getContentPane().add(panel);
 
@@ -128,8 +126,9 @@ public class EvaluationWindow
 		JPanel panelScore = new JPanel();
 		panelScore.setBounds(295, 28, 194, 271);
 		panelScore.setLayout(null);
-		panelScore.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Evaluation", TitledBorder.LEADING, TitledBorder.TOP,
-				null, null));
+		panelScore.setBorder(new TitledBorder(new EtchedBorder(
+				EtchedBorder.LOWERED, null, null), "Evaluation",
+				TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		frame.getContentPane().add(panelScore);
 
 		scoreLabel = new JLabel();
@@ -138,163 +137,192 @@ public class EvaluationWindow
 		scoreLabel.setBounds(18, 59, 158, 16);
 		scoreLabel.setText("...");
 		panelScore.add(scoreLabel);
-		
+
 		precisionLabel = new JLabel();
 		precisionLabel.setText("...");
 		precisionLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		precisionLabel.setFont(new Font("Arial", Font.PLAIN, 13));
 		precisionLabel.setBounds(18, 134, 158, 16);
 		panelScore.add(precisionLabel);
-		
+
 		recallLabel = new JLabel();
 		recallLabel.setText("...");
 		recallLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		recallLabel.setFont(new Font("Arial", Font.PLAIN, 13));
 		recallLabel.setBounds(18, 222, 158, 16);
 		panelScore.add(recallLabel);
-		
+
 		JLabel lblScore = new JLabel("Score");
 		lblScore.setBounds(78, 31, 39, 16);
 		panelScore.add(lblScore);
-		
+
 		JLabel lblPrecision = new JLabel("Precision");
 		lblPrecision.setBounds(67, 106, 57, 16);
 		panelScore.add(lblPrecision);
-		
+
 		JLabel lblRecall = new JLabel("Recall");
 		lblRecall.setBounds(78, 194, 39, 16);
 		panelScore.add(lblRecall);
 
 	}
 
-	public int getSimilarity()
-	{
+	/**
+	 * Recupera la tipologia similarità
+	 * 
+	 * @return tipologia di similarità
+	 */
+	public int getSimilarity() {
 
 		int choice;
-		switch (similarityComboBox.getSelectedItem().toString())
-		{
-			case "Pearson Correlation Similarity":
-				choice = 0;
-				break;
-				
-			case "Euclidean Distance Similarity":
-				choice = 1;
-				break;
+		switch (similarityComboBox.getSelectedItem().toString()) {
+		case "Pearson Correlation Similarity":
+			choice = 0;
+			break;
 
-			case "Tanimoto Coefficient Similarity":
-				choice = 2;
-				break;
+		case "Euclidean Distance Similarity":
+			choice = 1;
+			break;
 
-			case "Log Likelihood Similarity":
-				choice = 3;
-				break;
+		case "Tanimoto Coefficient Similarity":
+			choice = 2;
+			break;
 
-			default:
-				choice = 1;
-				break;
+		case "Log Likelihood Similarity":
+			choice = 3;
+			break;
+
+		default:
+			choice = 1;
+			break;
 		}
 		return choice;
 
 	}
-	
-	public int getNeighborhood(){
-		int choice;
-		switch (neighborhoodComboBox.getSelectedItem().toString())
-		{
-			case "ThresholdUserNeighborhood":
-				choice = 0;
-				break;
-				
-			case "NearestNUserNeighborhood":	
-				choice = 1;
-				break;
 
-			default:
-				choice =0;
-				break;
+	/**
+	 * Recupera la tipologia di neighborhood
+	 * 
+	 * @return tipologia di neighborhood
+	 */
+	public int getNeighborhood() {
+		int choice;
+		switch (neighborhoodComboBox.getSelectedItem().toString()) {
+		case "ThresholdUserNeighborhood":
+			choice = 0;
+			break;
+
+		case "NearestNUserNeighborhood":
+			choice = 1;
+			break;
+
+		default:
+			choice = 0;
+			break;
 		}
 		return choice;
 	}
 
-	public Double getTrainingSet()
-	{
+	/**
+	 * Recupera il trainingSet
+	 * 
+	 * @return trainingSet
+	 */
+	public Double getTrainingSet() {
 		return Double.parseDouble(trainingTextField.getText());
 	}
 
-	public Double getTestSet()
-	{
+	/**
+	 * Recupera il testSet
+	 * 
+	 * @return testSet
+	 */
+	public Double getTestSet() {
 		return Double.parseDouble(testTextField.getText());
 	}
 
 	/**
-	 * @return the frame
+	 * Recupera il frame
+	 * 
+	 * @return frame
 	 */
-	public JFrame getFrame()
-	{
+	public JFrame getFrame() {
 		return frame;
 	}
 
 	/**
-	 * @return the btnStart
+	 * Recupera il bottone di avvio
+	 * 
+	 * @return bottone di avvio
 	 */
-	public JButton getBtnStart()
-	{
+	public JButton getBtnStart() {
 		return btnStart;
 	}
 
 	/**
-	 * @param btnStart the btnStart to set
+	 * Imposta {@code btnStart} come bottone di avvio
+	 * 
+	 * @param btnStart
+	 *            bottone da settare
 	 */
-	public void setBtnStart(JButton btnStart)
-	{
+	public void setBtnStart(JButton btnStart) {
 		this.btnStart = btnStart;
 	}
 
 	/**
-	 * @return the scoreLabel
+	 * Recupera la label dedicata al puntegio
+	 * 
+	 * @return label del punteggio
 	 */
-	public JLabel getScoreLabel()
-	{
+	public JLabel getScoreLabel() {
 		return scoreLabel;
 	}
 
 	/**
-	 * @param scoreLabel the scoreLabel to set
+	 * Imposta {@code scoreLabel} come label per il punteggio
+	 * 
+	 * @param scoreLabel
+	 *            label da impostare
 	 */
-	public void setScoreLabel(JLabel scoreLabel)
-	{
+	public void setScoreLabel(JLabel scoreLabel) {
 		this.scoreLabel = scoreLabel;
 	}
 
 	/**
-	 * @return the precisionLabel
+	 * Recupera la label dedicata alla precisione
+	 * 
+	 * @return label per la precisione
 	 */
-	public JLabel getPrecisionLabel()
-	{
+	public JLabel getPrecisionLabel() {
 		return precisionLabel;
 	}
 
 	/**
-	 * @param precisionLabel the precisionLabel to set
+	 * Imposta {@code precisionLabel} come label per la precisione
+	 * 
+	 * @param precisionLabel
+	 *            label da impostare
 	 */
-	public void setPrecisionLabel(JLabel precisionLabel)
-	{
+	public void setPrecisionLabel(JLabel precisionLabel) {
 		this.precisionLabel = precisionLabel;
 	}
 
 	/**
-	 * @return the recallLabel
+	 * Recupera la label dedicata al punteggio della recall
+	 * 
+	 * @return label per la recall
 	 */
-	public JLabel getRecallLabel()
-	{
+	public JLabel getRecallLabel() {
 		return recallLabel;
 	}
 
 	/**
-	 * @param recallLabel the recallLabel to set
+	 * Imposta {@code recallLabel} come label dedicata all puntteggio della
+	 * recall
+	 * 
+	 * @param recallLabel
+	 *            label da impostare
 	 */
-	public void setRecallLabel(JLabel recallLabel)
-	{
+	public void setRecallLabel(JLabel recallLabel) {
 		this.recallLabel = recallLabel;
 	}
 }
