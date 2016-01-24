@@ -243,39 +243,7 @@ public class PersistenceService
 
 	}
 
-	/**
-	 * Recupera il profilo dell'utente dal db o altrimenti ne crea uno
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public Profile retrieveProfile(long id, String teachingRole, double score, String position)
-	{
-		Profile profile = null;
-
-		Document doc = dbManager.retrieveProfile(id);
-		if (doc == null)
-		{
-			profile = Profile.createProfile(id, teachingRole, score, position);
-			this.saveProfile(profile);
-		} else
-		{
-			String profileString = doc.toJson();
-			Gson gson = new Gson();
-			profile = gson.fromJson(profileString, Profile.class);
-
-		}
-		return profile;
-	}
-
-	public void saveProfile(Profile profile)
-	{
-		Gson gson = new Gson();
-		String jsonProfile = gson.toJson(profile);
-		Document document = Document.parse(jsonProfile);
-
-		dbManager.saveProfile(document);
-	}
+	
 
 	/**
 	 * Recupera il codice identificativo della provincia passata per argomento,

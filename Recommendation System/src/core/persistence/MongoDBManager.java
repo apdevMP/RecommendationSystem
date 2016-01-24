@@ -245,26 +245,7 @@ public class MongoDBManager {
 		return iterable;
 	}
 
-	/**
-	 * Recupera il profilo dell'utente all'interno del sistema
-	 * 
-	 * @param id
-	 * @return profilo utente, altrimenti null
-	 */
-	public Document retrieveProfile(long id) {
-		MongoCollection<Document> collection = getCollectionByName(configuration
-				.getProfile_collection());
-		Document document = collection.find(new Document("id", id)).first();
-		return document;
-	}
 
-	public void saveProfile(Document doc) {
-
-		MongoCollection<Document> collection = getCollectionByName(configuration
-				.getProfile_collection());
-		collection.insertOne(doc);
-		System.out.println("salvato document");
-	}
 
 	/**
 	 * Recupera una lista di documenti dai Watches insegnata

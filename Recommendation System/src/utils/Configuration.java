@@ -20,7 +20,6 @@ public class Configuration
 	private String					municipalities_collection;
 	private String					school_collection;
 	private String					watches_collection;
-	private String					profile_collection;
 	private String					neo_username;
 	private String					neo_password;
 	private String					neo_server_address;
@@ -162,22 +161,6 @@ public class Configuration
 	public void setWatches_collection(String watches_collection)
 	{
 		this.watches_collection = watches_collection;
-	}
-
-	/**
-	 * @return the profile_collection
-	 */
-	public String getProfile_collection()
-	{
-		return profile_collection;
-	}
-
-	/**
-	 * @param profile_collection the profile_collection to set
-	 */
-	public void setProfile_collection(String profile_collection)
-	{
-		this.profile_collection = profile_collection;
 	}
 
 	/**
@@ -323,7 +306,7 @@ public class Configuration
 		return "Configuration [getMongo_server_address()=" + getMongo_server_address() + ", getMongo_port()=" + getMongo_port()
 				+ ", getMongodb_name()=" + getMongodb_name() + ", getLog_collection()=" + getLog_collection() + ", getMunicipalities_collection()="
 				+ getMunicipalities_collection() + ", getSchool_collection()=" + getSchool_collection() + ", getWatches_collection()="
-				+ getWatches_collection() + ", getProfile_collection()=" + getProfile_collection() + ", getNeo_username()=" + getNeo_username()
+				+ getWatches_collection() + ", getNeo_username()=" + getNeo_username()
 				+ ", getNeo_password()=" + getNeo_password() + ", getNeo_server_address()=" + getNeo_server_address() + ", getNeo_port()="
 				+ getNeo_port() + "]";
 	}
