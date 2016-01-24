@@ -14,25 +14,26 @@ import java.util.logging.Logger;
 import utils.Configuration;
 
 /**
- * @author Vanessa
+ * Classe per la gestione delle connessioni e delle query al grafo di neo4j.
+ * Implementato come singleton per una corretta gestione delle connessioni.
  * 
- * Classe GraphManager per la gestione delle connessioni e delle query al db di
- * neo4j. Implementato come singleton per una corretta gestione delle
- * connessioni. 
- *
+ * 
+ * @author apdev
+ * 
  */
-public class GraphManager
-{
+public class GraphManager {
 
-	private Connection				connection;
-	private static GraphManager		manager			= null;
-	private static Configuration	configuration	= null;
-	private static final Logger			LOGGER	= Logger.getLogger(GraphManager.class.getName());
+	private Connection connection;
+	private static GraphManager manager = null;
+	private static Configuration configuration = null;
+	private static final Logger LOGGER = Logger.getLogger(GraphManager.class
+			.getName());
 
-	private GraphManager()
-	{
-		if (configuration == null)
-		{
+	/**
+	 * Costruttore di default
+	 */
+	private GraphManager() {
+		if (configuration == null) {
 			configuration = Configuration.getIstance();
 
 		}
@@ -42,62 +43,75 @@ public class GraphManager
 	}
 
 	/**
-	 * Restituisce l'stanza del manager del database di Neo4j
+	 * Restituisce l'istanza di {@link GraphManager} di Neo4j
 	 * 
 	 * @return
 	 */
-	public static GraphManager getIstance()
-	{
+	public static GraphManager getIstance() {
 
-		//Se l'istanza è nulla ne crea una altrimenti la restituisce
+		// Se l'istanza è nulla ne crea una altrimenti la restituisce
 
-		if (manager == null)
-		{
-			//	System.out.println("manager è null");
+		if (manager == null) {
 			manager = new GraphManager();
 		}
-		//	else System.out.println("manager non è null");
 		return manager;
 
 	}
 
-	public void connectToGraph(String user, String password)
-	{
-		LOGGER.info("[" + GraphManager.class.getName() + "] Connecting to Neo4j..");
+	/**
+	 * Effettua la connessione al grafo di Neo4j mediante l'accesso tramite
+	 * credenziali
+	 * 
+	 * @param user
+	 *            usename di accesso
+	 * @param password
+	 *            password di accesso
+	 */
+	public void connectToGraph(String user, String password) {
+		LOGGER.info("[" + GraphManager.class.getName()
+				+ "] Connecting to Neo4j..");
 
-		try
-		{
+		try {
 			// Make sure Neo4j Driver is registered
 			Class.forName("org.neo4j.jdbc.Driver");
-			//Authentication
+			// Authentication
 			Properties properties = new Properties();
 			properties.put("user", user);
 			properties.put("password", password);
-			connection = DriverManager.getConnection("jdbc:neo4j://" + configuration.getNeo_server_address() + ":" + configuration.getNeo_port()
-					+ "/", properties);
+			connection = DriverManager.getConnection("jdbc:neo4j://"
+					+ configuration.getNeo_server_address() + ":"
+					+ configuration.getNeo_port() + "/", properties);
 			connection.clearWarnings();
 
-		} catch (ClassNotFoundException e)
-		{
-			LOGGER.log(Level.SEVERE, "[" + GraphManager.class.getName() + "]  org.neo4j.jdbc.Driver not found");
+		} catch (ClassNotFoundException e) {
+			LOGGER.log(Level.SEVERE, "[" + GraphManager.class.getName()
+					+ "]  org.neo4j.jdbc.Driver not found");
 			System.exit(1);
-		} catch (SQLException e)
-		{
-			LOGGER.log(Level.SEVERE, "[" + GraphManager.class.getName() + "]  Cannot connect to Neo4j");
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "[" + GraphManager.class.getName()
+					+ "]  Cannot connect to Neo4j");
 			System.exit(1);
 		}
 
 	}
 
-	public String queryMunicipalityCodeFromSchool(String schoolId) throws SQLException
-	{
+	/**
+	 * Recupera il codice del comune dal nome della scuola
+	 * 
+	 * @param schoolId
+	 *            id della scuola
+	 * @return id del comune
+	 * @throws SQLException
+	 */
+	public String queryMunicipalityCodeFromSchool(String schoolId)
+			throws SQLException {
 		Statement stmt = connection.createStatement();
 
-		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'}) RETURN n.municipalityCode LIMIT 1");
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId
+				+ "'}) RETURN n.municipalityCode LIMIT 1");
 		stmt.setQueryTimeout(3);
 		String municipalityCode = null;
-		while (rs.next())
-		{
+		while (rs.next()) {
 			String appString = rs.getString("n.municipalityCode");
 			if (appString != null)
 				municipalityCode = appString;
@@ -106,14 +120,22 @@ public class GraphManager
 		return municipalityCode;
 	}
 
-	public String queryProvinceCodeFromSchool(String schoolId) throws SQLException
-	{
+	/**
+	 * Recupera la provincia data una scuola
+	 * 
+	 * @param schoolId
+	 *            id della scuola
+	 * @return id del comune
+	 * @throws SQLException
+	 */
+	public String queryProvinceCodeFromSchool(String schoolId)
+			throws SQLException {
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(3);
-		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'}) RETURN n.provinceCode LIMIT 1");
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId
+				+ "'}) RETURN n.provinceCode LIMIT 1");
 		String provinceCode = null;
-		while (rs.next())
-		{
+		while (rs.next()) {
 			String appString = rs.getString("n.provinceCode");
 			if (appString != null)
 				provinceCode = appString;
@@ -123,24 +145,34 @@ public class GraphManager
 	}
 
 	/**
-	 * 
 	 * Controlla il numero di posti liberi per il dato teachingRole all'interno
 	 * di una provincia, come differenza tra il numero di trasferimenti in
 	 * uscita e in entrata. Se tale differenza è maggiore di 0 allora la
 	 * provincia ha scuole con posti liberi per quella materia di insegnamento
 	 * 
-	 * @param
+	 * @param provinceCode
+	 *            codice della provincia
+	 * @param teachingRole
+	 *            materia insegnata
+	 * @return true se ci sono posti liberi,false altrimenti
 	 * @throws SQLException
 	 */
-	public boolean queryFreePositionInProvince(String provinceCode, String teachingRole) throws SQLException
-	{
+	public boolean queryFreePositionInProvince(String provinceCode,
+			String teachingRole) throws SQLException {
 
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(3);
 
-		ResultSet rs = stmt.executeQuery("MATCH (n:School {provinceCode:'" + provinceCode + "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'"
-				+ teachingRole + "'}]->()) as outgoing," + " size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]-()) as incoming,"
-				+ " n WHERE (outgoing-incoming)>0 RETURN (outgoing - incoming) as freePositions LIMIT 1");
+		ResultSet rs = stmt
+				.executeQuery("MATCH (n:School {provinceCode:'"
+						+ provinceCode
+						+ "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'"
+						+ teachingRole
+						+ "'}]->()) as outgoing,"
+						+ " size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'"
+						+ teachingRole
+						+ "'}]-()) as incoming,"
+						+ " n WHERE (outgoing-incoming)>0 RETURN (outgoing - incoming) as freePositions LIMIT 1");
 		/*
 		 * la query restituisce un unico risultato nel caso in cui esso sia
 		 * positivo, altrimenti l'insieme sarà vuoto e il che vorrà dire che non
@@ -148,11 +180,9 @@ public class GraphManager
 		 */
 
 		boolean freePositionAvailable = false;
-		while (rs.next())
-		{
+		while (rs.next()) {
 
-			if (rs.getInt("freePositions") > 0)
-			{
+			if (rs.getInt("freePositions") > 0) {
 				freePositionAvailable = true;
 			}
 
@@ -163,25 +193,34 @@ public class GraphManager
 	}
 
 	/**
-	 * 
 	 * Controlla il numero di posti liberi per il dato teachingRole all'interno
 	 * di un comune, come differenza tra il numero di trasferimenti in uscita e
 	 * in entrata. Se tale differenza è maggiore di 0 allora il comune ha scuole
 	 * con posti liberi per quella materia di insegnamento
 	 * 
-	 * @param
+	 * @param municipalityCode
+	 *            codice del comune
+	 * @param teachingRole
+	 *            materia insegnata
+	 * @return true se ci sono posti liberi,false altrimenti
 	 * @throws SQLException
 	 */
-	public boolean queryFreePositionInMunicipality(String municipalityCode, String teachingRole) throws SQLException
-	{
+	public boolean queryFreePositionInMunicipality(String municipalityCode,
+			String teachingRole) throws SQLException {
 
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(3);
 
-		ResultSet rs = stmt.executeQuery("MATCH (n:School {municipalityCode:'" + municipalityCode
-				+ "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]->()) as outgoing,"
-				+ " size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]-()) as incoming,"
-				+ " n WHERE (outgoing-incoming)>0 RETURN (outgoing - incoming) as freePositions LIMIT 1"); 
+		ResultSet rs = stmt
+				.executeQuery("MATCH (n:School {municipalityCode:'"
+						+ municipalityCode
+						+ "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'"
+						+ teachingRole
+						+ "'}]->()) as outgoing,"
+						+ " size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'"
+						+ teachingRole
+						+ "'}]-()) as incoming,"
+						+ " n WHERE (outgoing-incoming)>0 RETURN (outgoing - incoming) as freePositions LIMIT 1");
 
 		/*
 		 * la query restituisce un unico risultato nel caso in cui esso sia
@@ -190,11 +229,9 @@ public class GraphManager
 		 */
 
 		boolean freePositionAvailable = false;
-		while (rs.next())
-		{
+		while (rs.next()) {
 
-			if (rs.getInt("freePositions") > 0)
-			{
+			if (rs.getInt("freePositions") > 0) {
 				freePositionAvailable = true;
 			}
 
@@ -206,28 +243,29 @@ public class GraphManager
 	}
 
 	/**
-	 * Controlla se una scuola prevede il teachingRole passato per argomento
+	 * Controlla se una scuola preveda il teachingRole passato per argomento
 	 * come ruolo di insegnamento al suo interno. Si presume che, se ci sono
 	 * stati trasferimenti in uscita per quel ruolo, allora la scuola risponda
 	 * al requisito.
 	 * 
-	 * @param schoolId id della scuola
+	 * @param schoolId
+	 *            id della scuola
 	 * @return true se la scuola ha posti liberi per l'area di insegnamento
-	 * specificata
+	 *         specificata
 	 * @throws SQLException
 	 */
-	public int queryTeachingRoleInSchool(String schoolId, String teachingRole) throws SQLException
-	{
+	public int queryTeachingRoleInSchool(String schoolId, String teachingRole)
+			throws SQLException {
 
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(3);
 		int numberOfResults = 0;
 
-		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'})-[r:TRANSFER_MAIN]->() WHERE r.teachingRoleArea = '"
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId
+				+ "'})-[r:TRANSFER_MAIN]->() WHERE r.teachingRoleArea = '"
 				+ teachingRole + "' RETURN count(r) as numberOfResults");
 
-		while (rs.next())
-		{
+		while (rs.next()) {
 
 			numberOfResults += rs.getInt("numberOfResults");
 
@@ -244,23 +282,26 @@ public class GraphManager
 	 * uguale)
 	 * 
 	 * @param schoolId
+	 *            id della scuola
 	 * @param teachingRole
+	 *            materia insegnata
 	 * @param score
+	 *            punteggio dell'utente
 	 * @return
 	 * @throws SQLException
 	 */
-	public int queryScoreMatching(String schoolId, String teachingRole, Double score) throws SQLException
-	{
+	public int queryScoreMatching(String schoolId, String teachingRole,
+			Double score) throws SQLException {
 
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(3);
 		int numberOfResults = 0;
 
-		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'})-[r:TRANSFER_MAIN]->() WHERE r.teachingRoleArea = '"
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId
+				+ "'})-[r:TRANSFER_MAIN]->() WHERE r.teachingRoleArea = '"
 				+ teachingRole + "' RETURN r.score as resultScore");
 
-		while (rs.next())
-		{
+		while (rs.next()) {
 
 			Double resultScore = rs.getDouble("resultScore");
 			if (resultScore <= score)
@@ -269,7 +310,7 @@ public class GraphManager
 		}
 
 		stmt.closeOnCompletion();
-		//ritorna il numero di matching per la condizione specificata
+		// ritorna il numero di matching per la condizione specificata
 		return numberOfResults;
 
 	}
@@ -282,24 +323,29 @@ public class GraphManager
 	 * 
 	 * 
 	 * @param schoolId
+	 *            id della scuola
 	 * @param teachingRole
-	 * @return
+	 *            materia insegnata
+	 * @return true se ci sono posti liberi, false altrimenti
 	 * @throws SQLException
 	 */
-	public int queryFreePositionsInSchool(String schoolId, String teachingRole) throws SQLException
-	{
+	public int queryFreePositionsInSchool(String schoolId, String teachingRole)
+			throws SQLException {
 
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(3);
 		int numberOfResults = 0;
 
-		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId + "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'"
-				+ teachingRole + "'}]->()) as outgoing," + " size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'" + teachingRole + "'}]-()) as incoming,"
+		ResultSet rs = stmt.executeQuery("MATCH (n:School {code:'" + schoolId
+				+ "'}) WITH size((n)-[:TRANSFER_MAIN {teachingRoleArea:'"
+				+ teachingRole + "'}]->()) as outgoing,"
+				+ " size((n)<-[:TRANSFER_MAIN {teachingRoleArea:'"
+				+ teachingRole + "'}]-()) as incoming,"
 				+ " n RETURN (outgoing - incoming) as freePositions");
 
-		//se ci sono stati trasferimenti in uscita per quel teachingRole, allora restituisce true
-		while (rs.next())
-		{
+		// se ci sono stati trasferimenti in uscita per quel teachingRole,
+		// allora restituisce true
+		while (rs.next()) {
 			numberOfResults += rs.getInt("freePositions");
 		}
 
@@ -307,27 +353,29 @@ public class GraphManager
 		return numberOfResults;
 	}
 
-
 	/**
 	 * Recupera il nome del comune a partire dal codice identificativo e lo
 	 * restituisce
 	 * 
 	 * @param municipalityCode
-	 * @return
+	 *            codice del comune
+	 * @return nome del comune
 	 * @throws SQLException
 	 */
-	public String queryMunicipalityName(String municipalityCode) throws SQLException, SQLTimeoutException
-	{
+	public String queryMunicipalityName(String municipalityCode)
+			throws SQLException, SQLTimeoutException {
 
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(3);
 		stmt.closeOnCompletion();
 
-		ResultSet rs = stmt.executeQuery("MATCH (n:School) WHERE n.municipalityCode = '" + municipalityCode + "' RETURN n.municipalityName LIMIT 1");
+		ResultSet rs = stmt
+				.executeQuery("MATCH (n:School) WHERE n.municipalityCode = '"
+						+ municipalityCode
+						+ "' RETURN n.municipalityName LIMIT 1");
 
 		String municipality = null;
-		while (rs.next())
-		{
+		while (rs.next()) {
 			String appString = rs.getString("n.municipalityName");
 			if (appString != null)
 				municipality = appString;
@@ -337,19 +385,24 @@ public class GraphManager
 	}
 
 	/**
+	 * Recupera l'id del comune dato il codice del comune
+	 * 
 	 * @param municipalityCode
-	 * @return
+	 *            codice del comune
+	 * @return ide del comune
 	 * @throws SQLException
 	 */
-	public long queryMunicipalityId(String municipalityCode) throws SQLException
-	{
+	public long queryMunicipalityId(String municipalityCode)
+			throws SQLException {
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(3);
 
-		ResultSet rs = stmt.executeQuery("MATCH (n:School) WHERE n.municipalityCode = '" + municipalityCode + "' RETURN n.municipalityId LIMIT 1");
+		ResultSet rs = stmt
+				.executeQuery("MATCH (n:School) WHERE n.municipalityCode = '"
+						+ municipalityCode
+						+ "' RETURN n.municipalityId LIMIT 1");
 		long municipalityId = 0;
-		while (rs.next())
-		{
+		while (rs.next()) {
 			long appString = rs.getLong("n.municipalityId");
 			if (appString != 0)
 				municipalityId = appString;
@@ -357,18 +410,23 @@ public class GraphManager
 		return municipalityId;
 	}
 
-	public ArrayList<String> retrieveClassCodes() throws SQLException
-	{
+	/**
+	 * Recupera tutti i codici delle materie insegnate
+	 * 
+	 * @return lista delle materie insegnate
+	 * @throws SQLException
+	 */
+	public ArrayList<String> retrieveClassCodes() throws SQLException {
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(3);
 		ArrayList<String> classCodeStrings = new ArrayList<>();
 
-		//dato che in un comune il numero di scuole è limitato,per ora le visualizziamo tutte nella classifica
+		// dato che in un comune il numero di scuole è limitato,per ora le
+		// visualizziamo tutte nella classifica
 		ResultSet rs = stmt
 				.executeQuery("MATCH (n) WHERE has(n.teachingRoleArea) RETURN DISTINCT \"node\" as element, n.teachingRoleArea AS teachingRoleArea LIMIT 25 UNION ALL MATCH ()-[r]-() WHERE has(r.teachingRoleArea) RETURN DISTINCT \"relationship\" AS element, r.teachingRoleArea AS teachingRoleArea");
 
-		while (rs.next())
-		{
+		while (rs.next()) {
 
 			classCodeStrings.add(rs.getString("teachingRoleArea"));
 
@@ -376,8 +434,12 @@ public class GraphManager
 		return classCodeStrings;
 	}
 
-	public void closeConnection() throws SQLException
-	{
+	/**
+	 * Chiude la connessione col grafo di Neo4j
+	 * 
+	 * @throws SQLException
+	 */
+	public void closeConnection() throws SQLException {
 		connection.close();
 		manager = null;
 
