@@ -6,6 +6,8 @@ import java.io.PrintStream;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bson.Document;
 
@@ -25,6 +27,7 @@ public class PersistenceService
 
 	private MongoDBManager	dbManager;
 	private GraphManager	graphManager;
+	private static final Logger			LOGGER	= Logger.getLogger(PersistenceService.class.getName());
 
 	// private static Configuration configuration = null;
 
@@ -136,8 +139,7 @@ public class PersistenceService
 			return 1;
 		} catch (SQLException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "[" + PersistenceService.class.getName() + "] Cannot execute statement.");
 		}
 
 		// Se la stringa � null,restituisco non presente
@@ -208,8 +210,7 @@ public class PersistenceService
 			fos = new FileOutputStream("azioni.txt");
 		} catch (FileNotFoundException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "[" + PersistenceService.class.getName() + "] Cannot find file azioni.txt .");
 		}
 		@SuppressWarnings("resource")
 		PrintStream write = new PrintStream(fos);
@@ -305,11 +306,9 @@ public class PersistenceService
 			id = graphManager.queryMunicipalityId(municipalityCode);
 		} catch (SQLException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "[" + PersistenceService.class.getName() + "] Cannot execute statement.");
 		}
 
-		//
 		return id;
 	}
 
