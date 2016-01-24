@@ -79,7 +79,7 @@ public class Controller {
 				 * Crea il profilo dell'utente sul quale si effettua la
 				 * raccomandazione
 				 */
-				Profile userProfile = ProfileService.createProfile(
+				Profile userProfile = ProfileService.factoryProfile(
 						configuration.getUserId(), teachingRole, score, region);
 
 				LOGGER.info("[" + Controller.class.getName()

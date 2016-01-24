@@ -42,15 +42,19 @@ public class ProfileService {
 	private static final int SCHOOL_ID = 3;
 
 	/**
-	 * Metodo statico per la creazione del profilo
+	 * Metodo statico per la creazione di {@link Profile}
 	 * 
 	 * @param id
+	 *            id utente
 	 * @param teachingRole
+	 *            materia insegnata
 	 * @param score
+	 *            punteggion in graduatoria dell'utente
 	 * @param position
-	 * @return
+	 *            regione di provenienza dell'utente
+	 * @return profilo utente
 	 */
-	public static Profile createProfile(long id, String teachingRole,
+	public static Profile factoryProfile(long id, String teachingRole,
 			double score, String position) {
 
 		/* Istanzia il profilo passandogli gli opportuni parametri */
@@ -63,9 +67,10 @@ public class ProfileService {
 	}
 
 	/**
-	 * Riempie la lista di preferenze del profilo
+	 * Riempie la lista di {@link UtilityMatrixPreference} del profilo
 	 * 
 	 * @param profile
+	 *            profilo utente
 	 */
 	private static void fillListOfUserPreference(Profile profile) {
 		/* Si istanzia il QueryManager e si richiamano gli opportuni metodi */
@@ -88,19 +93,25 @@ public class ProfileService {
 	}
 
 	/**
-	 * Riempie la lista del profilo utente con le preferenze dei Watch
+	 * Riempie la lista del profilo utente con le preferenze provenienti dal Log
+	 * di navigazione
 	 * 
 	 * @param profile
+	 *            profilo utente
 	 * @param logByIdLists
+	 *            lista di Document
 	 * @param userPreference
+	 *            lista di preferenze
 	 */
 	private static void fillListWithLogs(Profile profile,
 			FindIterable<Document> logByIdLists,
 			List<UtilityMatrixPreference> userPreference) {
 
 		List<Document> list = Lists.newArrayList(logByIdLists);
-		// se la lista dei documenti � vuota, non viene riempita la matrice di
-		// utility
+		/*
+		 * se la lista dei documenti è vuota, non viene riempita la matrice di
+		 * utility
+		 */
 		if (list.size() < 1) {
 			return;
 		}
@@ -123,7 +134,7 @@ public class ProfileService {
 			switch (action) {
 			case "webapi_municipality_aggregates":
 				/*
-				 * La preferenza � sulle provincia quindi la si recupera dal
+				 * La preferenza è sulle provincia quindi la si recupera dal
 				 * documento
 				 */
 				String province = attributes.getString(CODE_PROVINCE);
@@ -144,7 +155,7 @@ public class ProfileService {
 
 			case "webapi_school_aggregates":
 				/*
-				 * La preferenza � sul comune quindi lo si recupera dal
+				 * La preferenza è sul comune quindi lo si recupera dal
 				 * documento
 				 */
 				String municipality = attributes.getString(CODE_MUNICIPALITY);
@@ -163,7 +174,7 @@ public class ProfileService {
 				break;
 			case "webapi_get_best_schools":
 				/*
-				 * La preferenza � sulle provincia quindi la si recupera dal
+				 * La preferenza è sulle provincia quindi la si recupera dal
 				 * documento
 				 */
 				String provinceFromBestSchool = attributes
@@ -226,11 +237,15 @@ public class ProfileService {
 	}
 
 	/**
-	 * Riempie la lista del profilo utente con le preferenze dei Watch
+	 * Riempie la lista del profilo utente con le preferenze provenienti dalla
+	 * collezione dei Watches
 	 * 
 	 * @param profile
+	 *            profilo utente
 	 * @param watchByIdLists
+	 *            lista di documenti
 	 * @param userPreference
+	 *            lista delle preferenze
 	 */
 	private static void fillListWithWatches(Profile profile,
 			FindIterable<Document> watchByIdLists,
@@ -262,7 +277,7 @@ public class ProfileService {
 			switch ((int) typeId) {
 			case 1:
 				/*
-				 * La preferenza � sulle provincia quindi la si recupera dal
+				 * La preferenza è sulle provincia quindi la si recupera dal
 				 * documento
 				 */
 				String province = target.getString(KEY);
@@ -317,7 +332,7 @@ public class ProfileService {
 
 			case 3:
 				/*
-				 * La preferenza � sulle scuola quindi la si recupera dal
+				 * La preferenza è sulle scuola quindi la si recupera dal
 				 * documento
 				 */
 				String school = target.getString(KEY);
