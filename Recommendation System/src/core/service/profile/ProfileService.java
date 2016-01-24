@@ -41,7 +41,6 @@ public class ProfileService {
 	private static final int MUNICIPALITY_ID = 2;
 	private static final int SCHOOL_ID = 3;
 
-	private static final int BONUS = 1;
 	/**
 	 * Metodo statico per la creazione del profilo
 	 * 
@@ -140,7 +139,7 @@ public class ProfileService {
 				 * precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						province, PROVINCE_ID, value,BONUS));
+						province, PROVINCE_ID, value));
 				break;
 
 			case "webapi_school_aggregates":
@@ -160,7 +159,7 @@ public class ProfileService {
 				 * relativo ai comuni(2) e il valore calcolato in precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						municipality, MUNICIPALITY_ID, value,BONUS));
+						municipality, MUNICIPALITY_ID, value));
 				break;
 			case "webapi_get_best_schools":
 				/*
@@ -181,7 +180,7 @@ public class ProfileService {
 				 * precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						provinceFromBestSchool, PROVINCE_ID, value,BONUS));
+						provinceFromBestSchool, PROVINCE_ID, value));
 				break;
 			case "webapi_get_school_detail":
 
@@ -198,7 +197,7 @@ public class ProfileService {
 				 * precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId, school,
-						SCHOOL_ID, value,BONUS));
+						SCHOOL_ID, value));
 				PersistenceService service = new PersistenceService();
 				String provinceFromSchool = null;
 				String municipalityFromSchool = null;
@@ -213,11 +212,11 @@ public class ProfileService {
 				}
 				if (provinceFromSchool != null)
 					userPreference.add(new UtilityMatrixPreference(userId,
-							provinceFromSchool, PROVINCE_ID, value,BONUS));
+							provinceFromSchool, PROVINCE_ID, value));
 
 				if (municipalityFromSchool != null)
 					userPreference.add(new UtilityMatrixPreference(userId,
-							municipalityFromSchool, MUNICIPALITY_ID, value,BONUS));
+							municipalityFromSchool, MUNICIPALITY_ID, value));
 
 				break;
 			}
@@ -286,7 +285,7 @@ public class ProfileService {
 				 * precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						province, PROVINCE_ID, value,BONUS));
+						province, PROVINCE_ID, value));
 				break;
 
 			case 2:
@@ -313,7 +312,7 @@ public class ProfileService {
 				 * relativo ai comuni(2) e il valore calcolato in precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId,
-						municipality, MUNICIPALITY_ID, value,BONUS));
+						municipality, MUNICIPALITY_ID, value));
 				break;
 
 			case 3:
@@ -340,7 +339,7 @@ public class ProfileService {
 				 * relativo alle scuole(3) e il valore calcolato in precedenza
 				 */
 				userPreference.add(new UtilityMatrixPreference(userId, school,
-						SCHOOL_ID, value,BONUS));
+						SCHOOL_ID, value));
 				PersistenceService service = new PersistenceService();
 
 				String provinceFromSchool = null;
@@ -356,11 +355,11 @@ public class ProfileService {
 				}
 				if (provinceFromSchool != null)
 					userPreference.add(new UtilityMatrixPreference(userId,
-							provinceFromSchool, PROVINCE_ID, value,BONUS));
+							provinceFromSchool, PROVINCE_ID, value));
 
 				if (municipalityFromSchool != null)
 					userPreference.add(new UtilityMatrixPreference(userId,
-							municipalityFromSchool, MUNICIPALITY_ID, value,BONUS));
+							municipalityFromSchool, MUNICIPALITY_ID, value));
 
 				break;
 			}

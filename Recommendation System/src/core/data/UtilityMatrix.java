@@ -30,14 +30,13 @@ public class UtilityMatrix {
 	private static final String ACTION = "action";
 	private static final String ATTRIBUTES = "attributes";
 	private static final String ID = "id";
-	
+
 	private static final int PROVINCE_ID = 1;
 	private static final int MUNICIPALITY_ID = 2;
 	private static final int SCHOOL_ID = 3;
 
 	private static final Logger LOGGER = Logger.getLogger(UtilityMatrix.class
 			.getName());
-	
 
 	private List<UtilityMatrixPreference> preferences;
 	private int contProvince;
@@ -174,9 +173,6 @@ public class UtilityMatrix {
 			Document target = (Document) doc.get(TARGET);
 			long typeId = target.getLong(TYPE_ID);
 
-			Document context = null;
-			String teachingRole = null;
-			int bonus = 0;
 			int value = 0;
 			long eventType = 1;
 			switch ((int) typeId) {
@@ -197,17 +193,7 @@ public class UtilityMatrix {
 				if (ledProvince != null) {
 					eventType = ledProvince.getLong(EVENT_TYPE);
 				}
-				
-				context = (Document) ledProvince.get("context");
-				teachingRole = context.getString("teachingRoleCode"); 
-				bonus = 0;
-				if(teachingRole == null)
-					bonus = 0;
-				else {
-					if(teachingRole.equals(profile.getTeachingRole()))
-						bonus = 1;
-					else bonus = 0;
-				}
+
 				value = Utils.computeValue(eventType);
 
 				/*
@@ -216,7 +202,7 @@ public class UtilityMatrix {
 				 * precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId, province,
-						PROVINCE_ID, value,bonus));
+						PROVINCE_ID, value));
 				break;
 
 			case 2:
@@ -236,16 +222,7 @@ public class UtilityMatrix {
 				if (ledMunicipality != null) {
 					eventType = ledMunicipality.getLong(EVENT_TYPE);
 				}
-				context = (Document) ledMunicipality.get("context");
-				teachingRole = context.getString("teachingRoleCode"); 
-				bonus = 0;
-				if(teachingRole == null)
-					bonus = 0;
-				else {
-					if(teachingRole.equals(profile.getTeachingRole()))
-						bonus = 1;
-					else bonus = 0;
-				}
+
 				value = Utils.computeValue(eventType);
 
 				/*
@@ -253,7 +230,7 @@ public class UtilityMatrix {
 				 * relativo ai comuni(2) e il valore calcolato in precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId,
-						municipality, MUNICIPALITY_ID, value,bonus));
+						municipality, MUNICIPALITY_ID, value));
 
 				break;
 
@@ -274,17 +251,7 @@ public class UtilityMatrix {
 				if (ledSchool != null) {
 					eventType = ledSchool.getLong(EVENT_TYPE);
 				}
-				
-				context = (Document) ledSchool.get("context");
-				teachingRole = context.getString("teachingRoleCode"); 
-				bonus = 0;
-				if(teachingRole == null)
-					bonus = 0;
-				else {
-					if(teachingRole.equals(profile.getTeachingRole()))
-						bonus = 1;
-					else bonus = 0;
-				}
+
 				value = Utils.computeValue(eventType);
 
 				/*
@@ -292,7 +259,7 @@ public class UtilityMatrix {
 				 * relativo alle scuole(3) e il valore calcolato in precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId, school,
-						SCHOOL_ID, value,bonus));
+						SCHOOL_ID, value));
 
 				String provinceFromSchool = null;
 				String municipalityFromSchool = null;
@@ -308,11 +275,11 @@ public class UtilityMatrix {
 				}
 				if (provinceFromSchool != null)
 					preferences.add(new UtilityMatrixPreference(userId,
-							provinceFromSchool, PROVINCE_ID, value,bonus));
+							provinceFromSchool, PROVINCE_ID, value));
 
 				if (municipalityFromSchool != null)
 					preferences.add(new UtilityMatrixPreference(userId,
-							municipalityFromSchool, MUNICIPALITY_ID, value,bonus));
+							municipalityFromSchool, MUNICIPALITY_ID, value));
 
 				break;
 			}
@@ -349,8 +316,7 @@ public class UtilityMatrix {
 			 */
 			String action = doc.getString(ACTION);
 			Document attributes = (Document) doc.get(ATTRIBUTES);
-			String teachingRole = null;
-			int bonus = 0;
+
 			int value = 0;
 			switch (action) {
 			case "webapi_municipality_aggregates":
@@ -361,16 +327,7 @@ public class UtilityMatrix {
 				String province = attributes.getString(CODE_PROVINCE);
 				if (province == null)
 					break;
-				
-				teachingRole = attributes.getString("teachingRoleCodeTo"); 
-				bonus = 0;
-				if(teachingRole == null)
-					bonus = 0;
-				else {
-					if(teachingRole.equals(profile.getTeachingRole()))
-						bonus = 1;
-					else bonus = 0;
-				}
+
 				/* Calcola il valore da attribuire alla preferenza */
 				value = Utils.computeValue(3);
 
@@ -380,7 +337,7 @@ public class UtilityMatrix {
 				 * precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId, province,
-						PROVINCE_ID, value,bonus));
+						PROVINCE_ID, value));
 				break;
 
 			case "webapi_school_aggregates":
@@ -392,15 +349,6 @@ public class UtilityMatrix {
 				if (municipality == null)
 					break;
 
-				teachingRole = attributes.getString("teachingRoleCodeTo"); 
-				bonus = 0;
-				if(teachingRole == null)
-					bonus = 0;
-				else {
-					if(teachingRole.equals(profile.getTeachingRole()))
-						bonus = 1;
-					else bonus = 0;
-				}
 				/* Calcola il valore da attribuire alla preferenza */
 				value = Utils.computeValue(3);
 
@@ -409,7 +357,7 @@ public class UtilityMatrix {
 				 * relativo ai comuni(2) e il valore calcolato in precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId,
-						municipality, MUNICIPALITY_ID, value,bonus));
+						municipality, MUNICIPALITY_ID, value));
 				break;
 			case "webapi_get_best_schools":
 				/*
@@ -421,30 +369,21 @@ public class UtilityMatrix {
 				if (provinceFromBestSchool == null)
 					break;
 
-				teachingRole = attributes.getString("codTeachingRoles"); 
-				bonus = 0;
-				if(teachingRole == null)
-					bonus = 0;
-				else {
-					if(teachingRole.equals(profile.getTeachingRole()))
-						bonus = 1;
-					else bonus = 0;
-				}
 				/* Calcola il valore da attribuire alla preferenza */
 				value = Utils.computeValue(3);
-				
+
 				/*
 				 * Si aggiunge la preferenza sulla provincia, le si assegna il
 				 * tag relativo alle province(1) e il valore calcolato in
 				 * precedenza
 				 */
 				preferences.add(new UtilityMatrixPreference(userId,
-						provinceFromBestSchool, PROVINCE_ID, value,bonus));
+						provinceFromBestSchool, PROVINCE_ID, value));
 				break;
 
 			case "webapi_get_school_detail":
-				
-				String school = attributes.getString(ID); 
+
+				String school = attributes.getString(ID);
 				if (school == null)
 					break;
 
@@ -456,8 +395,8 @@ public class UtilityMatrix {
 				 * tag relativo alle province(1) e il valore calcolato in
 				 * precedenza
 				 */
-				preferences.add(new UtilityMatrixPreference(userId,
-						school, SCHOOL_ID, value,bonus));
+				preferences.add(new UtilityMatrixPreference(userId, school,
+						SCHOOL_ID, value));
 				String provinceFromSchool = null;
 				String municipalityFromSchool = null;
 
@@ -472,11 +411,11 @@ public class UtilityMatrix {
 				}
 				if (provinceFromSchool != null)
 					preferences.add(new UtilityMatrixPreference(userId,
-							provinceFromSchool, PROVINCE_ID, value,bonus));
+							provinceFromSchool, PROVINCE_ID, value));
 
 				if (municipalityFromSchool != null)
 					preferences.add(new UtilityMatrixPreference(userId,
-							municipalityFromSchool, MUNICIPALITY_ID, value,bonus));
+							municipalityFromSchool, MUNICIPALITY_ID, value));
 
 				break;
 			}
@@ -517,7 +456,7 @@ public class UtilityMatrix {
 							continue;
 						if (sortedPreferences.get(present).getScore() == 3)
 							continue;
-						
+
 						int score = sortedPreferences.get(present).getScore()
 								+ preference.getScore();
 						sortedPreferences.get(present).setScore(score);
@@ -542,12 +481,5 @@ public class UtilityMatrix {
 		 */
 		preferences = sortedPreferences;
 	}
-	
-	public void addBonusToScorePreferences(){
-		for(UtilityMatrixPreference u : preferences){
-			if(u.getBonus()==1){
-				u.addBonus();
-			}
-		}
-	}
+
 }
