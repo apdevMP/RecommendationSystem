@@ -11,31 +11,32 @@ import java.util.logging.Logger;
 
 import org.bson.Document;
 
-import com.google.gson.Gson;
 import com.mongodb.client.FindIterable;
 
 import core.persistence.GraphManager;
 import core.persistence.MongoDBManager;
-import core.service.profile.Profile;
 
 /**
- * Classe di servizio che si frappone tra il sistema e il DBManager
+ * Classe di servizio che si frappone tra il sistema e lo strato di persistenza
+ * ({@link MongoDBManager} e {@link GraphManager})
+ * 
+ * 
+ * @author apdev
  * 
  */
-public class PersistenceService
-{
+public class PersistenceService {
 
-	private MongoDBManager	dbManager;
-	private GraphManager	graphManager;
-	private static final Logger			LOGGER	= Logger.getLogger(PersistenceService.class.getName());
+	private MongoDBManager dbManager;
+	private GraphManager graphManager;
+	private static final Logger LOGGER = Logger
+			.getLogger(PersistenceService.class.getName());
 
 	// private static Configuration configuration = null;
 
 	/**
 	 * Costruttore di default
 	 */
-	public PersistenceService()
-	{
+	public PersistenceService() {
 		dbManager = MongoDBManager.getIstance();
 		graphManager = GraphManager.getIstance();
 	}
@@ -45,35 +46,21 @@ public class PersistenceService
 	 * 
 	 * @throws SQLException
 	 */
-	public void closeConnection() throws SQLException
-	{
+	public void closeConnection() throws SQLException {
 		dbManager.closeConnection();
 		graphManager.closeConnection();
 	}
 
 	/**
-	 * Recupera i documenti per punteggio e li stampa
-	 * 
-	 * @param score
-	 */
-	public void findWatchesByScore(int score)
-	{
-		FindIterable<Document> iterable = dbManager.findWatchesByScore(score);
-		for (Document doc : iterable)
-		{
-			System.out.println(doc.toJson());
-		}
-	}
-
-	/**
 	 * Recupera i documenti dai watches filtrati per materia insegnata
 	 * 
-	 * @param teachingRole materia insegnata
+	 * @param teachingRole
+	 *            materia insegnata
 	 * @return lista di documenti filtrati
 	 */
-	public FindIterable<Document> findWatchesByTeachingRole(String teachingRole)
-	{
-		FindIterable<Document> iterable = dbManager.findWatchesByTeachingRole(teachingRole);
+	public FindIterable<Document> findWatchesByTeachingRole(String teachingRole) {
+		FindIterable<Document> iterable = dbManager
+				.findWatchesByTeachingRole(teachingRole);
 		return iterable;
 	}
 
@@ -81,26 +68,28 @@ public class PersistenceService
 	 * Recupera la lista di azioni eseguite dagli utenti(log),filtrate per la
 	 * materia insegnata
 	 * 
-	 * @param teachingRole materia insegnata
+	 * @param teachingRole
+	 *            materia insegnata
 	 * @return lista di documenti filtrati
 	 */
-	public FindIterable<Document> findLogsByTeachingRole(String teachingRole)
-	{
-		FindIterable<Document> iterable = dbManager.findLogsByTeachingRole(teachingRole);
+	public FindIterable<Document> findLogsByTeachingRole(String teachingRole) {
+		FindIterable<Document> iterable = dbManager
+				.findLogsByTeachingRole(teachingRole);
 
 		return iterable;
 	}
 
 	/**
-	 * Verifica se la provincia "province" � presente all'interno della regione
-	 * "region"
+	 * Verifica se la provincia {@code province} è presente all'interno della
+	 * regione {@code region}
 	 * 
-	 * @param region regione
-	 * @param province provincia
+	 * @param region
+	 *            regione
+	 * @param province
+	 *            provincia
 	 * @return 0 se presente,1 altrimenti
 	 */
-	public int isProvinceInRegion(String region, String province)
-	{
+	public int isProvinceInRegion(String region, String province) {
 
 		Document doc = dbManager.findDocWithProvince(province);
 		// se non viene recuperato alcun documento restituisce 1
@@ -117,34 +106,31 @@ public class PersistenceService
 	}
 
 	/**
-	 * Verifica se il comune rapppresentato dal suo codice � presente
-	 * all'interno della regione "region"
+	 * Verifica se il comune rapppresentato da {@code municipalityCode} è
+	 * all'interno della regione {@code region}
 	 * 
-	 * @param region regione
-	 * @param municipality_code codice del comune
+	 * @param region
+	 *            regione
+	 * @param municipalityCode
+	 *            codice del comune
 	 * @return 0 se presente,1 altrimenti
 	 */
-	public int isMunicipalityInRegion(String region, String municipality_code)
-	{
+	public int isMunicipalityInRegion(String region, String municipalityCode) {
 
 		// Si recupera il nome del comune dal codice
 		String municipality = null;
-		try
-		{
-			municipality = graphManager.queryMunicipalityName(municipality_code);
-			
+		try {
+			municipality = graphManager.queryMunicipalityName(municipalityCode);
 
-		} catch (SQLTimeoutException e)
-		{
+		} catch (SQLTimeoutException e) {
 			return 1;
-		} catch (SQLException e)
-		{
-			LOGGER.log(Level.SEVERE, "[" + PersistenceService.class.getName() + "] Cannot execute statement.");
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "[" + PersistenceService.class.getName()
+					+ "] Cannot execute statement.");
 		}
 
-		// Se la stringa � null,restituisco non presente
-		if (municipality == null)
-		{
+		// Se la stringa è null,restituisco non presente
+		if (municipality == null) {
 			return 1;
 		}
 		// Viene recuperato il documento avente il comune trovato in precedenza
@@ -162,15 +148,16 @@ public class PersistenceService
 	}
 
 	/**
-	 * Verifica se la scuola rapppresentata dal suo codice � presente
-	 * all'interno della regione "region"
+	 * Verifica se la scuola rapppresentata dal suo codice è presente
+	 * all'interno di {@code region}
 	 * 
-	 * @param region regione
-	 * @param school codice della scuola
+	 * @param region
+	 *            regione
+	 * @param school
+	 *            codice della scuola
 	 * @return 0 se presente,1 altrimenti
 	 */
-	public int isSchoolInRegion(String region, String school)
-	{
+	public int isSchoolInRegion(String region, String school) {
 		// recupero il documento che contiene il codice della scuola e verifico
 		// se esiste
 		Document doc = dbManager.findDocWithSchool(school);
@@ -180,11 +167,9 @@ public class PersistenceService
 		// recupero la regione dal documento ed effettuo il confronto tra
 		// stringhe
 		String documentRegion = doc.getString("regionName");
-		if (documentRegion.equals(region))
-		{
+		if (documentRegion.equals(region)) {
 			return 0;
-		} else
-		{
+		} else {
 			return 1;
 		}
 	}
@@ -195,8 +180,7 @@ public class PersistenceService
 	 * 
 	 * @return lista di azioni
 	 */
-	public ArrayList<String> getLogAction()
-	{
+	public ArrayList<String> getLogAction() {
 
 		// Viene inizializzata la lista delle azioni e vengono recuperati tutti
 		// documentii del log
@@ -205,23 +189,20 @@ public class PersistenceService
 
 		// Si inizializzano le classi per la scrittura su file
 		FileOutputStream fos = null;
-		try
-		{
+		try {
 			fos = new FileOutputStream("azioni.txt");
-		} catch (FileNotFoundException e)
-		{
-			LOGGER.log(Level.SEVERE, "[" + PersistenceService.class.getName() + "] Cannot find file azioni.txt .");
+		} catch (FileNotFoundException e) {
+			LOGGER.log(Level.SEVERE, "[" + PersistenceService.class.getName()
+					+ "] Cannot find file azioni.txt .");
 		}
 		@SuppressWarnings("resource")
 		PrintStream write = new PrintStream(fos);
 
 		// vengono salavate tutte le azioni una volta sola
-		for (Document doc : iterable)
-		{
+		for (Document doc : iterable) {
 			String action = doc.getString("action");
 
-			if (!actionList.contains(action))
-			{
+			if (!actionList.contains(action)) {
 				actionList.add(action);
 				write.println(doc.toJson());
 			}
@@ -231,29 +212,28 @@ public class PersistenceService
 	}
 
 	/**
-	 * Scrive su file i log filtrati per un'azione specifica
+	 * Recupera i log filtrati per una lista di azioni
 	 * 
-	 * @param action azione
+	 * @param actions
+	 *            azioni su cui filtrare
+	 * @return lista di documenti
 	 */
-	public FindIterable<Document> getLogsByAction(String[] action)
-	{
+	public FindIterable<Document> getLogsByAction(String[] actions) {
 
-		FindIterable<Document> iterable = dbManager.findLogsByAction(action);
+		FindIterable<Document> iterable = dbManager.findLogsByAction(actions);
 		return iterable;
 
 	}
-
-	
 
 	/**
 	 * Recupera il codice identificativo della provincia passata per argomento,
 	 * effettuando una query sul file municipality.csv
 	 * 
-	 * @param provinceCode sigla della provincia
+	 * @param provinceCode
+	 *            sigla della provincia
 	 * @return codice identificativo della provincia
 	 */
-	public int retrieveProvinceId(String provinceCode)
-	{
+	public int retrieveProvinceId(String provinceCode) {
 		Document document = dbManager.findDocWithProvince(provinceCode);
 		return document.getInteger("province_id");
 	}
@@ -262,35 +242,36 @@ public class PersistenceService
 	 * Recupera il codice identificativo del comune il cui codice istat è
 	 * passato per argomento, effettuando una query sul file municipality.csv
 	 * 
-	 * @param municipalityCode codice istat del comune
+	 * @param municipalityCode
+	 *            codice istat del comune
 	 * @return codice identificativo del comune
 	 */
-	public long retrieveMunicipalityId(String municipalityCode)
-	{
+	public long retrieveMunicipalityId(String municipalityCode) {
 
 		long id = 0;
-		try
-		{
+		try {
 			id = graphManager.queryMunicipalityId(municipalityCode);
-		} catch (SQLException e)
-		{
-			LOGGER.log(Level.SEVERE, "[" + PersistenceService.class.getName() + "] Cannot execute statement.");
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "[" + PersistenceService.class.getName()
+					+ "] Cannot execute statement.");
 		}
 
 		return id;
 	}
 
 	/**
-	 * Controlla se ci sono posizioni aperte nella scuola per il dato
-	 * teachingRole
+	 * Controlla se ci sono posizioni aperte in {@code schoolId} per il dato
+	 * {@code teachingRole}
 	 * 
 	 * @param schoolId
+	 *            id della scuola
 	 * @param teachingRole
+	 *            materia insegnata
 	 * @return true se ci sono posizioni aperte, false altrimenti
 	 * @throws SQLException
 	 */
-	public boolean freePositionAvailableAtSchool(String schoolId, String teachingRole) throws SQLException
-	{
+	public boolean freePositionAvailableAtSchool(String schoolId,
+			String teachingRole) throws SQLException {
 
 		boolean available = false;
 
@@ -301,18 +282,21 @@ public class PersistenceService
 	}
 
 	/**
-	 * Controlla se ci sono scuole all'interno della provincia con posizioni
-	 * aperte per una materia di insegnamento
+	 * Controlla se ci sono scuole all'interno di {@code provinceCode} con
+	 * posizioni aperte per una {@code teachingRole}
 	 * 
 	 * @param provinceCode
+	 *            provincia
 	 * @param teachingRole
+	 *            materia insegnata
 	 * @return true se ci sono posizioni aperte, false altrimenti
 	 * @throws SQLException
 	 */
-	public boolean freePositionAvailableInProvince(String provinceCode, String teachingRole) throws SQLException
-	{
+	public boolean freePositionAvailableInProvince(String provinceCode,
+			String teachingRole) throws SQLException {
 
-		return graphManager.queryFreePositionInProvince(provinceCode, teachingRole);
+		return graphManager.queryFreePositionInProvince(provinceCode,
+				teachingRole);
 	}
 
 	/**
@@ -324,22 +308,27 @@ public class PersistenceService
 	 * @return
 	 * @throws SQLException
 	 */
-	public boolean freePositionAvailableInMunicipality(String municipalityCode, String teachingRole) throws SQLException
-	{
+	public boolean freePositionAvailableInMunicipality(String municipalityCode,
+			String teachingRole) throws SQLException {
 
-		return graphManager.queryFreePositionInMunicipality(municipalityCode, teachingRole);
+		return graphManager.queryFreePositionInMunicipality(municipalityCode,
+				teachingRole);
 	}
 
 	/**
 	 * Usato in fase di classificazione Controlla sul grafo se la scuola è
 	 * adatta per il teaching role dell'utente
 	 * 
+	 * @param schoolId
+	 *            scuola
+	 * @param teachingRole
+	 *            materia insegnata
 	 * @return true se la scuola prevede il teachingRole passato come materia di
-	 * insegnamento
+	 *         insegnamento
 	 * @throws SQLException
 	 */
-	public boolean isSchoolQuotedForTeachingRole(String schoolId, String teachingRole) throws SQLException
-	{
+	public boolean isSchoolQuotedForTeachingRole(String schoolId,
+			String teachingRole) throws SQLException {
 		if (graphManager.queryTeachingRoleInSchool(schoolId, teachingRole) > 0)
 			return true;
 		else
@@ -352,12 +341,18 @@ public class PersistenceService
 	 * trasferiti da quella scuola ce ne sono alcuni con score relazionabile a
 	 * quello dell'utente
 	 * 
+	 * @param schoolId
+	 *            id della scuola
+	 * @param teachingRole
+	 *            materia insegnata
+	 * @param score
+	 *            punteggio dell'utente
 	 * @return true se la scuola prevede trasferimenti in uscita con score
-	 * minore o uguale a quello dell'utente
+	 *         minore o uguale a quello dell'utente
 	 * @throws SQLException
 	 */
-	public boolean isScoreMatchingTransfers(String schoolId, String teachingRole, Double score) throws SQLException
-	{
+	public boolean isScoreMatchingTransfers(String schoolId,
+			String teachingRole, Double score) throws SQLException {
 
 		if (graphManager.queryScoreMatching(schoolId, teachingRole, score) > 0)
 			return true;
@@ -367,13 +362,13 @@ public class PersistenceService
 	}
 
 	/**
-	 * Recupera i documenti dai watches
+	 * Recupera i documenti dalla collezione dei Watches
 	 * 
-	 * @param teachingRole materia insegnata
+	 * @param teachingRole
+	 *            materia insegnata
 	 * @return lista di documenti filtrati
 	 */
-	public FindIterable<Document> findWatches()
-	{
+	public FindIterable<Document> findWatches() {
 		FindIterable<Document> iterable = dbManager.findWatches();
 		return iterable;
 	}
@@ -381,49 +376,98 @@ public class PersistenceService
 	/**
 	 * Recupera la lista di azioni eseguite dagli utenti(log)
 	 * 
-	 * @param teachingRole materia insegnata
+	 * @param teachingRole
+	 *            materia insegnata
 	 * @return lista di documenti filtrati
 	 */
-	public FindIterable<Document> findLogs()
-	{
+	public FindIterable<Document> findLogs() {
 		FindIterable<Document> iterable = dbManager.findLogs();
 
 		return iterable;
 	}
 
-	public FindIterable<Document> findWatches(int index)
-	{
+	/**
+	 * Recupera una lista di Wacthes paginata
+	 * 
+	 * @param index
+	 *            numero di pagina
+	 * @return lista di documenti
+	 */
+	public FindIterable<Document> findWatches(int index) {
 		FindIterable<Document> iterable = dbManager.findWatches(index);
 		return iterable;
 	}
 
-	public FindIterable<Document> getLogsByAction(String[] actions, int index)
-	{
-		FindIterable<Document> iterable = dbManager.findLogsByAction(actions, index);
+	/**
+	 * Restituisce una lista paginata di documenti provenienete dal log di
+	 * navigazione e filtrata per tipologia di azione
+	 * 
+	 * @param actions
+	 *            azioni per il filtraggio
+	 * @param index
+	 *            pagina
+	 * @return lista di documenti
+	 */
+	public FindIterable<Document> getLogsByAction(String[] actions, int index) {
+		FindIterable<Document> iterable = dbManager.findLogsByAction(actions,
+				index);
 		return iterable;
 	}
 
-	public FindIterable<Document> getLogsByActionAndId(long id, String[] actions)
-	{
-		FindIterable<Document> iterable = dbManager.findLogsByIdAndAction(id, actions);
+	/**
+	 * Restituisce una lista paginata di documenti provenienete dal log di
+	 * navigazione e filtrata per tipologia di azione e per id dell'utente
+	 * 
+	 * @param id
+	 *            id dell'utente
+	 * @param actions
+	 *            azioni per il filtraggio
+	 * @return lista di documenti
+	 */
+	public FindIterable<Document> getLogsByActionAndId(long id, String[] actions) {
+		FindIterable<Document> iterable = dbManager.findLogsByIdAndAction(id,
+				actions);
 		return iterable;
 	}
 
-	public FindIterable<Document> getWatchById(long id)
-	{
+	/**
+	 * Restituisce una lista di documenti proveneienti dalla collezione dei
+	 * Watches,filtrata per id
+	 * 
+	 * @param id
+	 *            id dell'utente
+	 * @return lista di documenti
+	 */
+	public FindIterable<Document> getWatchById(long id) {
 		FindIterable<Document> iterable = dbManager.findWatchById(id);
 		return iterable;
 	}
 
-	public String getMunicipalityFromSchool(String school) throws SQLException
-	{
+	/**
+	 * 
+	 * Recupera il comune di appartenenza di {@code school}
+	 * 
+	 * @param school
+	 *            scuola
+	 * @return comune di appartenenza della scuola
+	 * @throws SQLException
+	 */
+	public String getMunicipalityFromSchool(String school) throws SQLException {
 
-		String municipalityString = graphManager.queryMunicipalityCodeFromSchool(school);
+		String municipalityString = graphManager
+				.queryMunicipalityCodeFromSchool(school);
 		return municipalityString;
 	}
 
-	public String getProvinceFromSchool(String school) throws SQLException
-	{
+	/**
+	 * Recupera una provincia data {@code school}
+	 * 
+	 * @param school
+	 *            scuola
+	 * @return provincia dove si trova {@code school}
+	 * @throws SQLException
+	 */
+	public String getProvinceFromSchool(String school) throws SQLException {
 		String province = null;
 		/*
 		 * se la lunghezza della stringa è 10, allora siamo in un caso standard

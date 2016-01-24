@@ -30,70 +30,80 @@ import utils.Configuration;
  * Classe di servizio per effettuare le raccomandazioni
  * 
  */
-public class RecommenderService
-{
+public class RecommenderService {
 
-	private Profile				userProfile;
+	private Profile userProfile;
 	private Configuration configuration = null;
-	private static final Logger	LOGGER	= Logger.getLogger(RecommenderService.class.getName());
+	private static final Logger LOGGER = Logger
+			.getLogger(RecommenderService.class.getName());
 
-	public RecommenderService(Profile profile)
-	{
+	public RecommenderService(Profile profile) {
 		userProfile = profile;
-		if (configuration == null)
-		{
+		if (configuration == null) {
 			configuration = Configuration.getIstance();
 
 		}
 	}
 
 	/**
-	 * Metodo per trovare i suggerimenti da fare ad un utente che ricerca una
-	 * regione
+	 * Metodo per trovare i suggerimenti da fare ad un utente che preferesce
+	 * {@code region}
 	 * 
 	 * @param region
+	 *            regione preferita dall'utente
+	 * @return lista delle raccomandazionis
 	 */
 	@SuppressWarnings("unused")
-	public List<CustomRecommendedItem> recommendItems(String region)
-	{
+	public List<CustomRecommendedItem> recommendItems(String region) {
 
+		/* Inizializza la lista finale */
 		List<CustomRecommendedItem> finalList = new ArrayList<CustomRecommendedItem>();
 
-		UtilityMatrixService utilityMatrixService = new UtilityMatrixService(userProfile);
+		/* Crea un servizio di UtilityMatrix passandogli il profilo dell'utente */
+		UtilityMatrixService utilityMatrixService = new UtilityMatrixService(
+				userProfile);
 
-		UtilityMatrix matrix = utilityMatrixService.createPreferencesWithPagination();
+		/* Riempie la matrice di utilità e la salva su file .csv */
+		UtilityMatrix matrix = utilityMatrixService
+				.createPreferencesWithPagination();
 		utilityMatrixService.savePreferences(matrix);
 
-		try
-		{
-			DataModel model = new FileDataModel(new File(userProfile.getId()+".csv"));
-			
+		/* Recupera le raccomandazioni */
+		try {
+			DataModel model = new FileDataModel(new File(userProfile.getId()
+					+ ".csv"));
+
 			UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
 			UserSimilarity similarity2 = new EuclideanDistanceSimilarity(model);
 			UserSimilarity similarity3 = new LogLikelihoodSimilarity(model);
-			UserSimilarity similarity4 = new TanimotoCoefficientSimilarity(model);
-			
-			UserNeighborhood nearestNeighborhood = new NearestNUserNeighborhood(30, similarity3, model);
-			Recommender recommender = new GenericUserBasedRecommender(model, nearestNeighborhood, similarity4);
+			UserSimilarity similarity4 = new TanimotoCoefficientSimilarity(
+					model);
 
+			UserNeighborhood nearestNeighborhood = new NearestNUserNeighborhood(
+					30, similarity3, model);
+			Recommender recommender = new GenericUserBasedRecommender(model,
+					nearestNeighborhood, similarity4);
 
-			LOGGER.info("\n\n[" + RecommenderService.class.getName() + "] Starting recommender service..");
+			LOGGER.info("\n\n[" + RecommenderService.class.getName()
+					+ "] Starting recommender service..");
 
-			List<RecommendedItem> recommendedItems = recommender.recommend(userProfile.getId(),configuration.getRecommended_items() );
+			List<RecommendedItem> recommendedItems = recommender.recommend(
+					userProfile.getId(), configuration.getRecommended_items());
 
-			LOGGER.info("[" + RecommenderService.class.getName() + "] List of recommended items created. Size: "+recommendedItems.size()+"\n");
+			LOGGER.info("[" + RecommenderService.class.getName()
+					+ "] List of recommended items created. Size: "
+					+ recommendedItems.size() + "\n");
 
-			
 			LOGGER.info("\n----- RECOMMENDATION LIST -----");
-			if (!recommendedItems.isEmpty())
-			{
-				for (RecommendedItem item : recommendedItems)
-				{
-					LOGGER.info("id:" + item.getItemID() + ", value:" + item.getValue());
+			if (!recommendedItems.isEmpty()) {
+				for (RecommendedItem item : recommendedItems) {
+					LOGGER.info("id:" + item.getItemID() + ", value:"
+							+ item.getValue());
 
 				}
-
-				RankingService rankingService = new RankingService(recommendedItems, utilityMatrixService.getItemsMap(),
+				/* Esegue il ranking sugli item forniti dalla raccomandazione */
+				RankingService rankingService = new RankingService(
+						recommendedItems, utilityMatrixService.getItemsMap(),
 						utilityMatrixService.getCategoriesMap(), userProfile);
 
 				/*
@@ -102,16 +112,16 @@ public class RecommenderService
 				 */
 				finalList = rankingService.getFinalList();
 
-			} else
-			{
-				LOGGER.warning("[" + RecommenderService.class.getName() + "] Empty recommendation list");
+			} else {
+				LOGGER.warning("[" + RecommenderService.class.getName()
+						+ "] Empty recommendation list");
 
 			}
 
-		} catch (IOException | TasteException e)
-		{
-			LOGGER.log(Level.SEVERE, "[" + RecommenderService.class.getName() + "] Exception: ", e);
-		} 
+		} catch (IOException | TasteException e) {
+			LOGGER.log(Level.SEVERE, "[" + RecommenderService.class.getName()
+					+ "] Exception: ", e);
+		}
 
 		return finalList;
 

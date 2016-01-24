@@ -17,8 +17,10 @@ import core.data.UtilityMatrixPreference;
 import core.service.profile.Profile;
 
 /**
- * Classe di Servizio per il riempimento ed il salvataggio su file della matrice
- * di utilità
+ * Classe di Servizio per il riempimento ed il salvataggio su file di
+ * {@link UtilityMatrix}
+ * 
+ * @author apdev
  * 
  */
 public class UtilityMatrixService {
@@ -57,7 +59,7 @@ public class UtilityMatrixService {
 	 * Crea una {@link UtilityMatrix} utilizzando le preferenze recuperate dalle
 	 * collezioni di Watch e Log
 	 * 
-	 * @return
+	 * @return una matrice di utilità del tipo {@linl UtilityMatrix}
 	 */
 	public UtilityMatrix createPreferencesWithPagination() {
 		/* Istanzio un queryManager per recuperare dati dalle collezioni */
@@ -110,12 +112,12 @@ public class UtilityMatrixService {
 				break;
 			}
 
-			/* Se la lista dei Log non � vuota,si riempie la matrice di utilità */
+			/* Se la lista dei Log non è vuota,si riempie la matrice di utilità */
 			if (!finishLog) {
 				utilityMatrix.fillPreferencesWithLogs(listLogs, userProfile);
 			}
 
-			/* Se la lista dei Log non � vuota,si riempie la matrice di utilità */
+			/* Se la lista dei Log non è vuota,si riempie la matrice di utilità */
 			if (!finishWatch) {
 				utilityMatrix.fillPreferencesWithWatches(listWatches,
 						userProfile);
@@ -128,34 +130,46 @@ public class UtilityMatrixService {
 
 		/*
 		 * Si aggiunge la lista ricavata dal profilo utente a quella della
-		 * matrice di utilit�
+		 * matrice di utilità
 		 */
-		utilityMatrix.addListToPreferences(userProfile.getUserPreferences());
+		utilityMatrix.addProfileListToPreferences(userProfile
+				.getUserPreferences());
 
 		/*
 		 * Si ordinano le preferenze all'interno della matrice di utilità e si
 		 * aggiungono i bonus
 		 */
 		utilityMatrix.sortForPlacePreferences();
-		//utilityMatrix.addBonusToScorePreferences();
-		
-		/* Restituisce la matrice di utilit� */
+
+		/* Restituisce la matrice di utilità */
 		return utilityMatrix;
 
 	}
 
+	/**
+	 * Restituisce la mappa delle destinazioni
+	 * 
+	 * @return mappa delle destinazioni
+	 */
 	public Map<String, Long> getItemsMap() {
 		return this.itemsMap;
 	}
 
+	/**
+	 * Recupera la mappa delle tipologie di destinazione
+	 * 
+	 * @return mappa delle tipologie di destinazione
+	 */
 	public Map<String, Long> getCategoriesMap() {
 		return this.categoriesMap;
 	}
 
 	/**
-	 * Metodo che permette di salvare le preferenze su un apposito file
+	 * Metodo che permette di salvare le preferenze di {@code matrix} su un
+	 * apposito file
 	 * 
 	 * @param matrix
+	 *            matrice da salavare
 	 */
 	public void savePreferences(UtilityMatrix matrix) {
 		/* Prelevo la lista delle preferenze dalla UtilityMatrix */
@@ -169,7 +183,7 @@ public class UtilityMatrixService {
 			long counter = 0;
 			this.itemsMap = new HashMap<String, Long>();
 
-			for (int j = 0; j < matrix.getContProvince(); j++) {
+			for (int j = 0; j < matrix.getIndexProvince(); j++) {
 				String provinceCodeString = preferenceList.get(j).getPlaceId();
 
 				Long i = itemsMap.get(provinceCodeString);
@@ -183,8 +197,8 @@ public class UtilityMatrixService {
 			}
 
 			this.categoriesMap.put("province", counter);
-			for (int j = matrix.getContProvince(); j < matrix
-					.getContMunicipality(); j++) {
+			for (int j = matrix.getIndexProvince(); j < matrix
+					.getIndexMunicipality(); j++) {
 
 				String municipalityCodeString = preferenceList.get(j)
 						.getPlaceId();
@@ -199,8 +213,8 @@ public class UtilityMatrixService {
 
 			this.categoriesMap.put("comuni", counter);
 
-			for (int j = matrix.getContMunicipality(); j < matrix
-					.getContSchool(); j++) {
+			for (int j = matrix.getIndexMunicipality(); j < matrix
+					.getIndexSchool(); j++) {
 
 				String schoolCodeString = preferenceList.get(j).getPlaceId();
 				Long i = itemsMap.get(schoolCodeString);
