@@ -45,7 +45,7 @@ public class GraphManager {
 	/**
 	 * Restituisce l'istanza di {@link GraphManager} di Neo4j
 	 * 
-	 * @return
+	 * @return istanza di {@link GraphManager}
 	 */
 	public static GraphManager getIstance() {
 
@@ -287,7 +287,7 @@ public class GraphManager {
 	 *            materia insegnata
 	 * @param score
 	 *            punteggio dell'utente
-	 * @return
+	 * @return punteggio
 	 * @throws SQLException
 	 */
 	public int queryScoreMatching(String schoolId, String teachingRole,

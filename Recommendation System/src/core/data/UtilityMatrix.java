@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import org.bson.Document;
 
+import core.service.UtilityMatrixService;
 import core.service.PersistenceService;
 import core.service.profile.Profile;
 import utils.Utils;

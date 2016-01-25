@@ -30,6 +30,7 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 import utils.Configuration;
 import view.EvaluationWindow;
+import core.service.RecommenderService;
 
 /**
  * Claase Controller nell'ambito del pattern MVC che gestisce
@@ -67,7 +68,7 @@ public class EvaluationController {
 
 	/**
 	 * Metodo che permette di far partire la valutazione del data model creato
-	 * tramite {@RecommenderService}
+	 * tramite {@link RecommenderService}
 	 */
 	public void evaluate() {
 		listener = new ActionListener() {
@@ -216,7 +217,7 @@ public class EvaluationController {
 	 * @param threshold 
 	 * @param userSimilarity
 	 * @param model
-	 * @return
+	 * @return tipo di Neighborhood
 	 * @throws TasteException
 	 */
 	private UserNeighborhood setUserNeighborhood(double threshold,

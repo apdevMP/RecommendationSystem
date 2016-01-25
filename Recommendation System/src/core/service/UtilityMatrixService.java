@@ -59,7 +59,7 @@ public class UtilityMatrixService {
 	 * Crea una {@link UtilityMatrix} utilizzando le preferenze recuperate dalle
 	 * collezioni di Watch e Log
 	 * 
-	 * @return una matrice di utilità del tipo {@linl UtilityMatrix}
+	 * @return una matrice di utilità del tipo {@link UtilityMatrix}
 	 */
 	public UtilityMatrix createPreferencesWithPagination() {
 		/* Istanzio un queryManager per recuperare dati dalle collezioni */

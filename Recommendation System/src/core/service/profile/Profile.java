@@ -93,7 +93,7 @@ public class Profile {
 	}
 
 	/**
-	 * Recupera la lista di {@link UtilityMatrixPreferences} dell'utente
+	 * Recupera la lista di {@link UtilityMatrixPreference} dell'utente
 	 * 
 	 * @return la lista di preferenze dell'utente
 	 */

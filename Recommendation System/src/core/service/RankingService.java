@@ -199,7 +199,7 @@ public class RankingService
 	}
 
 	/**
-	 * Aggiunge alla lista finale da mostrare all'utente un numero {@param
+	 * Aggiunge alla lista finale da mostrare all'utente un numero {@code
 	 * numberOfResults} di item per ognuna delle liste create
 	 * 
 	 * @param numberOfResults il numero di item per lista da mostrare

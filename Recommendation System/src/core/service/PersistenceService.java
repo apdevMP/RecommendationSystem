@@ -146,26 +146,29 @@ public class PersistenceService {
 		else
 			return 1;
 	}
-	
+
 	/**
 	 * Recupera il nome di un comune a partire dal suo {@code municipalityCode}
 	 * 
-	 * @param municipalityCode codice identificativo del comune
-	 * @return stringa contenente il nome del comune o null in caso di fallimento
+	 * @param municipalityCode
+	 *            codice identificativo del comune
+	 * @return stringa contenente il nome del comune o null in caso di
+	 *         fallimento
 	 */
-	public String queryMunicipalityName(String municipalityCode){
-		
-		// Si recupera il nome del comune dal codice
-				String municipalityName = null;
-				try {
-					municipalityName = graphManager.queryMunicipalityName(municipalityCode);
+	public String queryMunicipalityName(String municipalityCode) {
 
-				} catch (SQLException e) {
-					LOGGER.log(Level.SEVERE, "[" + PersistenceService.class.getName()
-							+ "] Cannot execute statement.");
-				}
-				
-				return municipalityName;
+		// Si recupera il nome del comune dal codice
+		String municipalityName = null;
+		try {
+			municipalityName = graphManager
+					.queryMunicipalityName(municipalityCode);
+
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "[" + PersistenceService.class.getName()
+					+ "] Cannot execute statement.");
+		}
+
+		return municipalityName;
 	}
 
 	/**
@@ -325,8 +328,10 @@ public class PersistenceService {
 	 * per una materia di insegnamento
 	 * 
 	 * @param municipalityCode
+	 *            codice del comune
 	 * @param teachingRole
-	 * @return
+	 *            materia insegnata
+	 * @return true se ci sono posizioni libere,false altrimenti
 	 * @throws SQLException
 	 */
 	public boolean freePositionAvailableInMunicipality(String municipalityCode,
@@ -385,8 +390,6 @@ public class PersistenceService {
 	/**
 	 * Recupera i documenti dalla collezione dei Watches
 	 * 
-	 * @param teachingRole
-	 *            materia insegnata
 	 * @return lista di documenti filtrati
 	 */
 	public FindIterable<Document> findWatches() {
@@ -397,8 +400,6 @@ public class PersistenceService {
 	/**
 	 * Recupera la lista di azioni eseguite dagli utenti(log)
 	 * 
-	 * @param teachingRole
-	 *            materia insegnata
 	 * @return lista di documenti filtrati
 	 */
 	public FindIterable<Document> findLogs() {
