@@ -2,6 +2,8 @@ package core.service.profile;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bson.Document;
 
@@ -32,6 +34,8 @@ public class ProfileService {
 	private static final String ACTION = "action";
 	private static final String ATTRIBUTES = "attributes";
 	private static final String ID = "id";
+	private static final Logger LOGGER = Logger.getLogger(ProfileService.class
+			.getName());
 
 	private static final String[] actions = { "webapi_school_aggregates",
 			"webapi_municipality_aggregates", "webapi_get_best_schools",
@@ -218,8 +222,8 @@ public class ProfileService {
 					municipalityFromSchool = service
 							.getMunicipalityFromSchool(school);
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.log(Level.SEVERE, "[" + ProfileService.class.getName()
+							+ "] Cannot execute statement.");
 				}
 				if (provinceFromSchool != null)
 					userPreference.add(new UtilityMatrixPreference(userId,
@@ -365,8 +369,8 @@ public class ProfileService {
 					municipalityFromSchool = service
 							.getMunicipalityFromSchool(school);
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.log(Level.SEVERE, "[" + ProfileService.class.getName()
+							+ "] Cannot execute statement.");
 				}
 				if (provinceFromSchool != null)
 					userPreference.add(new UtilityMatrixPreference(userId,

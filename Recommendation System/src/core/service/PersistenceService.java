@@ -146,6 +146,27 @@ public class PersistenceService {
 		else
 			return 1;
 	}
+	
+	/**
+	 * Recupera il nome di un comune a partire dal suo {@code municipalityCode}
+	 * 
+	 * @param municipalityCode codice identificativo del comune
+	 * @return stringa contenente il nome del comune o null in caso di fallimento
+	 */
+	public String queryMunicipalityName(String municipalityCode){
+		
+		// Si recupera il nome del comune dal codice
+				String municipalityName = null;
+				try {
+					municipalityName = graphManager.queryMunicipalityName(municipalityCode);
+
+				} catch (SQLException e) {
+					LOGGER.log(Level.SEVERE, "[" + PersistenceService.class.getName()
+							+ "] Cannot execute statement.");
+				}
+				
+				return municipalityName;
+	}
 
 	/**
 	 * Verifica se la scuola rapppresentata dal suo codice è presente

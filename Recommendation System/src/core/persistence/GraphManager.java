@@ -30,7 +30,7 @@ public class GraphManager {
 			.getName());
 
 	/**
-	 * Costruttore di default
+	 * Costruttore di default 
 	 */
 	private GraphManager() {
 		if (configuration == null) {

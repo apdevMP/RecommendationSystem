@@ -102,7 +102,7 @@ public class MongoDBManager {
 	/**
 	 * Recupera la collezione di documenti di MongoDB dal nome
 	 * 
-	 * @param collectionName
+	 * @param collectionName 
 	 *            nome della collezione
 	 * @return collezione di documenti di MongoDB
 	 */

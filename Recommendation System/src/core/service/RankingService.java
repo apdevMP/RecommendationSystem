@@ -24,34 +24,33 @@ import core.service.profile.Profile;
  * 
  */
 
-public class RankingService {
+public class RankingService
+{
 
-	private List<CustomRecommendedItem> provinceIdList;
-	private List<CustomRecommendedItem> municipalityIdList;
-	private List<CustomRecommendedItem> schoolsIdList;
-	private List<CustomRecommendedItem> finalList;
-	private String userPosition;
-	private String teachingRole;
-	private Double score;
-	private PersistenceService queryManager;
-	private static Configuration configuration;
-	private static final Logger LOGGER = Logger.getLogger(RankingService.class
-			.getName());
+	private List<CustomRecommendedItem>	provinceIdList;
+	private List<CustomRecommendedItem>	municipalityIdList;
+	private List<CustomRecommendedItem>	schoolsIdList;
+	private List<CustomRecommendedItem>	finalList;
+	private String						userPosition;
+	private String						teachingRole;
+	private Double						score;
+	private PersistenceService			queryManager;
+	private static Configuration		configuration;
+	private static final Logger			LOGGER	= Logger.getLogger(RankingService.class.getName());
 
 	/**
-	 * Costruttore di default che esegue la classificazione dei {@link CustomRecommendedItem}
+	 * Costruttore di default che esegue la classificazione dei
+	 * {@link CustomRecommendedItem}
 	 * 
 	 * @param recommendedItems
 	 * @param itemsMap
 	 * @param categoriesMap
 	 * @param userProfile
 	 */
-	public RankingService(List<RecommendedItem> recommendedItems,
-			Map<String, Long> itemsMap, Map<String, Long> categoriesMap,
-			Profile userProfile) {
+	public RankingService(List<RecommendedItem> recommendedItems, Map<String, Long> itemsMap, Map<String, Long> categoriesMap, Profile userProfile)
+	{
 
-		LOGGER.info("\n\n[" + RankingService.class.getName()
-				+ "] Starting ranking service..");
+		LOGGER.info("\n\n[" + RankingService.class.getName() + "] Starting ranking service..");
 		configuration = Configuration.getIstance();
 
 		/*
@@ -80,8 +79,10 @@ public class RankingService {
 		 * crea tre liste separate per distinguere gli item in - province -
 		 * comuni -scuole
 		 */
-		try {
-			for (RecommendedItem item : recommendedItems) {
+		try
+		{
+			for (RecommendedItem item : recommendedItems)
+			{
 
 				/*
 				 * recupera l'id numerico associato all'item e in base al suo
@@ -89,19 +90,21 @@ public class RankingService {
 				 */
 				long itemId = item.getItemID();
 
-				if (itemId <= categoriesMap.get("province")) {
+				if (itemId <= categoriesMap.get("province"))
+				{
 					// trovato l'id di una provincia
-					for (Entry<String, Long> entry : itemsMap.entrySet()) {
+					for (Entry<String, Long> entry : itemsMap.entrySet())
+					{
 						/*
 						 * Recupera il vero id in formato stringa dell'item
 						 * dalla map, lo setta all'interno dell'oggetto e lo
 						 * salva nella lista delle province
 						 */
-						if (entry.getValue().compareTo(itemId) == 0) {
+						if (entry.getValue().compareTo(itemId) == 0)
+						{
 							String realId = entry.getKey();
 
-							CustomRecommendedItem customProvince = new CustomRecommendedItem(
-									itemId, item.getValue(), 0, realId);
+							CustomRecommendedItem customProvince = new CustomRecommendedItem(itemId, item.getValue(), 0, realId);
 
 							provinceIdList.add(customProvince);
 							break;
@@ -111,14 +114,15 @@ public class RankingService {
 
 				}
 
-				else if (categoriesMap.get("province") < itemId
-						&& itemId <= categoriesMap.get("comuni")) {
+				else if (categoriesMap.get("province") < itemId && itemId <= categoriesMap.get("comuni"))
+				{
 					// trovato l'id di un comune
-					for (Entry<String, Long> entry : itemsMap.entrySet()) {
-						if (entry.getValue().compareTo(itemId) == 0) {
+					for (Entry<String, Long> entry : itemsMap.entrySet())
+					{
+						if (entry.getValue().compareTo(itemId) == 0)
+						{
 							String realId = entry.getKey();
-							CustomRecommendedItem customMunicipality = new CustomRecommendedItem(
-									itemId, item.getValue(), 0, realId);
+							CustomRecommendedItem customMunicipality = new CustomRecommendedItem(itemId, item.getValue(), 0, realId);
 							municipalityIdList.add(customMunicipality);
 							break;
 						}
@@ -126,14 +130,15 @@ public class RankingService {
 					}
 				}
 
-				else if (categoriesMap.get("comuni") < itemId
-						&& itemId <= categoriesMap.get("scuole")) {
+				else if (categoriesMap.get("comuni") < itemId && itemId <= categoriesMap.get("scuole"))
+				{
 					// trovato l'id di una scuola
-					for (Entry<String, Long> entry : itemsMap.entrySet()) {
-						if (entry.getValue().compareTo(itemId) == 0) {
+					for (Entry<String, Long> entry : itemsMap.entrySet())
+					{
+						if (entry.getValue().compareTo(itemId) == 0)
+						{
 							String realId = entry.getKey();
-							CustomRecommendedItem customSchool = new CustomRecommendedItem(
-									itemId, item.getValue(), 0, realId);
+							CustomRecommendedItem customSchool = new CustomRecommendedItem(itemId, item.getValue(), 0, realId);
 							schoolsIdList.add(customSchool);
 							break;
 						}
@@ -142,9 +147,9 @@ public class RankingService {
 
 				}
 			}
-		} catch (NullPointerException e) {
-			LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName()
-					+ "] Cannot retrieve realID. File .csv missing.");
+		} catch (NullPointerException e)
+		{
+			LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName() + "] Cannot retrieve realID. File .csv missing.");
 			System.exit(1);
 		}
 
@@ -154,23 +159,20 @@ public class RankingService {
 		 */
 
 		updateRankings();
-		LOGGER.info("["
-				+ RankingService.class.getName()
-				+ "] Updating process for rankings terminated. Classification in progress.. ");
+		LOGGER.info("[" + RankingService.class.getName() + "] Updating process for rankings terminated. Classification in progress.. ");
 
 		sortLists();
 
-		LOGGER.info("[" + RankingService.class.getName()
-				+ "] Classification terminated");
+		LOGGER.info("[" + RankingService.class.getName() + "] Classification terminated");
 
 		printSortedLists();
 
 		LOGGER.info("\n\n----- FINAL LIST ---");
 		finalList = new ArrayList<CustomRecommendedItem>();
 		getRecommendedItemsList(configuration.getItem_per_list());
-		for (CustomRecommendedItem item : finalList) {
-			LOGGER.info(item.getRealID() + " , recommendation value:"
-					+ item.getValue() + " , ranking:" + item.getRanking());
+		for (CustomRecommendedItem item : finalList)
+		{
+			LOGGER.info(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
 		}
 
 		LOGGER.info("\n[" + RankingService.class.getName() + "] Done.");
@@ -181,17 +183,18 @@ public class RankingService {
 	 * 
 	 * @return la lista finale
 	 */
-	public List<CustomRecommendedItem> getFinalList() {
+	public List<CustomRecommendedItem> getFinalList()
+	{
 		return finalList;
 	}
 
 	/**
 	 * Imposta la lista finale con {@code finalList}
 	 * 
-	 * @param finalList
-	 *            lista da impostare
+	 * @param finalList lista da impostare
 	 */
-	public void setFinalList(List<CustomRecommendedItem> finalList) {
+	public void setFinalList(List<CustomRecommendedItem> finalList)
+	{
 		this.finalList = finalList;
 	}
 
@@ -199,10 +202,11 @@ public class RankingService {
 	 * Aggiunge alla lista finale da mostrare all'utente un numero {@param
 	 * numberOfResults} di item per ognuna delle liste create
 	 * 
-	 * @param numberOfResults
-	 *            il numero di item per lista da mostrare sull'interfaccia
+	 * @param numberOfResults il numero di item per lista da mostrare
+	 * sull'interfaccia
 	 */
-	public void getRecommendedItemsList(int numberOfResults) {
+	public void getRecommendedItemsList(int numberOfResults)
+	{
 
 		/*
 		 * Per ogni lista, se essa contiene più item di quelli richiesti, ne
@@ -219,21 +223,22 @@ public class RankingService {
 	 * Preleva da {@code list} i primi {@code numberOfResults} item da inserire
 	 * nella lista finale
 	 * 
-	 * @param list
-	 *            lista da aggiungere
-	 * @param numberOfResults
-	 *            numero di risultati da prelevare
+	 * @param list lista da aggiungere
+	 * @param numberOfResults numero di risultati da prelevare
 	 */
-	private void addToFinalList(List<CustomRecommendedItem> list,
-			int numberOfResults) {
+	private void addToFinalList(List<CustomRecommendedItem> list, int numberOfResults)
+	{
 
-		if (list.size() > numberOfResults) {
-			for (int index = 0; index < numberOfResults; index++) {
+		if (list.size() > numberOfResults)
+		{
+			for (int index = 0; index < numberOfResults; index++)
+			{
 
 				finalList.add(list.get(index));
 
 			}
-		} else {
+		} else
+		{
 			/*
 			 * se il numero di elementi nella lista è minore di quelli da
 			 * inserire, allora si aggiungono tutti senza iterare
@@ -246,7 +251,8 @@ public class RankingService {
 	/**
 	 * Aggiorna il punteggio degli item delle liste parziali
 	 */
-	private void updateRankings() {
+	private void updateRankings()
+	{
 
 		if (!schoolsIdList.isEmpty())
 			rankSchools();
@@ -262,20 +268,37 @@ public class RankingService {
 	/**
 	 * Ordina le liste parziali
 	 */
-	private void sortLists() {
+	private void sortLists()
+	{
 		if (!provinceIdList.isEmpty())
 			Collections.sort(provinceIdList);
 		if (!municipalityIdList.isEmpty())
+		{
+			for (CustomRecommendedItem municipality : municipalityIdList)
+			{
+				String municipalityName = queryManager.queryMunicipalityName(municipality.getRealID());
+				if (municipalityName != null)
+				{
+					municipality.setRealID(queryManager.queryMunicipalityName(municipality.getRealID()));
+				}
+
+			}
 			Collections.sort(municipalityIdList);
+		}
 		if (!schoolsIdList.isEmpty())
+		{
+
 			Collections.sort(schoolsIdList);
+
+		}
 
 	}
 
 	/**
 	 * Stampa la lista ordinata
 	 */
-	private void printSortedLists() {
+	private void printSortedLists()
+	{
 		LOGGER.info("\n----- PROVINCES -----");
 		printList(provinceIdList);
 
@@ -290,42 +313,45 @@ public class RankingService {
 	/**
 	 * Stampa {@code list} di @ link CustomRecommendedItem}
 	 * 
-	 * @param list
-	 *            lista da stampare
+	 * @param list lista da stampare
 	 */
-	private void printList(List<CustomRecommendedItem> list) {
+	private void printList(List<CustomRecommendedItem> list)
+	{
 
-		for (CustomRecommendedItem item : list) {
-			LOGGER.info(item.getRealID() + " , recommendation value:"
-					+ item.getValue() + " , ranking:" + item.getRanking());
+		for (CustomRecommendedItem item : list)
+		{
+			LOGGER.info(item.getRealID() + " , recommendation value:" + item.getValue() + " , ranking:" + item.getRanking());
 		}
 	}
 
 	/**
 	 * Assegna punteggi alle province
 	 */
-	public void rankProvinces() {
-		for (CustomRecommendedItem province : provinceIdList) {
+	public void rankProvinces()
+	{
+		for (CustomRecommendedItem province : provinceIdList)
+		{
 			/*
 			 * CLASSIFICAZIONE IN BASE ALLA POSIZIONE se la provincia trovata si
 			 * trova all'interno della regione scelta dall'utente allora aumenta
 			 * il suo ranking
 			 */
-			if (queryManager.isProvinceInRegion(userPosition,
-					province.getRealID()) == 0) {
+			if (queryManager.isProvinceInRegion(userPosition, province.getRealID()) == 0)
+			{
 				province.setRanking(province.getRanking() + 1);
 
 			}
 
 			// CLASSIFICAZIONE IN BASE AL TEACHING ROLE
-			try {
-				if (queryManager.freePositionAvailableInProvince(
-						province.getRealID(), teachingRole) == true) {
+			try
+			{
+				if (queryManager.freePositionAvailableInProvince(province.getRealID(), teachingRole) == true)
+				{
 					province.setRanking(province.getRanking() + 1);
 				}
-			} catch (SQLException e) {
-				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName()
-						+ "] Cannot execute statement.");
+			} catch (SQLException e)
+			{
+				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName() + "] Cannot execute statement.");
 			}
 
 		}
@@ -334,27 +360,30 @@ public class RankingService {
 	/**
 	 * Assegna punteggi ai comuni
 	 */
-	public void rankMunicipalities() {
-		for (CustomRecommendedItem municipality : municipalityIdList) {
+	public void rankMunicipalities()
+	{
+		for (CustomRecommendedItem municipality : municipalityIdList)
+		{
 			/*
 			 * CLASSIFICAZIONE IN BASE ALLA POSIZIONE se la provincia trovata si
 			 * trova all'interno della regione scelta dall'utente allora aumenta
 			 * il suo ranking
 			 */
-			if (queryManager.isMunicipalityInRegion(userPosition,
-					municipality.getRealID()) == 0) {
+			if (queryManager.isMunicipalityInRegion(userPosition, municipality.getRealID()) == 0)
+			{
 				municipality.setRanking(municipality.getRanking() + 1);
 			}
 
 			// CLASSIFICAZIONE IN BASE AL TEACHING ROLE
-			try {
-				if (queryManager.freePositionAvailableInMunicipality(
-						municipality.getRealID(), teachingRole) == true) {
+			try
+			{
+				if (queryManager.freePositionAvailableInMunicipality(municipality.getRealID(), teachingRole) == true)
+				{
 					municipality.setRanking(municipality.getRanking() + 1);
 				}
-			} catch (SQLException e) {
-				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName()
-						+ "] Cannot execute statement.");
+			} catch (SQLException e)
+			{
+				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName() + "] Cannot execute statement.");
 			}
 		}
 	}
@@ -362,8 +391,10 @@ public class RankingService {
 	/**
 	 * Assegna punteggi alle scuole
 	 */
-	public void rankSchools() {
-		for (CustomRecommendedItem school : schoolsIdList) {
+	public void rankSchools()
+	{
+		for (CustomRecommendedItem school : schoolsIdList)
+		{
 
 			String realID = school.getRealID();
 
@@ -372,7 +403,8 @@ public class RankingService {
 			 * trova all'interno della regione scelta dall'utente allora aumenta
 			 * il suo ranking
 			 */
-			if (queryManager.isSchoolInRegion(userPosition, realID) == 0) {
+			if (queryManager.isSchoolInRegion(userPosition, realID) == 0)
+			{
 				school.setRanking(school.getRanking() + 1);
 			}
 
@@ -381,15 +413,16 @@ public class RankingService {
 			 * le materie di insegnamento quella dell'utente allora aumenta il
 			 * suo ranking
 			 */
-			try {
-				if (queryManager.isSchoolQuotedForTeachingRole(realID,
-						teachingRole)) {
+			try
+			{
+				if (queryManager.isSchoolQuotedForTeachingRole(realID, teachingRole))
+				{
 					school.setRanking(school.getRanking() + 1);
 				}
 
-			} catch (SQLException e) {
-				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName()
-						+ "] Cannot execute statement.");
+			} catch (SQLException e)
+			{
+				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName() + "] Cannot execute statement.");
 			}
 
 			/*
@@ -397,24 +430,26 @@ public class RankingService {
 			 * trasferimenti in uscita utenti con score relazionabile a quello
 			 * dell'utente allora aumenta il suo ranking
 			 */
-			try {
+			try
+			{
 
 				/*
 				 * Si esegue la query solo se è stato impostato uno score
 				 * positivo all'avvio. In questo modo si evita di eseguire query
 				 * inutilmente.
 				 */
-				if (score > 0) {
-					if (queryManager.isScoreMatchingTransfers(realID,
-							teachingRole, score)) {
+				if (score > 0)
+				{
+					if (queryManager.isScoreMatchingTransfers(realID, teachingRole, score))
+					{
 
 						school.setRanking(school.getRanking() + 1);
 					}
 				}
 
-			} catch (SQLException e) {
-				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName()
-						+ "] Cannot execute statement.");
+			} catch (SQLException e)
+			{
+				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName() + "] Cannot execute statement.");
 			}
 
 			/*
@@ -422,14 +457,15 @@ public class RankingService {
 			 * TEACHING ROLE
 			 */
 
-			try {
-				if (queryManager.freePositionAvailableAtSchool(realID,
-						teachingRole) == true) {
+			try
+			{
+				if (queryManager.freePositionAvailableAtSchool(realID, teachingRole) == true)
+				{
 					school.setRanking(school.getRanking() + 1);
 				}
-			} catch (SQLException e) {
-				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName()
-						+ "] Cannot execute statement.");
+			} catch (SQLException e)
+			{
+				LOGGER.log(Level.SEVERE, "[" + RankingService.class.getName() + "] Cannot execute statement.");
 			}
 
 		}

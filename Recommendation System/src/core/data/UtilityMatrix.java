@@ -3,13 +3,13 @@ package core.data;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bson.Document;
 
 import core.service.PersistenceService;
 import core.service.profile.Profile;
-
 import utils.Utils;
 
 /**
@@ -284,8 +284,8 @@ public class UtilityMatrix {
 					municipalityFromSchool = queryManager
 							.getMunicipalityFromSchool(school);
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.log(Level.SEVERE, "[" + UtilityMatrix.class.getName()
+							+ "] Cannot execute statement.");
 				}
 				if (provinceFromSchool != null)
 					preferences.add(new UtilityMatrixPreference(userId,
@@ -431,8 +431,8 @@ public class UtilityMatrix {
 					municipalityFromSchool = queryManager
 							.getMunicipalityFromSchool(school);
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.log(Level.SEVERE, "[" + UtilityMatrix.class.getName()
+							+ "] Cannot execute statement.");
 				}
 				if (provinceFromSchool != null)
 					preferences.add(new UtilityMatrixPreference(userId,
